@@ -155,6 +155,13 @@ html{height:100%}body{font-family:var(--fb);background:var(--bg);color:var(--cre
 .btn-pwa.sim{background:var(--ouro);color:#0f0f0f}
 .btn-pwa.nao{background:transparent;border:1px solid var(--borda);color:var(--cinza)}
 
+.ponto-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:12px 14px;margin-bottom:7px}
+.ponto-nome{font-size:13px;font-weight:600;color:var(--ouro-lt);margin-bottom:2px}
+.ponto-sub{font-size:10px;color:var(--cinza);margin-bottom:6px}
+.ponto-letra{font-size:11px;color:#ccc;line-height:1.7;max-height:80px;overflow:hidden;position:relative}
+.ponto-letra::after{content:'';position:absolute;bottom:0;left:0;right:0;height:20px;background:linear-gradient(transparent,var(--card))}
+.ponto-links{display:flex;gap:8px;margin-top:8px}
+.ponto-link{font-size:10px;color:var(--ouro);text-decoration:none;border:1px solid var(--borda);border-radius:6px;padding:3px 8px}
 .empty{text-align:center;color:var(--cinza);font-size:13px;padding:40px 16px;font-style:italic}
 #toast{position:fixed;bottom:calc(var(--bottom)+10px);left:50%;transform:translateX(-50%) translateY(20px);background:#111;border:1px solid var(--ouro);border-radius:99px;color:var(--ouro-lt);padding:8px 18px;font-size:12px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:999;white-space:nowrap;max-width:90vw;text-align:center}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -275,6 +282,26 @@ html{height:100%}body{font-family:var(--fb);background:var(--bg);color:var(--cre
     </div>
   </div>
 
+  <!-- PONTOS -->
+  <div class="page" id="page-pontos">
+    <div style="padding-top:14px">
+      <div class="filter-bar">
+        <input type="search" id="pt-busca" placeholder="Buscar ponto..." oninput="renderPontos()"/>
+        <select id="pt-rel" onchange="renderPontos()">
+          <option value="">Todas as religi&otilde;es</option>
+          <option value="Umbanda">Umbanda</option>
+          <option value="Candomble">Candombl&eacute;</option>
+          <option value="Ambos">Ambos</option>
+        </select>
+        <select id="pt-ent" onchange="renderPontos()">
+          <option value="">Todas as entidades</option>
+        </select>
+      </div>
+      <div class="results-count" id="pt-count"></div>
+      <div id="pontos-lista"><div class="empty">Carregando...</div></div>
+    </div>
+  </div>
+
 </div><!-- /content -->
 
 <!-- BOTTOM NAV -->
@@ -308,12 +335,12 @@ const SUBCATS={
 const CAT_IC={Velas:'vela',Bebidas:'bebida',Fumo:'fumo','Ervas e Defumacao':'erva',Alimentos:'alim','Flores e Naturais':'flor'};
 const NIVEL_SLUG={'OK OK':'ok','! Repor':'repor','Alerta':'alerta','Urgente / Zero':'urgente'};
 
-let acervo=[],consumiveis=[],calendario=[],entidades=[];
+let acervo=[],consumiveis=[],calendario=[],entidades=[],pontos=[];
 let _grupoEnt='todos';
 let deferredPrompt=null;
 
 window.addEventListener('DOMContentLoaded',function(){
-  Promise.all([carregarHome(),carregarConsumiveis(),carregarAcervo(),carregarCalendario(),carregarEntidades()]).catch(function(){});
+  Promise.all([carregarHome(),carregarConsumiveis(),carregarAcervo(),carregarCalendario(),carregarEntidades(),carregarPontos()]).catch(function(){});
   if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
 });
 window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;document.getElementById('pwa-banner').style.display='flex';});
@@ -507,6 +534,45 @@ function renderEntidades(){
 }
 
 // ML
+async function carregarPontos(){
+  try{
+    var r=await fetch(GS+'?acao=pontos-listar'),j=await r.json();
+    if(j.ok){
+      pontos=j.pontos||[];
+      var ents=[...new Set(pontos.map(function(p){return p.entidade;}).filter(Boolean))].sort();
+      var sel=document.getElementById('pt-ent');
+      if(sel){ents.forEach(function(e){var o=document.createElement('option');o.value=e;o.textContent=e;sel.appendChild(o);});}
+      renderPontos();
+    }
+  }catch(e){var el=document.getElementById('pontos-lista');if(el)el.innerHTML='<div class="empty">Erro ao carregar.</div>';}
+}
+
+function renderPontos(){
+  var busca=(document.getElementById('pt-busca').value||'').toLowerCase();
+  var rel=document.getElementById('pt-rel').value;
+  var ent=document.getElementById('pt-ent').value;
+  var f=pontos.filter(function(p){
+    return(!busca||(p.nome||'').toLowerCase().includes(busca)||(p.letra||'').toLowerCase().includes(busca)||(p.entidade||'').toLowerCase().includes(busca))
+      &&(!rel||p.religiao===rel)&&(!ent||p.entidade===ent);
+  });
+  document.getElementById('pt-count').textContent=f.length+' ponto(s)';
+  if(!f.length){document.getElementById('pontos-lista').innerHTML='<div class="empty">Nenhum ponto encontrado.</div>';return;}
+  var html='';
+  f.forEach(function(p){
+    html+='<div class="ponto-card">';
+    html+='<div class="ponto-nome">'+(p.nome||'--')+'</div>';
+    html+='<div class="ponto-sub">'+(p.religiao||'')+(p.entidade?' - '+p.entidade:'')+'</div>';
+    if(p.letra){var lf=p.letra.split(String.fromCharCode(10)).join('<br/>');html+='<div class="ponto-letra">'+lf+'</div>';}
+    if(p.youtube||p.audio){
+      html+='<div class="ponto-links">';
+      if(p.youtube)html+='<a class="ponto-link" href="'+p.youtube+'" target="_blank">YouTube</a>';
+      if(p.audio)html+='<a class="ponto-link" href="'+p.audio+'" target="_blank">Audio</a>';
+      html+='</div>';
+    }
+    html+='</div>';
+  });
+  document.getElementById('pontos-lista').innerHTML=html;
+}
 </script>
 </body>
 </html>
