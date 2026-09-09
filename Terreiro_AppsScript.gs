@@ -28,7 +28,8 @@ const ABA = {
   FINANCEIRO: 'Financeiro',
   LOG:        'Log',
   ADMINS:     'Admins',
-  LISTA:      'Lista de Compras'
+  LISTA:      'Lista de Compras',
+  PONTOS:     'Pontos'
 };
 
 const SALT    = 'ile_ase_salt_v16_2026';
@@ -100,7 +101,8 @@ function setup() {
     {nome: ABA.FINANCEIRO,  criar: _criarFinanceiro,  cols: 9},
     {nome: ABA.LOG,         criar: _criarLog,         cols: 9},
     {nome: ABA.ADMINS,      criar: _criarAdmins,      cols: 8},
-    {nome: ABA.LISTA,       criar: _criarLista,       cols: 6}
+    {nome: ABA.LISTA,       criar: _criarLista,       cols: 6},
+    {nome: ABA.PONTOS,      criar: _criarPontos,      cols: 8}
   ];
 
   ABAS_CONFIG.forEach(function(cfg) {
@@ -334,6 +336,14 @@ function _criarFinanceiro(ss) {
   _fechar(aba, cols.length, 501);
 }
 
+function _criarPontos(ss) {
+  var aba = ss.insertSheet(ABA.PONTOS);
+  var cols = ['ID','Religiao','Entidade / Orixa','Nome do Ponto','Letra','Link YouTube','Audio','Observacoes'];
+  _cab(aba, cols, '#1a0a2a', '#e8c8f0');
+  _val(aba,'B2:B200',['Umbanda','Candomble','Ambos']);
+  _fechar(aba, cols.length, 201);
+}
+
 function _criarLista(ss) {
   var aba = ss.insertSheet(ABA.LISTA);
   var cols = ['ID','Item','Qtd','Unidade','Observações','Cadastrado em'];
@@ -538,6 +548,7 @@ function doPost(e) {
     if (d.acao==='calendario-inserir') return _saida(_inserirCalendario(d,sessao));
     if (d.acao==='entidade-inserir')   return _saida(_inserirEntidade(d,sessao));
     if (d.acao==='lista-inserir')      return _saida(_inserirLista(d,sessao));
+    if (d.acao==='ponto-inserir')       return _saida(_inserirPonto(d,sessao));
     if (d.acao==='lista-deletar')      return _saida(_deletarLista(d,sessao));
     if (d.acao==='admin-criar')        return _saida(_criarAdmin(d,sessao));
     if (d.acao==='admin-desbloquear')  return _saida(_desbloquearAdmin(d.email,sessao));
@@ -562,6 +573,7 @@ function doGet(e) {
     if (acao==='datas-mes')          return _saida(_datasDoMes());
     if (acao==='ml-buscar')          return _saida(_buscarML(p.q));
     if (acao==='lista-listar')         return _saida(_listarLista());
+    if (acao==='pontos-listar')        return _saida(_listarPontos());
     var sessao = _validarToken(p.token);
     if (!sessao) return _saida({ok:false,erro:'Não autorizado.',code:401});
     if (acao==='filhos-listar') {
@@ -769,6 +781,25 @@ function _inserirCalendario(d,s) {
   var id=_uuid('CAL');
   aba.appendRow([id,d.data||'',d.titulo||'',d.tipo||'Outro',d.descricao||'',d.responsavel||s.nome,d.observacoes||'',_hoje()]);
   _log(s.nome,s.email,'INSERIR',ABA.CALENDARIO,id,'-','-',d.titulo);
+  return{ok:true,id};
+}
+
+function _listarPontos() {
+  var aba=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ABA.PONTOS);
+  if(!aba)return{ok:false,erro:'Aba nao encontrada.'};
+  var rows=aba.getDataRange().getValues().slice(1);
+  return{ok:true,pontos:rows.filter(function(l){return l[0]!=='';}).map(function(l){return{
+    id:l[0],religiao:l[1],entidade:l[2],nome:l[3],letra:l[4],youtube:l[5],audio:l[6],obs:l[7]
+  };})};
+}
+
+function _inserirPonto(d,s) {
+  if(!_tem(s,'entidades_edit'))return{ok:false,erro:'Sem permissao.'};
+  var aba=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ABA.PONTOS);
+  if(!aba)return{ok:false,erro:'Aba nao encontrada.'};
+  var id=_uuid('PNT');
+  aba.appendRow([id,d.religiao||'',d.entidade||'',d.nome||'',d.letra||'',d.youtube||'',d.audio||'',d.obs||'']);
+  _log(s.nome,s.email,'INSERIR',ABA.PONTOS,id,'-','-',d.nome);
   return{ok:true,id};
 }
 
