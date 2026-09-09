@@ -374,8 +374,9 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
         <label class="field-lbl">E-mail</label>
         <input class="field-inp" type="email" id="na-email" placeholder="email@exemplo.com" autocomplete="off"/>
         <label class="field-lbl">Senha provis&oacute;ria (usu&aacute;rio dever&aacute; trocar no primeiro acesso)</label>
-        <input class="field-inp" type="text" id="na-senha" placeholder="Min. 6 caracteres" autocomplete="off"/>
+        <input class="field-inp" type="text" id="na-senha" placeholder="Min. 6 caracteres" value="Terreiro@2026" autocomplete="off"/>
         <label class="field-lbl">Permissoes</label>
+        <div style="margin-bottom:6px"><label style="font-size:11px;color:var(--ouro);cursor:pointer"><input type="checkbox" id="perm-all" onchange="togglePermsAll(this)" style="accent-color:var(--ouro);margin-right:5px"/>Selecionar todas</label></div>
         <div class="perms-grid">
           <label class="perm-cb"><input type="checkbox" value="acervo_edit"/> Editar Acervo</label>
           <label class="perm-cb"><input type="checkbox" value="consumiveis_edit"/> Editar Consumiveis</label>
@@ -467,8 +468,14 @@ function fmtBRL(v) {
 function fmtData(s) {
   if (!s || s === '--') return '--';
   try {
-    if (String(s).includes('/')) return s;
-    return new Date(s).toLocaleDateString('pt-BR');
+    var d = new Date(s);
+    if (isNaN(d)) return s;
+    var dd = String(d.getDate()).padStart(2,'0');
+    var mm = String(d.getMonth()+1).padStart(2,'0');
+    var yyyy = d.getFullYear();
+    var hh = String(d.getHours()).padStart(2,'0');
+    var mi = String(d.getMinutes()).padStart(2,'0');
+    return dd+'/'+mm+'/'+yyyy+' '+hh+':'+mi;
   } catch(e) { return s; }
 }
 
@@ -1083,9 +1090,12 @@ function listarAdmins() {
         var nome = document.createElement('div'); nome.className = 'adm-nome'; nome.textContent = a.nome;
         var email = document.createElement('div'); email.className = 'adm-email'; email.textContent = a.email;
         var ul = document.createElement('div'); ul.style.cssText = 'font-size:10px;color:var(--cinza);margin-top:2px';
-        ul.textContent = 'Ultimo acesso: ' + (a.ultimoAcesso || '--');
+        ul.textContent = 'Ultimo acesso: ' + fmtData(a.ultimoAcesso || '--');
         var perms = document.createElement('div'); perms.className = 'adm-perms';
-        perms.textContent = (a.permissoes || []).join(' - ') || 'Sem permissoes';
+        var permsVisiveis = (a.permissoes || []).filter(function(p) {
+          return !['acervo_view','consumiveis_view','entidades_view','calendario_view'].includes(p);
+        });
+        perms.textContent = permsVisiveis.join(' - ') || 'Acesso total';
         card.appendChild(nome); card.appendChild(email); card.appendChild(ul); card.appendChild(perms);
         if (a.trocaSenha) {
           var b = document.createElement('span'); b.className = 'badge-troca'; b.textContent = 'Senha provisoria';
@@ -1194,6 +1204,11 @@ function carregarLog() {
       toast('Carregado!');
     }).catch(function() { toast('Erro.', false); });
 }
+function togglePermsAll(cb) {
+  var checks = document.querySelectorAll('.perms-grid input[type=checkbox]');
+  checks.forEach(function(c) { c.checked = cb.checked; });
+}
+
 function _addBtnImprimir(elId, titulo, conteudo) {
   var el = document.getElementById(elId);
   var existing = el.querySelector('.btn-imprimir');
