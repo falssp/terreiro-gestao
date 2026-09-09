@@ -159,6 +159,19 @@ nav::-webkit-scrollbar{display:none}
 .modal-row:last-child{border:none}
 .modal-rot{color:var(--cinza)}
 
+.pontos-grupo{margin-bottom:28px}
+.pontos-grupo-titulo{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--ouro);font-weight:600;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+.pontos-grupo-titulo::after{content:'';flex:1;height:1px;background:var(--borda)}
+.pontos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.ponto-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:14px 16px;cursor:pointer;transition:border-color .15s}
+.ponto-card:hover{border-color:var(--ouro)}
+.ponto-nome{font-size:13px;font-weight:600;color:var(--ouro-lt);margin-bottom:3px}
+.ponto-sub{font-size:10px;color:var(--cinza);margin-bottom:8px}
+.ponto-letra{font-size:11px;color:#ccc;line-height:1.7;max-height:80px;overflow:hidden;position:relative}
+.ponto-letra::after{content:'';position:absolute;bottom:0;left:0;right:0;height:24px;background:linear-gradient(transparent,var(--card))}
+.ponto-links{display:flex;gap:8px;margin-top:8px}
+.ponto-link{font-size:10px;color:var(--ouro);text-decoration:none;border:1px solid var(--borda);border-radius:6px;padding:3px 8px}
+.ponto-link:hover{border-color:var(--ouro)}
 .empty{text-align:center;color:var(--cinza);font-size:13px;padding:40px 20px;font-style:italic}
 #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#111;border:1px solid var(--ouro);border-radius:99px;color:var(--ouro-lt);padding:8px 20px;font-size:12px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:999;white-space:nowrap}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -187,6 +200,7 @@ nav::-webkit-scrollbar{display:none}
   <button class="tab" onclick="irPara('consumiveis',this)">&#128305; Consum&iacute;veis</button>
   <button class="tab" onclick="irPara('calendario',this)">&#128197; Calend&aacute;rio</button>
   <button class="tab" onclick="irPara('entidades',this)">&#10024; Orix&aacute;s &amp; Entidades</button>
+  <button class="tab" onclick="irPara('pontos',this)">&#127925; Pontos</button>
 </nav>
 <div class="nav-links">
   <a href="mobile.html">&#128241; Vers&atilde;o celular</a>
@@ -271,6 +285,24 @@ nav::-webkit-scrollbar{display:none}
   <div id="ent-lista"><div class="empty">Carregando...</div></div>
 </div>
 
+<!-- PONTOS -->
+<div class="section" id="sec-pontos">
+  <div class="filter-bar">
+    <input type="search" id="pt-busca" placeholder="Buscar ponto..." oninput="renderPontos()"/>
+    <select id="pt-rel" onchange="renderPontos()">
+      <option value="">Todas as religi&otilde;es</option>
+      <option value="Umbanda">Umbanda</option>
+      <option value="Candomble">Candombl&eacute;</option>
+      <option value="Ambos">Ambos</option>
+    </select>
+    <select id="pt-ent" onchange="renderPontos()">
+      <option value="">Todas as entidades</option>
+    </select>
+  </div>
+  <div class="results-count" id="pt-count"></div>
+  <div id="pontos-lista"><div class="empty">Carregando...</div></div>
+</div>
+
 <!-- MODAL -->
 <div class="modal-bg" id="modal-bg" onclick="fecharModal(event)">
   <div class="modal">
@@ -291,10 +323,10 @@ const SUBCATS={
 };
 const CAT_IC={Velas:'vela',Bebidas:'bebida',Fumo:'fumo','Ervas e Defumacao':'erva',Alimentos:'alim','Flores e Naturais':'flor'};
 
-let acervo=[],consumiveis=[],calendario=[],entidades=[];
+let acervo=[],consumiveis=[],calendario=[],entidades=[],pontos=[];
 
 window.addEventListener('DOMContentLoaded',function(){
-  Promise.all([carregarHome(),carregarAcervo(),carregarConsumiveis(),carregarCalendario(),carregarEntidades()]).catch(function(){});
+  Promise.all([carregarHome(),carregarAcervo(),carregarConsumiveis(),carregarCalendario(),carregarEntidades(),carregarPontos()]).catch(function(){});
   if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
 });
 
@@ -590,6 +622,66 @@ function usarML(titulo,preco,link){
   document.getElementById('cu-link').value=decodeURIComponent(link);
   fecharForm();abrirForm('consumivel');
   toast('Dados preenchidos!');
+}
+async function carregarPontos(){
+  try{
+    var r=await fetch(GS+'?acao=pontos-listar'),j=await r.json();
+    if(j.ok){
+      pontos=j.pontos||[];
+      // Popular select de entidades
+      var ents=[...new Set(pontos.map(function(p){return p.entidade;}).filter(Boolean))].sort();
+      var sel=document.getElementById('pt-ent');
+      if(sel){
+        ents.forEach(function(e){var o=document.createElement('option');o.value=e;o.textContent=e;sel.appendChild(o);});
+      }
+      renderPontos();
+    }
+  }catch(e){
+    var el=document.getElementById('pontos-lista');
+    if(el)el.innerHTML='<div class="empty">Erro ao carregar pontos.</div>';
+  }
+}
+
+function renderPontos(){
+  var busca=(document.getElementById('pt-busca').value||'').toLowerCase();
+  var rel=document.getElementById('pt-rel').value;
+  var ent=document.getElementById('pt-ent').value;
+  var f=pontos.filter(function(p){
+    return(!busca||(p.nome||'').toLowerCase().includes(busca)||(p.letra||'').toLowerCase().includes(busca)||(p.entidade||'').toLowerCase().includes(busca))
+      &&(!rel||p.religiao===rel)
+      &&(!ent||p.entidade===ent);
+  });
+  document.getElementById('pt-count').textContent=f.length+' ponto(s)';
+  if(!f.length){document.getElementById('pontos-lista').innerHTML='<div class="empty">Nenhum ponto encontrado.</div>';return;}
+
+  // Agrupar por religiao > entidade
+  var grupos={};
+  f.forEach(function(p){
+    var g=(p.religiao||'Outros')+' -- '+(p.entidade||'Outros');
+    if(!grupos[g])grupos[g]=[];
+    grupos[g].push(p);
+  });
+
+  var html='';
+  Object.keys(grupos).sort().forEach(function(g){
+    html+='<div class="pontos-grupo"><div class="pontos-grupo-titulo">'+g+'</div><div class="pontos-grid">';
+    grupos[g].forEach(function(p){
+      html+='<div class="ponto-card">';
+      html+='<div class="ponto-nome">'+(p.nome||'--')+'</div>';
+      html+='<div class="ponto-sub">'+(p.religiao||'')+(p.entidade?' - '+p.entidade:'')+'</div>';
+      if(p.letra){var lf=p.letra.split(String.fromCharCode(10)).join('<br/>');html+='<div class="ponto-letra">'+lf+'</div>';}
+
+      if(p.youtube||p.audio){
+        html+='<div class="ponto-links">';
+        if(p.youtube)html+='<a class="ponto-link" href="'+p.youtube+'" target="_blank">YouTube</a>';
+        if(p.audio)html+='<a class="ponto-link" href="'+p.audio+'" target="_blank">Audio</a>';
+        html+='</div>';
+      }
+      html+='</div>';
+    });
+    html+='</div></div>';
+  });
+  document.getElementById('pontos-lista').innerHTML=html;
 }
 </script>
 </body>
