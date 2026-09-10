@@ -179,6 +179,29 @@ html{height:100%}body{font-family:var(--fb);background:var(--bg);color:var(--cre
 #toast{position:fixed;bottom:calc(var(--bottom)+10px);left:50%;transform:translateX(-50%) translateY(20px);background:#111;border:1px solid var(--ouro);border-radius:99px;color:var(--ouro-lt);padding:8px 18px;font-size:12px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:999;white-space:nowrap;max-width:90vw;text-align:center}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 #toast.erro{border-color:#f08080;color:#f08080}
+
+/* MINI PLAYER */
+#mini-player{position:fixed;bottom:var(--bottom);left:0;right:0;background:#111;border-top:1px solid var(--borda);z-index:200;display:none;flex-direction:column}
+#mini-player.ativo{display:flex}
+.mp-barra{height:3px;background:rgba(201,168,76,.15);cursor:pointer;position:relative}
+.mp-progresso{height:100%;background:var(--ouro);width:0%;transition:width .5s linear;pointer-events:none}
+.mp-corpo{display:flex;align-items:center;gap:10px;padding:8px 14px}
+.mp-thumb{width:36px;height:36px;border-radius:6px;background:rgba(201,168,76,.1);border:1px solid var(--borda);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.mp-info{flex:1;min-width:0}
+.mp-nome{font-size:12px;font-weight:600;color:var(--ouro-lt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mp-sub{font-size:10px;color:var(--cinza);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mp-controles{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.mp-btn{background:none;border:none;color:var(--cinza);cursor:pointer;padding:6px;font-size:16px;line-height:1;border-radius:6px;transition:color .15s}
+.mp-btn:hover,.mp-btn:active{color:var(--ouro-lt)}
+.mp-btn.play{font-size:20px;color:var(--ouro-lt)}
+.mp-btn.fechar{font-size:13px}
+/* iframe YT oculto para controle via API */
+#yt-player-hidden{position:fixed;bottom:-9999px;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
+/* GRUPO de pontos */
+.pontos-grupo-titulo{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--ouro);font-weight:600;margin:18px 0 8px;display:flex;align-items:center;gap:8px}
+.pontos-grupo-titulo::after{content:'';flex:1;height:1px;background:var(--borda)}
+.pontos-grupo-titulo:first-child{margin-top:0}
+
 </style>
 </head>
 <body>
@@ -305,7 +328,7 @@ html{height:100%}body{font-family:var(--fb);background:var(--bg);color:var(--cre
         <select id="pt-rel" onchange="renderPontos()">
           <option value="">Todas as religi&otilde;es</option>
           <option value="Umbanda">Umbanda</option>
-          <option value="Candomble">Candombl&eacute;</option>
+          <option value="Candomblé / Ketu">Candomblé / Ketu</option>
           <option value="Ambos">Ambos</option>
         </select>
         <select id="pt-ent" onchange="renderPontos()">
@@ -562,47 +585,140 @@ async function carregarPontos(){
 }
 
 
-function abrirModalPonto(id){
-  var p=pontos.find(function(x){return x.id===id;});
-  if(!p)return;
-  document.getElementById('modal-nome').textContent=p.nome||'--';
-  var corpo='';
-  // Linha religião + entidade
-  corpo+='<div class="modal-row"><span class="modal-rot">Tradição</span><span>'+(p.religiao||'--')+'</span></div>';
-  corpo+='<div class="modal-row"><span class="modal-rot">Entidade / Orixá</span><span>'+(p.entidade||'--')+'</span></div>';
-  // Letra
-  if(p.letra){
-    var lf=p.letra.replace(/\n/g,'<br>').replace(/BIS/g,'<em style="color:var(--ouro);font-style:normal;font-size:10px;font-weight:600">BIS</em>');
-    corpo+='<div style="margin:12px 0 4px;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ouro)">Letra</div>';
-    corpo+='<div style="font-size:14px;line-height:1.9;color:#ddd;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:14px 16px;margin-bottom:12px">'+lf+'</div>';
-  }
-  // YouTube embed
-  if(p.youtube){
-    var ytm=p.youtube.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_\-]{11})/);
-    if(ytm){
-      corpo+='<div style="position:relative;width:100%;padding-top:56.25%;border-radius:8px;overflow:hidden;margin-bottom:10px;background:#000"><iframe style="position:absolute;top:0;left:0;width:100%;height:100%;border:none" src="https://www.youtube.com/embed/'+ytm[1]+'" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen loading="lazy"></iframe></div>';
+
+function MODAL_OPEN(){document.getElementById('modal-overlay').classList.add('open');}
+function MODAL_CLOSE(){document.getElementById('modal-overlay').classList.remove('open');}
+
+// ── MINI PLAYER ──────────────────────────────────────────
+var MP = {
+  lista: [],       // pontos com youtube, em ordem
+  idx: -1,         // índice atual
+  tocando: false,
+  ytReady: false,
+  player: null,
+  timer: null,
+
+  // Pega lista filtrada com YT na ordem atual da renderização
+  setLista: function(pontosFiltrados){
+    MP.lista = pontosFiltrados.filter(function(p){return !!p.youtube;});
+  },
+
+  idxDe: function(id){
+    for(var i=0;i<MP.lista.length;i++){if(MP.lista[i].id===id)return i;}
+    return -1;
+  },
+
+  tocar: function(id){
+    var i = MP.idxDe(id);
+    if(i<0) return;
+    MP.idx = i;
+    var p = MP.lista[i];
+    var ytm = p.youtube.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_\-]{11})/);
+    if(!ytm) return;
+    var vid = ytm[1];
+
+    // Mostrar mini player
+    var el = document.getElementById('mini-player');
+    el.classList.add('ativo');
+    document.getElementById('mp-nome').textContent = p.nome;
+    document.getElementById('mp-sub').textContent = p.entidade;
+    MP._atualizarBotoes();
+
+    // Criar/atualizar iframe oculto para controle via YT IFrame API
+    if(MP.player && MP.ytReady){
+      MP.player.loadVideoById(vid);
+      MP.tocando = true;
+    } else {
+      // Criar iframe
+      var wrap = document.getElementById('yt-player-hidden');
+      wrap.innerHTML = '<div id="yt-iframe"></div>';
+      if(window.YT && window.YT.Player){
+        MP._criarPlayer(vid);
+      } else {
+        // Carregar API
+        var tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/iframe_api';
+        document.head.appendChild(tag);
+        window._ytVidPendente = vid;
+      }
     }
+    MP._iniciarTimer();
+  },
+
+  _criarPlayer: function(vid){
+    MP.player = new YT.Player('yt-iframe',{
+      videoId: vid,
+      playerVars:{autoplay:1,controls:0},
+      events:{
+        onReady: function(){ MP.ytReady=true; MP.tocando=true; MP._atualizarBotoes(); },
+        onStateChange: function(e){
+          if(e.data===YT.PlayerState.ENDED){ MP.proximo(); }
+          if(e.data===YT.PlayerState.PLAYING){ MP.tocando=true; MP._atualizarBotoes(); }
+          if(e.data===YT.PlayerState.PAUSED){ MP.tocando=false; MP._atualizarBotoes(); }
+        }
+      }
+    });
+  },
+
+  pausePlay: function(){
+    if(!MP.player||!MP.ytReady) return;
+    if(MP.tocando){ MP.player.pauseVideo(); }
+    else { MP.player.playVideo(); }
+  },
+
+  proximo: function(){
+    if(MP.lista.length===0) return;
+    MP.idx = (MP.idx+1) % MP.lista.length;
+    MP.tocar(MP.lista[MP.idx].id);
+  },
+
+  anterior: function(){
+    if(MP.lista.length===0) return;
+    MP.idx = (MP.idx-1+MP.lista.length) % MP.lista.length;
+    MP.tocar(MP.lista[MP.idx].id);
+  },
+
+  fechar: function(){
+    if(MP.player&&MP.ytReady) MP.player.stopVideo();
+    MP.tocando=false;
+    MP.idx=-1;
+    document.getElementById('mini-player').classList.remove('ativo');
+    clearInterval(MP.timer);
+    MP._atualizarProgresso(0);
+  },
+
+  _atualizarBotoes: function(){
+    var btn = document.getElementById('mp-play-btn');
+    if(btn) btn.textContent = MP.tocando ? '⏸' : '▶';
+  },
+
+  _iniciarTimer: function(){
+    clearInterval(MP.timer);
+    MP.timer = setInterval(function(){
+      if(!MP.player||!MP.ytReady) return;
+      try{
+        var dur = MP.player.getDuration();
+        var cur = MP.player.getCurrentTime();
+        if(dur>0) MP._atualizarProgresso(cur/dur*100);
+      }catch(e){}
+    },1000);
+  },
+
+  _atualizarProgresso: function(pct){
+    var el=document.getElementById('mp-progresso');
+    if(el) el.style.width=pct+'%';
   }
-  // Links
-  if(p.youtube){
-    corpo+='<div style="margin-top:4px"><a href="'+p.youtube+'" target="_blank" style="font-size:12px;color:var(--ouro);text-decoration:none;border:1px solid var(--borda);border-radius:6px;padding:5px 12px;display:inline-block">\u25b6 Ouvir no YouTube</a></div>';
+};
+
+// Callback da YT IFrame API
+function onYouTubeIframeAPIReady(){
+  if(window._ytVidPendente){
+    MP._criarPlayer(window._ytVidPendente);
+    window._ytVidPendente=null;
   }
-  if(p.obs)corpo+='<div style="font-size:11px;color:var(--cinza);margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05)">'+p.obs+'</div>';
-  if(p.drive){
-    corpo+='<div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07)">';
-    corpo+='<div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--cinza);margin-bottom:8px">Mais gravações desta entidade</div>';
-    corpo+='<a href="'+p.drive+'" target="_blank" style="font-size:12px;color:var(--cinza);text-decoration:none;border:1px solid var(--borda);border-radius:6px;padding:5px 12px;display:inline-block">\ud83d\udcc2 Abrir pasta no Drive</a>';
-    corpo+="</div>";
-  }
-  document.getElementById('modal-corpo').innerHTML=corpo;
-  document.getElementById('modal-overlay').classList.add('open');
 }
-var _ptAbertos={};
-function togglePonto(id){
-  _ptAbertos[id]=!_ptAbertos[id];
-  var el=document.getElementById('pt-'+id);
-  if(el)el.classList.toggle('open',!!_ptAbertos[id]);
-}
+
+// ── RENDER PONTOS (agrupado + badge correto) ──────────────
 function renderPontos(){
   var busca=(document.getElementById('pt-busca').value||'').toLowerCase();
   var rel=document.getElementById('pt-rel').value;
@@ -614,24 +730,97 @@ function renderPontos(){
   });
   document.getElementById('pt-count').textContent=f.length+' ponto(s)';
   if(!f.length){document.getElementById('pontos-lista').innerHTML='<div class="empty">Nenhum ponto encontrado.</div>';return;}
-  document.getElementById('pontos-lista').innerHTML=f.map(function(p){
-    var badgeCls=p.religiao==='Umbanda'?'umb':'can';
-    var badgeTxt=p.religiao==='Umbanda'?'Umbanda':'Candombl\u00e9';
-    var icons='';
-    if(p.youtube)icons+='<span style="font-size:11px;opacity:.7">\u25b6</span>';
-    if(p.drive)icons+='<span style="font-size:11px;opacity:.7">\ud83c\udfb5</span>';
-    return '<div class="csm-card" onclick="abrirModalPonto(\''+p.id+'\')">'
-      +'<div class="csm-top">'
-      +'<div><div class="csm-nome">'+p.nome+'</div>'
-      +'<div class="csm-cat">'+p.entidade+'</div></div>'
-      +'<div style="display:flex;align-items:center;gap:6px">'
-      +icons
-      +'<span class="ponto-badge '+badgeCls+'">'+badgeTxt+'</span>'
-      +'</div></div>'
-      +'</div>';
-  }).join('');
+
+  // Atualizar lista do player com a ordem atual
+  MP.setLista(f);
+
+  // Agrupar por religião > entidade
+  var grupos={};
+  var ordemGrupos=[];
+  f.forEach(function(p){
+    var chave=p.religiao+'|||'+p.entidade;
+    if(!grupos[chave]){grupos[chave]=[];ordemGrupos.push(chave);}
+    grupos[chave].push(p);
+  });
+
+  var html='';
+  ordemGrupos.forEach(function(chave){
+    var partes=chave.split('|||');
+    var rel2=partes[0], ent2=partes[1];
+    var badgeCls=rel2==='Umbanda'?'umb':'can';
+    var badgeTxt=rel2==='Umbanda'?'Umbanda':'Candombl\u00e9 / Ketu';
+    html+='<div class="pontos-grupo-titulo"><span class="ponto-badge '+badgeCls+'">'+badgeTxt+'</span>'+ent2+'</div>';
+    grupos[chave].forEach(function(p){
+      var icons='';
+      if(p.youtube)icons='<span style="color:var(--ouro);font-size:13px">&#9835;</span>';
+      html+='<div class="csm-card" onclick="abrirModalPonto(\''+p.id+\')">'
+        +'<div class="csm-top">'
+        +'<div style="flex:1;min-width:0"><div class="csm-nome">'+p.nome+'</div></div>'
+        +'<div style="display:flex;align-items:center;gap:6px">'+icons+'</div>'
+        +'</div>'
+        +'</div>';
+    });
+  });
+  document.getElementById('pontos-lista').innerHTML=html;
+}
+
+// ── ABRIR MODAL PONTO ──────────────────────────────────────
+function abrirModalPonto(id){
+  var p=pontos.find(function(x){return x.id===id;});
+  if(!p)return;
+  document.getElementById('modal-nome').textContent=p.nome||'--';
+  var corpo='';
+  corpo+='<div class="modal-row"><span class="modal-rot">Tradi\u00e7\u00e3o</span><span>'+p.religiao+'</span></div>';
+  corpo+='<div class="modal-row"><span class="modal-rot">Entidade / Orix\u00e1</span><span>'+p.entidade+'</span></div>';
+  if(p.letra){
+    var lf=p.letra.replace(/\n/g,'<br>').replace(/BIS/g,'<em style="color:var(--ouro);font-style:normal;font-size:10px;font-weight:600">BIS</em>');
+    corpo+='<div style="margin:12px 0 4px;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ouro)">Letra</div>';
+    corpo+='<div style="font-size:14px;line-height:1.9;color:#ddd;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:14px 16px;margin-bottom:12px">'+lf+'</div>';
+  }
+  if(p.youtube){
+    var isAtual=(MP.lista.length>0 && MP.idx>=0 && MP.lista[MP.idx] && MP.lista[MP.idx].id===id);
+    corpo+='<div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">';
+    corpo+='<button onclick="MP.tocar(\''+id+'\');fecharModalPonto()" style="background:rgba(201,168,76,.15);border:1px solid var(--borda);border-radius:6px;padding:6px 14px;color:var(--ouro-lt);font-size:12px;cursor:pointer;font-family:var(--fb)">&#9835; Tocar no player</button>';
+    corpo+='<a href="'+p.youtube+'" target="_blank" style="font-size:11px;color:var(--cinza);text-decoration:none;border:1px solid var(--borda);border-radius:6px;padding:6px 10px">&#9654; YouTube</a>';
+    corpo+='</div>';
+  }
+  if(p.obs)corpo+='<div style="font-size:11px;color:var(--cinza);margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05)">'+p.obs+'</div>';
+  if(p.drive){
+    corpo+='<div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07)">';
+    corpo+='<div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--cinza);margin-bottom:8px">Mais grava\u00e7\u00f5es desta entidade</div>';
+    corpo+='<a href="'+p.drive+'" target="_blank" style="font-size:12px;color:var(--cinza);text-decoration:none;border:1px solid var(--borda);border-radius:6px;padding:5px 12px;display:inline-block">\ud83d\udcc2 Abrir pasta no Drive</a>';
+    corpo+='</div>';
+  }
+  document.getElementById('modal-corpo').innerHTML=corpo;
+  MODAL_OPEN();
+}
+
+function fecharModalPonto(){
+  MODAL_CLOSE();
 }
 
 </script>
+
+<div id="yt-player-hidden"></div>
+
+<div id="mini-player">
+  <div class="mp-barra" onclick="var b=this.getBoundingClientRect();var pct=(event.clientX-b.left)/b.width;if(MP.player&&MP.ytReady)MP.player.seekTo(MP.player.getDuration()*pct,true)">
+    <div class="mp-progresso" id="mp-progresso"></div>
+  </div>
+  <div class="mp-corpo">
+    <div class="mp-thumb">&#9835;</div>
+    <div class="mp-info">
+      <div class="mp-nome" id="mp-nome">--</div>
+      <div class="mp-sub" id="mp-sub"></div>
+    </div>
+    <div class="mp-controles">
+      <button class="mp-btn" onclick="MP.anterior()" title="Anterior">&#9664;&#9664;</button>
+      <button class="mp-btn play" id="mp-play-btn" onclick="MP.pausePlay()">&#9654;</button>
+      <button class="mp-btn" onclick="MP.proximo()" title="Próximo">&#9654;&#9654;</button>
+      <button class="mp-btn fechar" onclick="MP.fechar()" title="Fechar">&#10005;</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
