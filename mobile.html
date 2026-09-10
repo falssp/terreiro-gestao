@@ -143,8 +143,8 @@ html{height:100%}body{font-family:var(--fb);background:var(--bg);color:var(--cre
 
 /* BOTTOM NAV */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;height:var(--bottom);background:#111;border-top:1px solid var(--borda);display:flex;align-items:stretch;z-index:50;padding-bottom:env(safe-area-inset-bottom)}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:none;border:none;color:var(--cinza);font-family:var(--fb);font-size:9px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color .15s}
-.nav-btn .ic{font-size:19px;line-height:1}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;background:none;border:none;color:var(--cinza);font-family:var(--fb);font-size:8px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color .15s}
+.nav-btn .ic{font-size:17px;line-height:1}
 .nav-btn.active{color:var(--ouro-lt)}
 .nav-btn.active::after{content:'';display:block;width:20px;height:2px;background:var(--ouro);border-radius:1px;margin-top:2px}
 
@@ -322,14 +322,14 @@ html{height:100%}body{font-family:var(--fb);background:var(--bg);color:var(--cre
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <button class="nav-btn active" onclick="navTo('home',this)"><span class="ic">&#127968;</span>Início</button>
-  <button class="nav-btn" onclick="navTo('acervo',this)"><span class="ic">&#128230;</span>Acervo</button>
   <button class="nav-btn" onclick="navTo('consumiveis',this)"><span class="ic">&#128305;</span>Consumíveis</button>
   <button class="nav-btn" onclick="navTo('pontos',this)"><span class="ic">&#9835;</span>Pontos</button>
-  <button class="nav-btn" onclick="navTo('entidades',this)"><span class="ic">&#10024;</span>Orixás &amp; Ent.</button>
+  <button class="nav-btn" onclick="navTo('acervo',this)"><span class="ic">&#128230;</span>Acervo</button>
+  <button class="nav-btn" onclick="navTo('entidades',this)"><span class="ic">&#10024;</span>Orixás</button>
 </nav>
 
 <!-- MODAL -->
-<div class="modal-overlay" id="modal-overlay" onclick="fecharModal(event)">
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)document.getElementById('modal-overlay').classList.remove('open')">
   <div class="modal">
     <div class="modal-titulo"><span id="modal-nome">--</span><span class="modal-fechar" onclick="fecharModal()">&#x2715;</span></div>
     <div id="modal-corpo"></div>
@@ -574,7 +574,7 @@ function abrirModalPonto(id){
   if(p.letra){
     var lf=p.letra.replace(/\n/g,'<br>').replace(/BIS/g,'<em style="color:var(--ouro);font-style:normal;font-size:10px;font-weight:600">BIS</em>');
     corpo+='<div style="margin:12px 0 4px;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ouro)">Letra</div>';
-    corpo+='<div style="font-size:12px;line-height:1.8;color:#ddd;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:12px 14px;margin-bottom:10px">'+lf+'</div>';
+    corpo+='<div style="font-size:14px;line-height:1.9;color:#ddd;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:14px 16px;margin-bottom:12px">'+lf+'</div>';
   }
   // YouTube embed
   if(p.youtube){
@@ -590,7 +590,7 @@ function abrirModalPonto(id){
   if(links.length)corpo+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">'+links.join('')+'</div>';
   if(p.obs)corpo+='<div style="font-size:10px;color:var(--cinza);margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05)">'+p.obs+'</div>';
   document.getElementById('modal-corpo').innerHTML=corpo;
-  document.getElementById('modal-bg').classList.add('aberto');
+  document.getElementById('modal-overlay').classList.add('open');
 }
 var _ptAbertos={};
 function togglePonto(id){
