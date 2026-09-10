@@ -163,14 +163,26 @@ nav::-webkit-scrollbar{display:none}
 .pontos-grupo-titulo{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--ouro);font-weight:600;margin:0 0 12px;display:flex;align-items:center;gap:8px}
 .pontos-grupo-titulo::after{content:'';flex:1;height:1px;background:var(--borda)}
 .pontos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
-.ponto-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:14px 16px;cursor:pointer;transition:border-color .15s}
-.ponto-card:hover{border-color:var(--ouro)}
-.ponto-nome{font-size:13px;font-weight:600;color:var(--ouro-lt);margin-bottom:3px}
-.ponto-sub{font-size:10px;color:var(--cinza);margin-bottom:8px}
-.ponto-letra{font-size:11px;color:#ccc;line-height:1.7;max-height:80px;overflow:hidden;position:relative}
-.ponto-letra::after{content:'';position:absolute;bottom:0;left:0;right:0;height:24px;background:linear-gradient(transparent,var(--card))}
-.ponto-links{display:flex;gap:8px;margin-top:8px}
-.ponto-link{font-size:10px;color:var(--ouro);text-decoration:none;border:1px solid var(--borda);border-radius:6px;padding:3px 8px}
+.ponto-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);margin-bottom:8px;overflow:hidden;transition:border-color .15s}
+.ponto-card:hover{border-color:rgba(201,168,76,.45)}
+.ponto-header{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;user-select:none}
+.ponto-badge{font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:99px;flex-shrink:0}
+.ponto-badge.umb{background:rgba(100,160,100,.18);color:#90d090;border:1px solid rgba(100,160,100,.3)}
+.ponto-badge.can{background:rgba(160,100,30,.2);color:#e0b060;border:1px solid rgba(160,100,30,.3)}
+.ponto-info{flex:1;min-width:0}
+.ponto-nome{font-size:14px;font-weight:600;color:var(--ouro-lt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ponto-sub{font-size:11px;color:var(--cinza);margin-top:2px}
+.ponto-chevron{color:var(--cinza);font-size:14px;flex-shrink:0;transition:transform .2s}
+.ponto-card.open .ponto-chevron{transform:rotate(180deg)}
+.ponto-body{display:none;border-top:1px solid var(--borda);padding:16px}
+.ponto-card.open .ponto-body{display:block}
+.ponto-letra{font-size:13px;color:#ccc;line-height:1.75;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:14px 16px;margin-bottom:12px;white-space:pre-line}
+.ponto-letra em{color:var(--ouro);font-style:normal;font-size:11px;font-weight:600;letter-spacing:.06em}
+.ponto-yt{position:relative;width:100%;padding-top:56.25%;border-radius:8px;overflow:hidden;margin-bottom:12px;background:#000}
+.ponto-yt iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
+.ponto-obs{font-size:11px;color:var(--cinza);margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05)}
+.ponto-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.ponto-link{font-size:11px;color:var(--ouro);text-decoration:none;border:1px solid var(--borda);border-radius:6px;padding:4px 10px}
 .ponto-link:hover{border-color:var(--ouro)}
 .empty{text-align:center;color:var(--cinza);font-size:13px;padding:40px 20px;font-style:italic}
 #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#111;border:1px solid var(--ouro);border-radius:99px;color:var(--ouro-lt);padding:8px 20px;font-size:12px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:999;white-space:nowrap}
@@ -643,6 +655,12 @@ async function carregarPontos(){
   }
 }
 
+var _ptAbertos={};
+function togglePonto(id){
+  _ptAbertos[id]=!_ptAbertos[id];
+  var el=document.getElementById('pt-'+id);
+  if(el)el.classList.toggle('open',!!_ptAbertos[id]);
+}
 function renderPontos(){
   var busca=(document.getElementById('pt-busca').value||'').toLowerCase();
   var rel=document.getElementById('pt-rel').value;
@@ -654,33 +672,33 @@ function renderPontos(){
   });
   document.getElementById('pt-count').textContent=f.length+' ponto(s)';
   if(!f.length){document.getElementById('pontos-lista').innerHTML='<div class="empty">Nenhum ponto encontrado.</div>';return;}
-
-  // Agrupar por religiao > entidade
-  var grupos={};
-  f.forEach(function(p){
-    var g=(p.religiao||'Outros')+' -- '+(p.entidade||'Outros');
-    if(!grupos[g])grupos[g]=[];
-    grupos[g].push(p);
-  });
-
   var html='';
-  Object.keys(grupos).sort().forEach(function(g){
-    html+='<div class="pontos-grupo"><div class="pontos-grupo-titulo">'+g+'</div><div class="pontos-grid">';
-    grupos[g].forEach(function(p){
-      html+='<div class="ponto-card">';
-      html+='<div class="ponto-nome">'+(p.nome||'--')+'</div>';
-      html+='<div class="ponto-sub">'+(p.religiao||'')+(p.entidade?' - '+p.entidade:'')+'</div>';
-      if(p.letra){var lf=p.letra.split(String.fromCharCode(10)).join('<br/>');html+='<div class="ponto-letra">'+lf+'</div>';}
-
-      if(p.youtube||p.audio){
-        html+='<div class="ponto-links">';
-        if(p.youtube)html+='<a class="ponto-link" href="'+p.youtube+'" target="_blank">YouTube</a>';
-        if(p.audio)html+='<a class="ponto-link" href="'+p.audio+'" target="_blank">Audio</a>';
-        html+='</div>';
-      }
-      html+='</div>';
-    });
-    html+='</div></div>';
+  f.forEach(function(p){
+    var isOpen=!!_ptAbertos[p.id];
+    var badgeCls=p.religiao==='Umbanda'?'umb':'can';
+    var badgeTxt=p.religiao==='Umbanda'?'Umbanda':'Candombl\u00e9';
+    var body='';
+    if(p.youtube){
+      var ytm=p.youtube.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_\-]{11})/);
+      if(ytm)body+='<div class="ponto-yt"><iframe src="https://www.youtube.com/embed/'+ytm[1]+'" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen loading="lazy"></iframe></div>';
+    }
+    if(p.letra){
+      var lf=p.letra.replace(/BIS/g,'<em>BIS</em>');
+      body+='<div class="ponto-letra">'+lf+'</div>';
+    }
+    var links='';
+    if(p.youtube)links+='<a class="ponto-link" href="'+p.youtube+'" target="_blank">\u25b6 YouTube</a>';
+    if(p.audio)links+='<a class="ponto-link" href="'+p.audio+'" target="_blank">\ud83c\udfb5 \u00c1udio</a>';
+    if(links)body+='<div class="ponto-links">'+links+'</div>';
+    if(p.obs)body+='<div class="ponto-obs">'+p.obs+'</div>';
+    html+='<div class="ponto-card'+(isOpen?' open':'')+'" id="pt-'+p.id+'">';
+    html+='<div class="ponto-header" onclick="togglePonto(\''+p.id+'\')">';
+    html+='<span class="ponto-badge '+badgeCls+'">'+badgeTxt+'</span>';
+    html+='<div class="ponto-info"><div class="ponto-nome">'+(p.nome||'--')+'</div>';
+    html+='<div class="ponto-sub">'+(p.entidade||'')+'</div></div>';
+    html+='<span class="ponto-chevron">\u25be</span></div>';
+    html+='<div class="ponto-body">'+body+'</div>';
+    html+='</div>';
   });
   document.getElementById('pontos-lista').innerHTML=html;
 }
