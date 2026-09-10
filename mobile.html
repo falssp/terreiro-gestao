@@ -206,10 +206,12 @@ html{height:100%}body{font-family:var(--fb);background:var(--bg);color:var(--cre
         <div class="nivel-card urgente" onclick="filtrarNivel('urgente')"><div class="num skeleton skel-num" id="cnt-urgente"></div><div class="rot">&#128680; Urgente</div></div>
       </div>
       <div class="ornamento">&#10022; &#10022; &#10022;</div>
-      <div style="background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(100,50,200,.08));border:1px solid rgba(201,168,76,.3);border-radius:var(--r);padding:14px;margin-bottom:14px">
-        <div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--ouro);font-weight:600;margin-bottom:10px">Consultas Espirituais</div>
-        <div style="font-size:12px;margin-bottom:6px"><span style="color:var(--ouro-lt);font-weight:600">Jogo de Buzios</span><br/><span style="color:var(--cinza);line-height:1.6">Leitura oracular africana com os buzios sagrados.</span></div>
-        <div style="font-size:12px;margin-bottom:10px"><span style="color:var(--ouro-lt);font-weight:600">Tarot</span><br/><span style="color:var(--cinza);line-height:1.6">Leitura para orientacao espiritual e esclarecimento.</span></div>
+      <div style="background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(100,50,200,.08));border:1px solid rgba(201,168,76,.3);border-radius:var(--r);padding:14px 14px 16px;margin-bottom:20px;margin-top:4px">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--ouro);font-weight:600;margin-bottom:12px">&#127775; Consultas Espirituais</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+          <div style="font-size:12px"><div style="color:var(--ouro-lt);font-weight:600;margin-bottom:4px">&#127775; Jogo de Búzios</div><div style="color:var(--cinza);line-height:1.6">Leitura oracular africana com os búzios sagrados. Consulte os orixás e receba orientações para sua vida.</div></div>
+          <div style="font-size:12px"><div style="color:var(--ouro-lt);font-weight:600;margin-bottom:4px">&#127183; Tarot</div><div style="color:var(--cinza);line-height:1.6">Leitura de tarot para orientação espiritual, esclarecimento de situações e apoio nas decisões da vida.</div></div>
+        </div>
         <a href="https://wa.me/5511989202958" target="_blank" style="display:block;text-align:center;color:var(--ouro);font-size:12px;text-decoration:none">WhatsApp (11) 98920-2958</a>
       </div>
       <div id="home-datas"></div>
@@ -320,8 +322,8 @@ html{height:100%}body{font-family:var(--fb);background:var(--bg);color:var(--cre
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <button class="nav-btn active" onclick="navTo('home',this)"><span class="ic">&#127968;</span>Início</button>
+  <button class="nav-btn" onclick="navTo('acervo',this)"><span class="ic">&#128230;</span>Acervo</button>
   <button class="nav-btn" onclick="navTo('consumiveis',this)"><span class="ic">&#128305;</span>Consumíveis</button>
-  <button class="nav-btn" onclick="navTo('calendario',this)"><span class="ic">&#128197;</span>Agenda</button>
   <button class="nav-btn" onclick="navTo('pontos',this)"><span class="ic">&#9835;</span>Pontos</button>
   <button class="nav-btn" onclick="navTo('entidades',this)"><span class="ic">&#10024;</span>Orixás &amp; Ent.</button>
 </nav>
