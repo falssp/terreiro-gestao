@@ -647,6 +647,37 @@ async function carregarPontos(){
   renderPontos();
 }
 
+
+function abrirModalPonto(id){
+  var p=pontos.find(function(x){return x.id===id;});
+  if(!p)return;
+  document.getElementById('modal-nome').textContent=p.nome||'--';
+  var corpo='';
+  // Linha religião + entidade
+  corpo+='<div class="modal-row"><span class="modal-rot">Tradição</span><span>'+(p.religiao||'--')+'</span></div>';
+  corpo+='<div class="modal-row"><span class="modal-rot">Entidade / Orixá</span><span>'+(p.entidade||'--')+'</span></div>';
+  // Letra
+  if(p.letra){
+    var lf=p.letra.replace(/\n/g,'<br>').replace(/BIS/g,'<em style="color:var(--ouro);font-style:normal;font-size:10px;font-weight:600">BIS</em>');
+    corpo+='<div style="margin:12px 0 4px;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ouro)">Letra</div>';
+    corpo+='<div style="font-size:12px;line-height:1.8;color:#ddd;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:12px 14px;margin-bottom:10px">'+lf+'</div>';
+  }
+  // YouTube embed
+  if(p.youtube){
+    var ytm=p.youtube.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_\-]{11})/);
+    if(ytm){
+      corpo+='<div style="position:relative;width:100%;padding-top:56.25%;border-radius:8px;overflow:hidden;margin-bottom:10px;background:#000"><iframe style="position:absolute;top:0;left:0;width:100%;height:100%;border:none" src="https://www.youtube.com/embed/'+ytm[1]+'" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen loading="lazy"></iframe></div>';
+    }
+  }
+  // Links
+  var links=[];
+  if(p.youtube)links.push('<a href="'+p.youtube+'" target="_blank" style="font-size:11px;color:var(--ouro);text-decoration:none;border:1px solid var(--borda);border-radius:6px;padding:4px 10px">\u25b6 YouTube</a>');
+  if(p.drive)links.push('<a href="'+p.drive+'" target="_blank" style="font-size:11px;color:var(--ouro);text-decoration:none;border:1px solid var(--borda);border-radius:6px;padding:4px 10px">\ud83d\udcc2 Drive</a>');
+  if(links.length)corpo+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">'+links.join('')+'</div>';
+  if(p.obs)corpo+='<div style="font-size:10px;color:var(--cinza);margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05)">'+p.obs+'</div>';
+  document.getElementById('modal-corpo').innerHTML=corpo;
+  document.getElementById('modal-bg').classList.add('aberto');
+}
 var _ptAbertos={};
 function togglePonto(id){
   _ptAbertos[id]=!_ptAbertos[id];
@@ -664,37 +695,24 @@ function renderPontos(){
   });
   document.getElementById('pt-count').textContent=f.length+' ponto(s)';
   if(!f.length){document.getElementById('pontos-lista').innerHTML='<div class="empty">Nenhum ponto encontrado.</div>';return;}
-  var html='';
-  f.forEach(function(p){
-    var isOpen=!!_ptAbertos[p.id];
+  document.getElementById('pontos-lista').innerHTML=f.map(function(p){
     var badgeCls=p.religiao==='Umbanda'?'umb':'can';
     var badgeTxt=p.religiao==='Umbanda'?'Umbanda':'Candombl\u00e9';
-    var body='';
-    if(p.youtube){
-      var ytm=p.youtube.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_\-]{11})/);
-      if(ytm)body+='<div class="ponto-yt"><iframe src="https://www.youtube.com/embed/'+ytm[1]+'" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen loading="lazy"></iframe></div>';
-    }
-    if(p.letra){
-      var lf=p.letra.replace(/\n/g,'<br>').replace(/BIS/g,'<em>BIS</em>');
-      body+='<div class="ponto-letra">'+lf+'</div>';
-    }
-    var links='';
-    if(p.youtube)links+='<a class="ponto-link" href="'+p.youtube+'" target="_blank">\u25b6 YouTube</a>';
-    if(p.audio)links+='<a class="ponto-link" href="'+p.audio+'" target="_blank">\ud83c\udfb5 \u00c1udio</a>';
-    if(p.drive)links+='<a class="ponto-link" href="'+p.drive+'" target="_blank">\ud83d\udcc2 Drive</a>';
-    if(links)body+='<div class="ponto-links">'+links+'</div>';
-    if(p.obs)body+='<div class="ponto-obs">'+p.obs+'</div>';
-    html+='<div class="ponto-card'+(isOpen?' open':'')+'" id="pt-'+p.id+'">';
-    html+='<div class="ponto-header" onclick="togglePonto(\''+p.id+'\')">';
-    html+='<span class="ponto-badge '+badgeCls+'">'+badgeTxt+'</span>';
-    html+='<div class="ponto-info"><div class="ponto-nome">'+(p.nome||'--')+'</div>';
-    html+='<div class="ponto-sub">'+(p.entidade||'')+'</div></div>';
-    html+='<span class="ponto-chevron">\u25be</span></div>';
-    html+='<div class="ponto-body">'+body+'</div>';
-    html+='</div>';
-  });
-  document.getElementById('pontos-lista').innerHTML=html;
+    var icons='';
+    if(p.youtube)icons+='<span style="font-size:11px;opacity:.7">\u25b6</span>';
+    if(p.drive)icons+='<span style="font-size:11px;opacity:.7">\ud83c\udfb5</span>';
+    return '<div class="csm-card" onclick="abrirModalPonto(\''+p.id+'\')">'
+      +'<div class="csm-top">'
+      +'<div><div class="csm-nome">'+p.nome+'</div>'
+      +'<div class="csm-cat">'+p.entidade+'</div></div>'
+      +'<div style="display:flex;align-items:center;gap:6px">'
+      +icons
+      +'<span class="ponto-badge '+badgeCls+'">'+badgeTxt+'</span>'
+      +'</div></div>'
+      +'</div>';
+  }).join('');
 }
+
 </script>
 </body>
 </html>
