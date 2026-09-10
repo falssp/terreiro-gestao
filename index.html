@@ -150,12 +150,12 @@ nav::-webkit-scrollbar{display:none}
 .btn-ml:hover{background:rgba(201,168,76,.3)}
 
 /* MODAL */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:flex-end;justify-content:center;z-index:100}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:100}
 .modal-bg.aberto{display:flex}
-.modal{background:#1a1a1a;border:1px solid var(--borda);border-radius:var(--r) var(--r) 0 0;padding:20px 16px;width:100%;max-width:560px;max-height:80dvh;overflow-y:auto}
+.modal{background:#1a1a1a;border:1px solid var(--borda);border-radius:var(--r);padding:28px 24px;width:100%;max-width:560px;max-height:85dvh;overflow-y:auto}
 .modal-titulo{font-family:var(--fd);font-size:1rem;color:var(--ouro-lt);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
 .modal-x{cursor:pointer;color:var(--cinza);font-size:18px}
-.modal-row{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.modal-row{display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)}
 .modal-row:last-child{border:none}
 .modal-rot{color:var(--cinza)}
 
@@ -670,11 +670,16 @@ function abrirModalPonto(id){
     }
   }
   // Links
-  var links=[];
-  if(p.youtube)links.push('<a href="'+p.youtube+'" target="_blank" style="font-size:11px;color:var(--ouro);text-decoration:none;border:1px solid var(--borda);border-radius:6px;padding:4px 10px">\u25b6 YouTube</a>');
-  if(p.drive)links.push('<a href="'+p.drive+'" target="_blank" style="font-size:11px;color:var(--ouro);text-decoration:none;border:1px solid var(--borda);border-radius:6px;padding:4px 10px">\ud83d\udcc2 Drive</a>');
-  if(links.length)corpo+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">'+links.join('')+'</div>';
-  if(p.obs)corpo+='<div style="font-size:10px;color:var(--cinza);margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05)">'+p.obs+'</div>';
+  if(p.youtube){
+    corpo+='<div style="margin-top:4px"><a href="'+p.youtube+'" target="_blank" style="font-size:12px;color:var(--ouro);text-decoration:none;border:1px solid var(--borda);border-radius:6px;padding:5px 12px;display:inline-block">\u25b6 Ouvir no YouTube</a></div>';
+  }
+  if(p.obs)corpo+='<div style="font-size:11px;color:var(--cinza);margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05)">'+p.obs+'</div>';
+  if(p.drive){
+    corpo+='<div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07)">';
+    corpo+='<div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--cinza);margin-bottom:8px">Mais gravações desta entidade</div>';
+    corpo+='<a href="'+p.drive+'" target="_blank" style="font-size:12px;color:var(--cinza);text-decoration:none;border:1px solid var(--borda);border-radius:6px;padding:5px 12px;display:inline-block">\ud83d\udcc2 Abrir pasta no Drive</a>';
+    corpo+="</div>";
+  }
   document.getElementById('modal-corpo').innerHTML=corpo;
   document.getElementById('modal-bg').classList.add('aberto');
 }
