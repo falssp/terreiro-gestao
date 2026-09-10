@@ -340,7 +340,7 @@ function _criarPontos(ss) {
   var aba = ss.insertSheet(ABA.PONTOS);
   var cols = ['ID','Religiao','Entidade / Orixa','Nome do Ponto','Letra','Link YouTube','Audio','Observacoes'];
   _cab(aba, cols, '#1a0a2a', '#e8c8f0');
-  _val(aba,'B2:B200',['Umbanda','Candomble','Ambos']);
+  _val(aba,'B2:B200',['Umbanda','Candomblé','Ambos']);
   _fechar(aba, cols.length, 201);
 }
 
