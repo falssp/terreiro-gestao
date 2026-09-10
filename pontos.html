@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Pontos Cantados — Ile Ase Vodun Ogum Ayres</title>
+<link rel="manifest" href="manifest.json"/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0f0f;--card:#1a1a1a;--card2:#222;
+  --ouro:#c9a84c;--ouro-lt:#f0d060;--creme:#fff;--cinza:#999;
+  --borda:rgba(201,168,76,.22);--r:12px;
+  --fd:'Cinzel',serif;--fb:'Inter',sans-serif;
+}
+html{font-size:16px}
+body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:100dvh;padding-bottom:40px}
+.topo{background:linear-gradient(135deg,#1a0e06,#0a0a0a);border-bottom:1px solid var(--borda);padding:14px 16px 10px;text-align:center}
+.topo h1{font-family:var(--fd);font-size:1.05rem;color:var(--ouro-lt);letter-spacing:.06em}
+.topo p{font-size:10px;color:var(--cinza);margin-top:3px;letter-spacing:.12em;text-transform:uppercase}
+.nav-links{display:flex;justify-content:flex-end;gap:16px;padding:5px 20px;background:#111;border-bottom:1px solid var(--borda)}
+.nav-links a{font-size:11px;color:var(--cinza);text-decoration:none}
+.nav-links a:hover{color:var(--ouro)}
+
+/* FILTROS */
+.filtros{padding:16px 20px;background:#111;border-bottom:1px solid var(--borda);display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.busca{flex:1;min-width:160px;background:var(--card);border:1px solid var(--borda);border-radius:8px;padding:8px 12px;color:var(--creme);font-size:13px;font-family:var(--fb);outline:none}
+.busca::placeholder{color:var(--cinza)}
+.busca:focus{border-color:var(--ouro)}
+.sel{background:var(--card);border:1px solid var(--borda);border-radius:8px;padding:8px 12px;color:var(--creme);font-size:13px;font-family:var(--fb);outline:none;cursor:pointer}
+.sel:focus{border-color:var(--ouro)}
+.sel option{background:#1a1a1a}
+.contador{font-size:11px;color:var(--cinza);padding:0 4px;white-space:nowrap}
+
+/* ABAS RELIGIÃO */
+.tabs-rel{display:flex;gap:0;background:#111;border-bottom:1px solid var(--borda);overflow-x:auto;scrollbar-width:none}
+.tabs-rel::-webkit-scrollbar{display:none}
+.tab-rel{padding:10px 18px;font-size:12px;font-weight:500;color:var(--cinza);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;font-family:var(--fb);white-space:nowrap;transition:color .15s}
+.tab-rel:hover{color:var(--ouro-lt)}
+.tab-rel.active{color:var(--ouro-lt);border-bottom-color:var(--ouro)}
+
+/* LISTA */
+.lista{padding:20px;max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+.card-ponto{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);overflow:hidden;transition:border-color .15s}
+.card-ponto:hover{border-color:rgba(201,168,76,.45)}
+.card-header{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;user-select:none}
+.badge-rel{font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:20px;flex-shrink:0}
+.badge-umb{background:rgba(100,160,100,.18);color:#90d090;border:1px solid rgba(100,160,100,.3)}
+.badge-can{background:rgba(160,100,30,.2);color:#e0b060;border:1px solid rgba(160,100,30,.3)}
+.card-info{flex:1;min-width:0}
+.card-nome{font-size:14px;font-weight:600;color:var(--ouro-lt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-entidade{font-size:11px;color:var(--cinza);margin-top:2px}
+.card-icons{display:flex;gap:8px;flex-shrink:0}
+.ic{width:20px;height:20px;opacity:.5;flex-shrink:0}
+.ic.has{opacity:1}
+.chevron{margin-left:4px;transition:transform .2s;color:var(--cinza);flex-shrink:0;font-size:14px}
+.card-ponto.open .chevron{transform:rotate(180deg)}
+.card-body{display:none;border-top:1px solid var(--borda);padding:16px}
+.card-ponto.open .card-body{display:block}
+
+/* LETRA */
+.letra-box{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:14px 16px;font-size:13px;line-height:1.75;color:#ddd;margin-bottom:12px;white-space:pre-line}
+.letra-box em{color:var(--ouro);font-style:normal;font-size:11px;font-weight:600;letter-spacing:.06em}
+
+/* YOUTUBE */
+.yt-wrap{position:relative;width:100%;padding-top:56.25%;border-radius:8px;overflow:hidden;margin-bottom:12px;background:#000}
+.yt-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
+
+/* LINKS */
+.ponto-links{display:flex;gap:8px;flex-wrap:wrap}
+.btn-link{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:6px 12px;border-radius:6px;text-decoration:none;font-weight:500;transition:opacity .15s}
+.btn-link:hover{opacity:.8}
+.btn-yt{background:rgba(255,0,0,.15);color:#ff6b6b;border:1px solid rgba(255,0,0,.25)}
+.btn-drive{background:rgba(66,133,244,.12);color:#82b1ff;border:1px solid rgba(66,133,244,.2)}
+.obs{font-size:11px;color:var(--cinza);margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05)}
+
+/* EMPTY */
+.empty{text-align:center;padding:60px 20px;color:var(--cinza)}
+.empty-ico{font-size:2.5rem;margin-bottom:12px}
+
+/* MOBILE */
+@media(max-width:500px){
+  .filtros{gap:8px}
+  .busca{min-width:100%}
+  .card-nome{font-size:13px}
+}
+</style>
+</head>
+<body>
+
+<div class="topo">
+  <h1>♪ Pontos Cantados</h1>
+  <p>Ile Ase Vodun Ogum Ayres</p>
+</div>
+<div class="nav-links">
+  <a href="index.html">⬅ Voltar ao App</a>
+</div>
+
+<div class="tabs-rel">
+  <button class="tab-rel active" data-rel="Todos" onclick="setRel(this)">Todos</button>
+  <button class="tab-rel" data-rel="Umbanda" onclick="setRel(this)">Umbanda</button>
+  <button class="tab-rel" data-rel="Candomblé / Ketu" onclick="setRel(this)">Candomblé / Ketu</button>
+</div>
+
+<div class="filtros">
+  <input class="busca" id="busca" type="search" placeholder="🔍  Buscar por nome ou entidade…" oninput="renderLista()"/>
+  <select class="sel" id="selEnt" onchange="renderLista()">
+    <option value="">Todas as entidades</option>
+  </select>
+  <span class="contador" id="contador"></span>
+</div>
+
+<div class="lista" id="lista"></div>
+
+<script>
+const PONTOS = [
+{
+"id": "PNT-7DD28B",
+"religiao": "Umbanda",
+"entidade": "Geral / Abertura",
+"nome": "Prece de Cáritas",
+"letra": "Deus Nosso Pai, vós que sois todo poder e bondade.<br>Dai força àquele que passa pela provação.<br>Dai luz àquele que procura a verdade.<br>Pondo no coração do homem a compaixão e caridade.<br>Que Assim Seja!",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1goSaVmJEbYg7W38MXvpU34sHoAEjOcKD",
+"obs": ""
+},
+{
+"id": "PNT-790F97",
+"religiao": "Umbanda",
+"entidade": "Geral / Abertura",
+"nome": "Pai Nosso Umbandista",
+"letra": "Pai nosso que estais nos céus, nos mares, nas matas e em todo o mundo habitado.<br>Santificado seja o vosso nome, pelos teus filhos, pela natureza, pelas águas, pela luz e pelo ar que respiramos.<br>Que Assim Seja!",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1goSaVmJEbYg7W38MXvpU34sHoAEjOcKD",
+"obs": ""
+},
+{
+"id": "PNT-153CBB",
+"religiao": "Umbanda",
+"entidade": "Geral / Abertura",
+"nome": "Credo Umbandista",
+"letra": "Creio em Deus, Onipotente e Supremo, no Seu poder, na Sua luz e no Seu perdão.<br>Creio nos Orixás amparando as nossas vidas.<br>Na comunicação dos Guias, encaminhando-nos para a caridade e a prática do bem.<br>Creio na Umbanda como missão e caminho para seguir a evolução.<br>Que Assim Seja!",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1goSaVmJEbYg7W38MXvpU34sHoAEjOcKD",
+"obs": ""
+},
+{
+"id": "PNT-E8E0C7",
+"religiao": "Umbanda",
+"entidade": "Geral / Abertura",
+"nome": "Hino da Umbanda",
+"letra": "Refletiu a luz Divina.<br>Em todo seu esplendor.<br>Vem do Reino de Oxalá.<br>Aonde há paz e amor.<br>Luz que refletiu na Terra.<br>Luz que refletiu no mar.<br>Luz que vem de Aruanda.<br>Para tudo iluminar.<br>A Umbanda é paz e amor.<br>É um mundo cheio de luz.<br>É a força que nos dá vida.<br>E a grandeza nos conduz.<br>Avante filhos de fé.<br>Como a nossa lei não há.<br>Levando ao mundo inteiro.<br>A bandeira de Oxalá.",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1goSaVmJEbYg7W38MXvpU34sHoAEjOcKD",
+"obs": ""
+},
+{
+"id": "PNT-0FBF7B",
+"religiao": "Umbanda",
+"entidade": "Geral / Abertura",
+"nome": "Defumação",
+"letra": "Defuma com as ervas da Jurema,<br>Defuma com arruda e guiné, <em>BIS</em>.<br>Alecrim, benjoim e alfazema,<br>Vamos defumar filhos de fé.<br>Corre e gira Pai Ogum,<br>Filho quer se defumar, <em>BIS</em>.<br>A Umbanda tem fundamento é preciso preparar,<br>Com incenso e benjoim, alecrim e alfazema,<br>Defumar filhos de fé, com as ervas da Jurema.<br>Nossa Senhora incensou a Jesus Cristo,<br>Jesus Cristo incensou os filhos seus,<br>Eu incenso, eu incenso essa casa, <em>BIS</em>.",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1goSaVmJEbYg7W38MXvpU34sHoAEjOcKD",
+"obs": ""
+},
+{
+"id": "PNT-6919D8",
+"religiao": "Umbanda",
+"entidade": "Geral / Abertura",
+"nome": "Abertura de Gira",
+"letra": "Abrimos a nossa gira, pedindo a proteção,<br>Ao nosso pai Oxalá, para cumprir nossa missão.<br>Eu abro a nossa gira com Deus e Nossa Senhora.<br>Eu abro a nossa gira samboreô, pemba de Angola.<br>Esta aberta nossa gira com Deus e Nossa Senhora.",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1goSaVmJEbYg7W38MXvpU34sHoAEjOcKD",
+"obs": ""
+},
+{
+"id": "PNT-505B24",
+"religiao": "Umbanda",
+"entidade": "Geral / Abertura",
+"nome": "Encerramento de Gira",
+"letra": "Fechamos a nossa gira, pedindo a proteção,<br>Ao nosso Pai Oxalá, para cumprir nossa missão.<br>Eu fecho a nossa gira com Deus e Nossa Senhora.<br>Eu fecho a nossa gira samboreô, pemba de Angola.<br>Esta fechada nossa gira com Deus e Nossa Senhora.",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1goSaVmJEbYg7W38MXvpU34sHoAEjOcKD",
+"obs": ""
+},
+{
+"id": "PNT-656E70",
+"religiao": "Umbanda",
+"entidade": "Exus e Pombagiras",
+"nome": "Saudação ao Exú Tranca Ruas",
+"letra": "O sino da igrejinha faz belém blém blom.<br>Deu meia noite o galo já cantou,<br>Seu Tranca Ruas que o dono da gira, <em>BIS</em>.<br>Oi corre gira que Ogum mandou.<br>Exú, Exú Tranca Ruas, <em>BIS</em>.<br>Me abre o terreiro, oi me fecha a rua.",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1J3qNeGVtuDckrs8MN6hRfAE9HKSDShtP",
+"obs": ""
+},
+{
+"id": "PNT-BDB237",
+"religiao": "Umbanda",
+"entidade": "Oxalá",
+"nome": "Meu pai Oxalá é o rei",
+"letra": "Meu pai Oxalá é o rei venha me valer.<br>Meu pai Oxalá é o rei venha me valer.<br>Ó Deus nos salve essa casa Santa,<br>Onde Deus fez a sua morada,<br>Onde mora o cálice bento, <em>BIS</em>.<br>E a hóstia consagrada.",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1rXN6-MxvREXAxmRQjjlILa-V-vHiymIc",
+"obs": ""
+},
+{
+"id": "PNT-6BDE80",
+"religiao": "Umbanda",
+"entidade": "Ogum",
+"nome": "Ogum em seu cavalo",
+"letra": "Ogum em seu cavalo corre e sua espada reluz.<br>Ogum, Ogum Megê sua bandeira cobre os filhos de Jesus Ogum nhê.<br>E quem está de ronda é São Jorge deixa São Jorge rondar.<br>São Jorge é guerreiro que manda na terra, que manda no mar.<br>Saravá meu Pai, saravá meu Pai.",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1oUGYo7qkvadXl18zUXcxm_zx4jzLV4Z_",
+"obs": ""
+},
+{
+"id": "PNT-0C2D2A",
+"religiao": "Umbanda",
+"entidade": "Oxum",
+"nome": "Foi na beira do rio",
+"letra": "Foi na beira do rio, aonde Oxum chorou.<br>Chora iê iê ô, choram os filhos seus.<br>Atraca, atraca que aí vem Nanã eh ah.<br>É Nanã, é Oxum, é quem vem saravá eh ah.",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/19ZIygXoWCyyV3mYtDna31V5OeOvYO8pj",
+"obs": ""
+},
+{
+"id": "PNT-61878F",
+"religiao": "Umbanda",
+"entidade": "Xangô",
+"nome": "Xangô — Ele vem de Aruanda",
+"letra": "Ele vem de Aruanda, ele vem trabalhar, <em>BIS</em>.<br>Ele vence demanda, ele é seu arirá.<br>Kaô, kaô, kaô, kaô a justiça chegou Xangô.<br>Kaô kabiesilê é de mussusú ai como ele vem.",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1QzPeQuWNKft5rrzuvdjJdD5Ia7qEsMxs",
+"obs": ""
+},
+{
+"id": "PNT-824BFD",
+"religiao": "Umbanda",
+"entidade": "Iansã",
+"nome": "Iansã tem um leque",
+"letra": "Iansã tem um leque que venta, pra abanar dia de calor.<br>Iansã mora na pedreira, eu quero ver meu pai Xangô.<br>Oiá é moça rica, ela é filha de Xangô.<br>Iansã chegou na Umbanda, em seu reino saravou.",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1uyY6aJJ5IXLep6bGB1ctbbFwxL4zWgVO",
+"obs": ""
+},
+{
+"id": "PNT-6844BE",
+"religiao": "Umbanda",
+"entidade": "Oxóssi",
+"nome": "Oxóssi — Oí lá nas matas",
+"letra": "Oí lá nas matas, lá na Jurema. <em>BIS</em>.<br>É uma lei severa, é uma lei sem pena.<br>Senhor Oxóssi que é dono da Lua,<br>Só veio ao mundo para clarear. <em>BIS</em>.<br>Oxóssi na mata é rei,<br>Quem passa pelos caminhos sem deixar marca do pé.",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1aOui5P8ezDmOlT-t3QlUy_tIcwWr_eQz",
+"obs": ""
+},
+{
+"id": "PNT-3B1737",
+"religiao": "Umbanda",
+"entidade": "Iemanjá",
+"nome": "Eu sou filho de Iabá",
+"letra": "Eu sou filho de Iabá, Iabá é minha Mãe.<br>Oh Rainha do tesouro e odociabá no fundo do mar.<br>Como é lindo o canto de Iemanjá,<br>Faz até o pescador chorar,<br>Iê Iemanjá, rainha das ondas sereia do mar.",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1jPP7uo_I3ShgqiVaK7PVqyHDdhyKBC1Q",
+"obs": ""
+},
+{
+"id": "PNT-ED7B4C",
+"religiao": "Umbanda",
+"entidade": "Obaluaê / Omolu",
+"nome": "Omolu é Orixá",
+"letra": "Seu Omulu ê, seu Omulu ê, Omulu é Orixá.<br>Saravá seu Omulu, Omulu ê, <em>BIS</em>.<br>Meu pai venha me ajudar, meu pai venha me valer, <em>BIS</em>.<br>É um grande Orixá, Atotô Obaluaiê.<br>Vem dançando a muzenza, trás na mão seu xaxará.",
+"ytid": "",
+"drive": "",
+"obs": ""
+},
+{
+"id": "PNT-76D3EF",
+"religiao": "Umbanda",
+"entidade": "Nanã",
+"nome": "Nanã Buruquê — Atraca",
+"letra": "Atraca, atraca que aí vem Nanã eh ah.<br>É Nanã, é Oxum, é quem vem saravá eh ah.<br>Eu vi Nanã, eu vi Nanã,<br>Eu vi Nanã, eu vi Nanã auê,<br>É Nanã Buruquê, é Nanã Buruquê.",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1b3W0xsfxliwyD-ZZU0hRO7Yi-xhACTBx",
+"obs": ""
+},
+{
+"id": "PNT-9CF6C4",
+"religiao": "Umbanda",
+"entidade": "Crianças / Erês",
+"nome": "Cosme, Damião e Doum",
+"letra": "Fui no jardim colher as rosas, <em>BIS</em>.<br>Cosme e Damião, oi Doum, <em>BIS</em>.<br>Crispim, Crispiniano são os filhos de Ogum.<br>Cosme e Damião, Damião cadê Doum,<br>Doum tá passeando no cavalo de Ogum.",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1j2Gn0K7NicgMusVttJpMjZ196C7vtC3I",
+"obs": ""
+},
+{
+"id": "PNT-E2928C",
+"religiao": "Umbanda",
+"entidade": "Zé Pilintra",
+"nome": "Zé Pilintra — Dim dim dim",
+"letra": "Dim, dim, dim, dim, dim, dim, dim, dim, dim, dim, dim, risca ponto. <em>BIS</em>.<br>Pulando cruzado no meio do terreiro chegou, <em>BIS</em>.<br>Chegou Zé Pilintra que veio do lado de lá, <em>BIS</em>.<br>Fumando e bebendo e gritando vamos Saravá.<br>Saravá oh oh Saravá, <em>BIS</em>.",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1pFbdA-1gJVleWK6QCh5tsd_fnJiA6hZj",
+"obs": ""
+},
+{
+"id": "PNT-4BD3B6",
+"religiao": "Umbanda",
+"entidade": "Pretos-Velhos",
+"nome": "Pai Jacinto de Angola",
+"letra": "Quem vem de longe é Pai Jacinto de Angola. <em>BIS</em>.<br>Com seus cabelos brancos e encaracolados,<br>Tem a brancura da pureza e da alegria,<br>São abençoados pelo filho de Maria.",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1jT6AJY75PYxKJGLWA7YLhlZs9STCEE7j",
+"obs": ""
+},
+{
+"id": "PNT-CD5CA5",
+"religiao": "Umbanda",
+"entidade": "Pretos-Velhos",
+"nome": "Adorei as almas",
+"letra": "Adorei as almas e as almas me atenderam.<br>Eram as santas almas, lá no cruzeiro.<br>O lelê meu Deus do céu que alegria,<br>O preto-Velho não carrega a soberbia. <em>BIS</em>.<br>Minha cachimba tem mironga, minha cachimba tem dendê. <em>BIS</em>.<br>Quem duvida da minha cachimba que venha vê. <em>BIS</em>.",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1jT6AJY75PYxKJGLWA7YLhlZs9STCEE7j",
+"obs": ""
+},
+{
+"id": "PNT-A22F45",
+"religiao": "Umbanda",
+"entidade": "Ciganos",
+"nome": "Ela é uma cigana faceira",
+"letra": "Ela é uma cigana faceira, ela é,<br>Ela é das 7 linhas,<br>Ela vem de muito longe os seus filhos ajudar,<br>Ela vem de muito longe Saravá este congá.",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1OENIz6u9jIatqCd2NvXo4X39rRI_hu9i",
+"obs": ""
+},
+{
+"id": "PNT-BF203E",
+"religiao": "Umbanda",
+"entidade": "Caboclos",
+"nome": "Caboclos da Jurema",
+"letra": "Oxalá chamou e já mandou buscar, <em>BIS</em>.<br>Os caboclos da Jurema, no seu Juremá.<br>Pai Oxalá é o rei do mundo inteiro,<br>E já deu ordens pra Jurema, mandar seus capangueiros.<br>Saravá seu 7 flechas que ele é o rei das matas.",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1bi7NYyd8KcNHt8HLoVjumQZBsR4hXpPT",
+"obs": ""
+},
+{
+"id": "PNT-C1A14E",
+"religiao": "Umbanda",
+"entidade": "Boiadeiros",
+"nome": "Salve Boiadeiro",
+"letra": "Salve Boiadeiro, salve a boiada,<br>Salve a Virgem Maria, salve esta morada.<br>Salve a luz Divina, um rei lá na chapada,<br>Salve a santa cruz, salve a Virgem Imaculada.<br>Seu Boiadeiro no clarão da lua.",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/11Lg8YXrHoaTqV_Y3j8t3rd66V1enxKNy",
+"obs": ""
+},
+{
+"id": "PNT-AC9179",
+"religiao": "Umbanda",
+"entidade": "Baianos",
+"nome": "Olha eu Camarada",
+"letra": "Mais olha eu Camarada, camarada meu,<br>Ele quebra a mandinga, ele vence demanda,<br>Ele vem de Aruanda, vamos todos Saravá.<br>Nossa Senhora da Lapa, da Lapa de bom Jesus,<br>Baiano quebra mandinga, nos pés da santa cruz.<br>Baiano é povo bom tem mironga no congá, <em>BIS</em>.",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1PhcSwUrR8UwpG9aJEByH5agpAypgwYr9",
+"obs": ""
+},
+{
+"id": "PNT-CB7002",
+"religiao": "Umbanda",
+"entidade": "Marinheiros",
+"nome": "Eu não sou daqui marinheiro só",
+"letra": "Eu não sou daqui, marinheiro só,<br>Eu não tenho amor, marinheiro só, <em>BIS</em>.<br>Eu sou da Bahia, marinheiro só, de São Salvador,<br>O marinheiro, marinheiro, marinheiro só,<br>Quem te ensinou a nadar, marinheiro só, <em>BIS</em>.<br>Ou foi o tombo do navio, ou foi o balanço do mar.",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1vsspZiBR9PEPR-9a17ExFtzaULgIPMer",
+"obs": ""
+},
+{
+"id": "PNT-26D510",
+"religiao": "Umbanda",
+"entidade": "Crianças / Erês",
+"nome": "No jardim do céu brincam as crianças",
+"letra": "No jardim do céu brincam as crianças, <em>BIS</em>.<br>Quando elas vêm em terra traz amor e esperança.<br>Venham crianças, venham brincar, <em>BIS</em>.<br>A criança é uma flor que merece nosso amor.<br>Bahia é terra de dois irmãos,<br>Governador na Bahia e Cosme e São Damião.",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1j2Gn0K7NicgMusVttJpMjZ196C7vtC3I",
+"obs": ""
+},
+{
+"id": "PNT-285867",
+"religiao": "Umbanda",
+"entidade": "Exus e Pombagiras",
+"nome": "Mojibá — Saudação aos Exús",
+"letra": "É mojibá, seu Exú rei é mojibá. <em>BIS</em>.<br>Seu Tranca Ruas na quimbanda é mojibá,<br>Sete Trunqueiras na magia é mojibá,<br>A Pomba-Gira na defesa é mojibá,<br>Exú Veludo no inferno é mojibá,<br>Seu Gira Mundo na virada é mojibá.",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1J3qNeGVtuDckrs8MN6hRfAE9HKSDShtP",
+"obs": ""
+},
+{
+"id": "PNT-E5882A",
+"religiao": "Umbanda",
+"entidade": "Exus e Pombagiras",
+"nome": "Pomba-Gira — Ela gira no ar",
+"letra": "Ela gira no ar, ela gira na praça, ela gira na rua, <em>BIS</em>.<br>Ela canta, ela dança, ela vive sorrindo em noite de lua.<br>Ela é sincera, ela é de verdade, <em>BIS</em>.<br>Cuidado amigo que ela não gosta de falsidade.<br>Pomba-Gira tem sete maridos.<br>Pomba-Gira Maria Mulambo, Maria Padilha rainha das almas.",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1J3qNeGVtuDckrs8MN6hRfAE9HKSDShtP",
+"obs": ""
+},
+{
+"id": "PNT-899C5F",
+"religiao": "Umbanda",
+"entidade": "Exus e Pombagiras",
+"nome": "Exú Mirim não bambeia",
+"letra": "A meia-noite na encruzilhada, dando a sua gargalhada, <em>BIS</em>.<br>Exú Mirim não bambeia.<br>Não bambeia, não bambeia, <em>BIS</em>.<br>Exú Mirim é um exú que não bambeia.<br>Exú Mirim já vem, fazendo careta,<br>Salve Exú Mirim, Saravá seu Capa Preta.",
+"ytid": "",
+"drive": "https://drive.google.com/drive/folders/1J3qNeGVtuDckrs8MN6hRfAE9HKSDShtP",
+"obs": ""
+},
+{
+"id": "PNT-B3C837",
+"religiao": "Candomblé / Ketu",
+"entidade": "Exu",
+"nome": "Egbá Rà Bó, Elégbára Rewá",
+"letra": "Egba rà bó ago mojuba rà<br>Egba Kose<br>E mó dé ko e ko<br>Lè gbálè èsù loná<br>Elégbára Rewá<br>Àwa se àwo<br>Iná iná e mojúbà e<br>Agô mojúbà<br>Esú Lò bi wa<br>So so Obé<br>Odara kolobi ebó<br>Laaròyé",
+"ytid": "jAiVVy5IVnQ",
+"drive": "https://drive.google.com/drive/folders/1J3qNeGVtuDckrs8MN6hRfAE9HKSDShtP",
+"obs": "Saudação ao guardião dos caminhos. Ketu."
+},
+{
+"id": "PNT-46D231",
+"religiao": "Candomblé / Ketu",
+"entidade": "Exu",
+"nome": "Laaróyè Èsù, Egbá Rà Bó",
+"letra": "Laaróyè Èsù<br>Egbá rà bó<br>Agô mojúbà<br>Laaróyè Èsù",
+"ytid": "UCIXyochfN8",
+"drive": "https://drive.google.com/drive/folders/1J3qNeGVtuDckrs8MN6hRfAE9HKSDShtP",
+"obs": "Pedido de licença ao dono dos caminhos. Ketu."
+},
+{
+"id": "PNT-0CE65F",
+"religiao": "Candomblé / Ketu",
+"entidade": "Ogum",
+"nome": "Ogún Onire Alágbára",
+"letra": "Ogún Onire Alágbára<br>Ogún Onire<br>Ogún awo ò<br>Ogún Onire Alágbára",
+"ytid": "47KrpqmDdrY",
+"drive": "https://drive.google.com/drive/folders/1oUGYo7qkvadXl18zUXcxm_zx4jzLV4Z_",
+"obs": "Louvor ao guerreiro que abre os caminhos. Ketu."
+},
+{
+"id": "PNT-B84BA9",
+"religiao": "Candomblé / Ketu",
+"entidade": "Oxóssi",
+"nome": "Arolè O Inaio Ke O Ajô",
+"letra": "Arolè o inaio ke o ajô<br>Arolè o inaio<br>Odé inaió<br>Arolè o inaio ke o ajô",
+"ytid": "lIitJWJJdn0",
+"drive": "https://drive.google.com/drive/folders/1aOui5P8ezDmOlT-t3QlUy_tIcwWr_eQz",
+"obs": "Pedido de luz ao rei das matas. Toque aguerê. Ketu."
+},
+{
+"id": "PNT-96E08B",
+"religiao": "Candomblé / Ketu",
+"entidade": "Oxóssi",
+"nome": "Farere Fibi Odé Fibô",
+"letra": "Farere fibi odé fibô<br>Farere fibi<br>Odé fibô<br>Farere fibi odé fibô",
+"ytid": "R_bSALywiZk",
+"drive": "https://drive.google.com/drive/folders/1aOui5P8ezDmOlT-t3QlUy_tIcwWr_eQz",
+"obs": "Louvor ao caçador da mata. Toque aguerê. Ketu."
+},
+{
+"id": "PNT-64A9A8",
+"religiao": "Candomblé / Ketu",
+"entidade": "Ossain",
+"nome": "Ewé Ó, Ossã, Ewé Ó",
+"letra": "Ewé ó, Ossã, ewé ó<br>Ewé ó, ewé<br>Ossã ewé ó<br>Ewé ó, Ossã, ewé ó",
+"ytid": "QKP9OKFO9sA",
+"drive": "",
+"obs": "Saudação às folhas e à natureza. Ketu."
+},
+{
+"id": "PNT-02725C",
+"religiao": "Candomblé / Ketu",
+"entidade": "Ossain",
+"nome": "Abebe Ni Bo Wa, Peregun",
+"letra": "Abebe ni bo wa<br>Peregun alaso titun<br>Abebe ni bo wa<br>Ossain ewé ó",
+"ytid": "MuRjEAFetNE",
+"drive": "",
+"obs": "Louvor às folhas sagradas. Ketu."
+},
+{
+"id": "PNT-9DFFA3",
+"religiao": "Candomblé / Ketu",
+"entidade": "Xangô",
+"nome": "Ikitê Re O Lokê Odô",
+"letra": "Ikitê re o lokê odô<br>Kabiyesi oba<br>Ikitê re o lokê odô<br>Kaô kabiesilê",
+"ytid": "6K8cjDHOI7w",
+"drive": "https://drive.google.com/drive/folders/1QzPeQuWNKft5rrzuvdjJdD5Ia7qEsMxs",
+"obs": "Louvor ao rei de Kossô. Toque alujá. Ketu."
+},
+{
+"id": "PNT-203E32",
+"religiao": "Candomblé / Ketu",
+"entidade": "Xangô",
+"nome": "Oba Sá Rewa",
+"letra": "Oba sá rewa<br>Kabiyesi oba<br>Oba sá rewa<br>Kaô kabiesilê",
+"ytid": "i0c13eljjjk",
+"drive": "https://drive.google.com/drive/folders/1QzPeQuWNKft5rrzuvdjJdD5Ia7qEsMxs",
+"obs": "Louvor ao rei belo e justiceiro. Toque alujá. Ketu."
+},
+{
+"id": "PNT-4F3C15",
+"religiao": "Candomblé / Ketu",
+"entidade": "Iansã",
+"nome": "Ajé Mito Ti Oyá",
+"letra": "Ajé mito ti Oyá<br>Oyá re wa o<br>Ajé mito ti Oyá<br>Eparrei Oyá",
+"ytid": "PxpXMV8fKV4",
+"drive": "https://drive.google.com/drive/folders/1uyY6aJJ5IXLep6bGB1ctbbFwxL4zWgVO",
+"obs": "Louvor à senhora dos ventos. Ketu."
+},
+{
+"id": "PNT-282383",
+"religiao": "Candomblé / Ketu",
+"entidade": "Iansã",
+"nome": "Oyá Koro Un Le, O Guerê Gue",
+"letra": "Oyá koro un le<br>O guerê gue<br>Oyá koro un le<br>Eparrei Oyá",
+"ytid": "K1y8Ak_89D8",
+"drive": "https://drive.google.com/drive/folders/1uyY6aJJ5IXLep6bGB1ctbbFwxL4zWgVO",
+"obs": "Louvor à guerreira dos ventos. Ketu."
+},
+{
+"id": "PNT-FE96B0",
+"religiao": "Candomblé / Ketu",
+"entidade": "Oxum",
+"nome": "Adé Kojú Iyá, Meiwura",
+"letra": "Adé kojú iyá<br>Meiwura<br>Adé kojú iyá<br>Ora iê iê ô",
+"ytid": "-yWCImyT_ic",
+"drive": "https://drive.google.com/drive/folders/19ZIygXoWCyyV3mYtDna31V5OeOvYO8pj",
+"obs": "Louvor à Orixá da beleza, do ouro e do espelho. Ketu."
+},
+{
+"id": "PNT-BEA5AF",
+"religiao": "Candomblé / Ketu",
+"entidade": "Oxum",
+"nome": "Yá Badé Lodô, Oxum Ma Yeyeô",
+"letra": "Yá badé lodô<br>Oxum ma yeyeô<br>Yá badé lodô<br>Ora iê iê ô",
+"ytid": "bqjTQHmcvFs",
+"drive": "https://drive.google.com/drive/folders/19ZIygXoWCyyV3mYtDna31V5OeOvYO8pj",
+"obs": "Saudação à Orixá das águas doces e do amor. Ketu."
+},
+{
+"id": "PNT-23F4A2",
+"religiao": "Candomblé / Ketu",
+"entidade": "Nanã",
+"nome": "Ibi Nàná Iyô, Olú Obó",
+"letra": "Ibi nàná iyô<br>Olú obó<br>Ibi nàná iyô<br>Salúbà Nanã",
+"ytid": "drQ_jzGm3c8",
+"drive": "https://drive.google.com/drive/folders/1b3W0xsfxliwyD-ZZU0hRO7Yi-xhACTBx",
+"obs": "Louvor à matriarca dos Orixás. Ketu."
+},
+{
+"id": "PNT-FB54C4",
+"religiao": "Candomblé / Ketu",
+"entidade": "Obaluaê / Omolu",
+"nome": "Ejì Bará Loko Panzuê",
+"letra": "Ejì bará loko panzuê<br>Atotô Obaluaiê<br>Ejì bará loko panzuê<br>Atotô babá",
+"ytid": "OmjQ3pQubBI",
+"drive": "",
+"obs": "Louvor ao senhor da terra e da cura. Ketu."
+},
+{
+"id": "PNT-89FB06",
+"religiao": "Candomblé / Ketu",
+"entidade": "Oxumaré",
+"nome": "A Mara Ká Moborum",
+"letra": "A mara ká moborum<br>Oxumarê<br>A mara ká moborum<br>Arrôbô Oxumarê",
+"ytid": "kDXrK0uv4rk",
+"drive": "",
+"obs": "Louvor à serpente do arco-íris. Ketu."
+},
+{
+"id": "PNT-2BD0E8",
+"religiao": "Candomblé / Ketu",
+"entidade": "Oxumaré",
+"nome": "Oxumarê Lele Mare",
+"letra": "Oxumarê lele mare<br>Arrôbô<br>Oxumarê lele mare<br>Arrôbô Oxumarê",
+"ytid": "QXT-zILeSy0",
+"drive": "",
+"obs": "Louvor ao Orixá do arco-íris e da serpente. Ketu."
+},
+{
+"id": "PNT-F4B59E",
+"religiao": "Candomblé / Ketu",
+"entidade": "Oxalá",
+"nome": "Oni Saurê, Aul Axé",
+"letra": "Oni saurê<br>Aul axé<br>Oni saurê<br>Êpa Babá",
+"ytid": "LF6RxpLIbxA",
+"drive": "https://drive.google.com/drive/folders/1rXN6-MxvREXAxmRQjjlILa-V-vHiymIc",
+"obs": "Louvor ao pai de todos os Orixás. Toque ijexá. Ketu."
+},
+{
+"id": "PNT-D1154E",
+"religiao": "Candomblé / Ketu",
+"entidade": "Oxalá",
+"nome": "Ofurufú é Aláyê, Ajalá",
+"letra": "Ofurufú é aláyê<br>Ajalá babá<br>Ofurufú é aláyê<br>Êpa Babá",
+"ytid": "ly2Kx-GFAw4",
+"drive": "https://drive.google.com/drive/folders/1rXN6-MxvREXAxmRQjjlILa-V-vHiymIc",
+"obs": "Louvor ao senhor do firmamento. Toque ijexá. Ketu."
+},
+{
+"id": "PNT-41C23D",
+"religiao": "Candomblé / Ketu",
+"entidade": "Ewá",
+"nome": "Ewá Ewá Majô",
+"letra": "Ewá ewá majô<br>Ewá ewá<br>Majô ewá<br>Ewá ewá majô",
+"ytid": "w_nTSrU4WMM",
+"drive": "",
+"obs": "Louvor à Orixá da beleza, do mistério e das fontes. Ketu."
+},
+{
+"id": "PNT-D75D8B",
+"religiao": "Candomblé / Ketu",
+"entidade": "Logun Edé",
+"nome": "Kerê Kerê Odé Ô",
+"letra": "Kerê kerê odé ô<br>Logun edé<br>Kerê kerê odé ô<br>Odé inaió",
+"ytid": "udIGGNcrT6g",
+"drive": "",
+"obs": "Louvor ao príncipe caçador das águas. Ketu."
+}
+];
+const ENTIDADES = ["Geral / Abertura", "Exus e Pombagiras", "Oxalá", "Ogum", "Oxum", "Xangô", "Iansã", "Oxóssi", "Iemanjá", "Obaluaê / Omolu", "Nanã", "Crianças / Erês", "Zé Pilintra", "Pretos-Velhos", "Ciganos", "Caboclos", "Boiadeiros", "Baianos", "Marinheiros", "Exu", "Ossain", "Oxumaré", "Ewá", "Logun Edé"];
+
+let relAtiva = "Todos";
+let abertos = new Set();
+
+// Preencher select de entidades
+const sel = document.getElementById("selEnt");
+ENTIDADES.forEach(e => {
+  const o = document.createElement("option");
+  o.value = e; o.textContent = e;
+  sel.appendChild(o);
+});
+
+function setRel(btn) {
+  document.querySelectorAll(".tab-rel").forEach(t => t.classList.remove("active"));
+  btn.classList.add("active");
+  relAtiva = btn.dataset.rel;
+  // Resetar filtro entidade ao trocar religião
+  document.getElementById("selEnt").value = "";
+  renderLista();
+}
+
+function filtrados() {
+  const q = document.getElementById("busca").value.trim().toLowerCase();
+  const ent = document.getElementById("selEnt").value;
+  return PONTOS.filter(p => {
+    if (relAtiva !== "Todos" && p.religiao !== relAtiva) return false;
+    if (ent && p.entidade !== ent) return false;
+    if (q && !p.nome.toLowerCase().includes(q) && !p.entidade.toLowerCase().includes(q) && !p.letra.toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+
+function toggle(id) {
+  if (abertos.has(id)) abertos.delete(id);
+  else abertos.add(id);
+  const el = document.getElementById("card-" + id);
+  if (el) el.classList.toggle("open", abertos.has(id));
+}
+
+function renderLista() {
+  const lista = document.getElementById("lista");
+  const items = filtrados();
+  document.getElementById("contador").textContent = items.length + " ponto" + (items.length !== 1 ? "s" : "");
+
+  if (!items.length) {
+    lista.innerHTML = '<div class="empty"><div class="empty-ico">🎵</div><p>Nenhum ponto encontrado.</p></div>';
+    return;
+  }
+
+  lista.innerHTML = items.map(p => {
+    const isOpen = abertos.has(p.id);
+    const badge = p.religiao === "Umbanda"
+      ? '<span class="badge-rel badge-umb">Umbanda</span>'
+      : '<span class="badge-rel badge-can">Candomblé</span>';
+    const hasYt = p.ytid ? "has" : "";
+    const hasDrv = p.drive ? "has" : "";
+
+    let bodyHtml = "";
+    if (p.ytid) {
+      bodyHtml += `<div class="yt-wrap"><iframe src="https://www.youtube.com/embed/${p.ytid}" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
+    }
+    if (p.letra) {
+      bodyHtml += `<div class="letra-box">${p.letra}</div>`;
+    }
+    const links = [];
+    if (p.ytid) links.push(`<a class="btn-link btn-yt" href="https://youtu.be/${p.ytid}" target="_blank">▶ YouTube</a>`);
+    if (p.drive) links.push(`<a class="btn-link btn-drive" href="${p.drive}" target="_blank">🎵 Áudios no Drive</a>`);
+    if (links.length) bodyHtml += `<div class="ponto-links">${links.join("")}</div>`;
+    if (p.obs) bodyHtml += `<div class="obs">ℹ️ ${p.obs}</div>`;
+
+    return `<div class="card-ponto${isOpen?' open':''}" id="card-${p.id}">
+  <div class="card-header" onclick="toggle('${p.id}')">
+    ${badge}
+    <div class="card-info">
+      <div class="card-nome">${p.nome}</div>
+      <div class="card-entidade">${p.entidade}</div>
+    </div>
+    <div class="card-icons">
+      <svg class="ic ${hasYt}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" color="#ff6b6b"><path d="M22.54 6.42A2.78 2.78 0 0 0 20.77 4.6C19.05 4 12 4 12 4s-7.05 0-8.77.54A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.23 19.4C4.95 20 12 20 12 20s7.05 0 8.77-.54a2.78 2.78 0 0 0 1.77-1.82A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+      <svg class="ic ${hasDrv}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" color="#82b1ff"><path d="M9 18l-6-3.5L6.5 8l8.5 1 4-6.5L23 6l-3 9H9z"/><path d="M9 18l5-2 3 5-8-3z"/></svg>
+    </div>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="card-body">${bodyHtml}</div>
+</div>`;
+  }).join("");
+}
+
+renderLista();
+</script>
+</body>
+</html>
