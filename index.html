@@ -514,7 +514,7 @@ async function carregarConsumiveis(){
   try{
     var r=await Promise.race([
         fetch(GS+'?acao=consumiveis-listar'),
-        new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'));},10000);})
+        new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'));},30000);})
       ]),j=await r.json();
     if(j.ok){
       var dl=document.getElementById('csm-list');
