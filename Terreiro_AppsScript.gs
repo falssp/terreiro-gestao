@@ -1,6 +1,5 @@
 // ================================================================
 //  GESTÃO DO TERREIRO -- Ile Ase Vodun Ogum Ayres -- Apps Script v17.0
-//  Reescrito do zero -- 01/08/2026
 //
 //  ABAS:
 //  Públicas:  Acervo | Consumíveis | Entidades e Orixás | Calendário
