@@ -47,8 +47,8 @@ nav::-webkit-scrollbar{display:none}
 .nivel-card.alerta{background:rgba(180,40,40,.18);border-color:rgba(180,40,40,.3)}.nivel-card.alerta .num{color:#f08080}
 .nivel-card.urgente{background:rgba(120,0,0,.25);border-color:rgba(200,0,0,.35)}.nivel-card.urgente .num{color:#ff6060}
 .home-datas{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
-.home-card{background:var(--card);border:1px solid var(--borda);border-radius:10px;padding:14px 16px}
-.home-card-titulo{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--ouro);margin-bottom:8px;font-weight:600}
+.home-card{background:var(--card);border:1px solid var(--borda);border-radius:10px;padding:18px 20px}
+.home-card-titulo{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--ouro);margin-bottom:12px;font-weight:600;padding-bottom:8px;border-bottom:1px solid var(--borda)}
 .home-item{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)}
 .home-item:last-child{border:none}
 .home-item .data{color:var(--cinza);font-size:11px}
@@ -103,8 +103,8 @@ nav::-webkit-scrollbar{display:none}
 .csm-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:14px;cursor:pointer;transition:border-color .15s}
 .csm-card:hover{border-color:var(--ouro)}
 .csm-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
-.csm-nome{font-size:13px;font-weight:600;flex:1}
-.csm-cat{font-size:10px;color:var(--cinza)}
+.csm-nome{font-size:14px;font-weight:600;flex:1}
+.csm-cat{font-size:11px;color:var(--cinza);margin-top:2px}
 .csm-bar-wrap{height:5px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;margin-bottom:4px}
 .csm-bar{height:100%;border-radius:99px}
 .csm-info{display:flex;justify-content:space-between;font-size:10px;color:var(--cinza)}
@@ -155,9 +155,9 @@ nav::-webkit-scrollbar{display:none}
 .modal{background:#1a1a1a;border:1px solid var(--borda);border-radius:var(--r);padding:28px 24px;width:100%;max-width:560px;max-height:85dvh;overflow-y:auto}
 .modal-titulo{font-family:var(--fd);font-size:1rem;color:var(--ouro-lt);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
 .modal-x{cursor:pointer;color:var(--cinza);font-size:18px}
-.modal-row{display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.modal-row{display:flex;justify-content:space-between;font-size:14px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)}
 .modal-row:last-child{border:none}
-.modal-rot{color:var(--cinza)}
+.modal-rot{color:var(--cinza);font-size:13px}
 
 .pontos-grupo{margin-bottom:28px}
 .pontos-grupo-titulo{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--ouro);font-weight:600;margin:0 0 12px;display:flex;align-items:center;gap:8px}
@@ -217,7 +217,7 @@ nav::-webkit-scrollbar{display:none}
 /* iframe YT oculto para controle via API */
 #yt-player-hidden{position:fixed;bottom:-9999px;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
 /* GRUPO de pontos */
-.pontos-grupo-titulo{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--ouro);font-weight:600;margin:18px 0 8px;display:flex;align-items:center;gap:8px}
+.pontos-grupo-titulo{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--ouro);font-weight:600;margin:20px 0 10px;display:flex;align-items:center;gap:8px}
 .pontos-grupo-titulo::after{content:'';flex:1;height:1px;background:var(--borda)}
 .pontos-grupo-titulo:first-child{margin-top:0}
 
@@ -246,7 +246,7 @@ nav::-webkit-scrollbar{display:none}
 <!-- HOME -->
 <div class="section active" id="sec-home">
   <div class="ornamento">&#10022; &#10022; &#10022;</div>
-  <div class="home-card" style="margin-bottom:24px;margin-top:8px;background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(100,50,200,.08));border-color:rgba(201,168,76,.3)"><div class="home-card-titulo">&#127775; Consultas Espirituais</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px"><div style="font-size:12px"><div style="color:var(--ouro-lt);font-weight:600;margin-bottom:4px">&#127775; Jogo de Búzios</div><div style="color:var(--cinza);line-height:1.6">Leitura oracular africana com os búzios sagrados. Consulte os orixás e receba orientações para sua vida.</div></div><div style="font-size:12px"><div style="color:var(--ouro-lt);font-weight:600;margin-bottom:4px">&#127183; Tarot</div><div style="color:var(--cinza);line-height:1.6">Leitura de tarot para orientação espiritual, esclarecimento de situações e apoio nas decisões da vida.</div></div></div><div style="margin-top:10px;font-size:11px;color:var(--cinza);text-align:center">Para agendamento: <a href="https://wa.me/5511989202958" target="_blank" style="color:var(--ouro);text-decoration:none">WhatsApp (11) 98920-2958</a></div></div>
+  <div class="home-card" style="margin-bottom:24px;margin-top:8px;background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(100,50,200,.08));border-color:rgba(201,168,76,.3)"><div class="home-card-titulo">&#127775; Consultas Espirituais</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px"><div style="font-size:13px"><div style="color:var(--ouro-lt);font-weight:600;margin-bottom:6px">&#127775; Jogo de Búzios</div><div style="color:var(--cinza);line-height:1.7;font-size:13px">Leitura oracular africana com os búzios sagrados. Consulte os orixás e receba orientações para sua vida.</div></div><div style="font-size:13px"><div style="color:var(--ouro-lt);font-weight:600;margin-bottom:6px">&#127183; Tarot</div><div style="color:var(--cinza);line-height:1.7;font-size:13px">Leitura de tarot para orientação espiritual, esclarecimento de situações e apoio nas decisões da vida.</div></div></div><div style="margin-top:10px;font-size:11px;color:var(--cinza);text-align:center">Para agendamento: <a href="https://wa.me/5511989202958" target="_blank" style="color:var(--ouro);text-decoration:none">WhatsApp (11) 98920-2958</a></div></div>
   <div class="niveis-grid">
     <div class="nivel-card ok" onclick="irParaFiltro('ok')"><div class="num skeleton skel-num" id="cnt-ok"></div><div class="rot">OK</div></div>
     <div class="nivel-card repor" onclick="irParaFiltro('repor')"><div class="num skeleton skel-num" id="cnt-repor"></div><div class="rot">Repor</div></div>
