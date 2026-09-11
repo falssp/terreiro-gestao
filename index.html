@@ -456,7 +456,7 @@ function nslug(n){
 // HOME
 async function carregarHome(){
   try{
-    var r=await fetch(GS+'?acao=datas-mes'),j=await r.json();
+    var r=await fetch(GS+'?acao=datas-mes',{redirect:'follow'}),j=await r.json();
     if(!j.ok)return;
     var html='';
     if(j.eventos&&j.eventos.length){
@@ -478,7 +478,7 @@ async function carregarHome(){
 async function carregarAcervo(){
   try{
     prog(20);
-    var r=await fetch(GS+'?acao=acervo-listar'),j=await r.json();
+    var r=await fetch(GS+'?acao=acervo-listar',{redirect:'follow'}),j=await r.json();
     prog(60);
     if(j.ok){acervo=(j.itens||[]).sort(function(a,b){return(a.nome||'').localeCompare((b.nome||''),'pt-BR');});renderAcervo();}
     prog(100);setTimeout(function(){prog(0);},500);
@@ -513,7 +513,7 @@ function fecharModal(e){if(!e||e.target.id==='modal-bg')document.getElementById(
 async function carregarConsumiveis(){
   try{
     var r=await Promise.race([
-        fetch(GS+'?acao=consumiveis-listar'),
+        fetch(GS+'?acao=consumiveis-listar',{redirect:'follow'}),
         new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'));},30000);})
       ]),j=await r.json();
     if(j.ok){
@@ -563,7 +563,7 @@ function abrirModalCsm(id){
 // CALENDÁRIO
 async function carregarCalendario(){
   try{
-    var r=await fetch(GS+'?acao=calendario-listar'),j=await r.json();
+    var r=await fetch(GS+'?acao=calendario-listar',{redirect:'follow'}),j=await r.json();
     if(j.ok){calendario=(j.eventos||[]).sort(function(a,b){return(a.data||'').localeCompare(b.data||'');});renderCalendario();}
   }catch(e){document.getElementById('cal-lista').innerHTML='<div class="empty">Erro ao carregar.</div>';}
 }
@@ -583,7 +583,7 @@ function renderCalendario(){
 // ENTIDADES
 async function carregarEntidades(){
   try{
-    var r=await fetch(GS+'?acao=entidades-listar'),j=await r.json();
+    var r=await fetch(GS+'?acao=entidades-listar',{redirect:'follow'}),j=await r.json();
     if(j.ok){entidades=(j.itens||[]);renderEntidades();}
   }catch(e){document.getElementById('ent-lista').innerHTML='<div class="empty">Erro ao carregar.</div>';}
 }
