@@ -512,7 +512,10 @@ function fecharModal(e){if(!e||e.target.id==='modal-bg')document.getElementById(
 // CONSUMIVEIS
 async function carregarConsumiveis(){
   try{
-    var r=await fetch(GS+'?acao=consumiveis-listar'),j=await r.json();
+    var r=await Promise.race([
+        fetch(GS+'?acao=consumiveis-listar'),
+        new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'));},10000);})
+      ]),j=await r.json();
     if(j.ok){
       var dl=document.getElementById('csm-list');
       if(dl){dl.innerHTML='';(j.itens||[]).forEach(function(i){var o=document.createElement('option');o.value=i.nome;dl.appendChild(o);});}
@@ -523,7 +526,12 @@ async function carregarConsumiveis(){
       fillNum('cnt-ok',counts.ok);fillNum('cnt-repor',counts.repor);
       fillNum('cnt-alerta',counts.alerta);fillNum('cnt-urgente',counts.urgente);
     }
-  }catch(e){document.getElementById('csm-lista').innerHTML='<div class="empty">Erro ao carregar.</div>';}
+  }catch(e){
+    console.error('carregarConsumiveis erro:',e);
+    document.getElementById('csm-lista').innerHTML='<div class="empty">Erro ao carregar consumíveis.</div>';
+    // Mostrar -- nos contadores em vez de skeleton
+    ['cnt-ok','cnt-repor','cnt-alerta','cnt-urgente'].forEach(function(id){fillNum(id,'--');});
+  }
 }
 function renderConsumiveis(){
   var busca=(document.getElementById('cf-busca').value||'').toLowerCase();
