@@ -781,7 +781,7 @@ function renderPontos(){
     grupos[chave].forEach(function(p){
       var icons='';
       if(p.youtube)icons='<span style="color:var(--ouro);font-size:13px">&#9835;</span>';
-      html+='<div class="csm-card" onclick="abrirModalPonto(\''+p.id+\')">'
+      html+='<div class="csm-card" data-pid="'+p.id+'" onclick="abrirModalPonto(this.dataset.pid)">'
         +'<div class="csm-top">'
         +'<div style="flex:1;min-width:0"><div class="csm-nome">'+p.nome+'</div></div>'
         +'<div style="display:flex;align-items:center;gap:6px">'+icons+'</div>'
