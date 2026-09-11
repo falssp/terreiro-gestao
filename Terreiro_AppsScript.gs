@@ -1,5 +1,5 @@
 // ================================================================
-//  GESTÃO DO TERREIRO -- Ile Ase Vodun Ogum Ayres -- Apps Script v16.2
+//  GESTÃO DO TERREIRO -- Ile Ase Vodun Ogum Ayres -- Apps Script v17.0
 //  Reescrito do zero -- 01/08/2026
 //
 //  ABAS:
@@ -598,24 +598,29 @@ function doGet(e) {
 
 // == LISTAGENS ============================================
 function _listarAcervo() {
+  var cached=_cacheGet('acervo');if(cached)return cached;
   var aba=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ABA.ACERVO);
   if(!aba)return{ok:false,erro:'Aba não encontrada.'};
   var rows=aba.getDataRange().getValues().slice(1);
-  return{ok:true,itens:rows.filter(function(l){return l[0]!=='';}).map(function(l){return{id:l[0],nome:l[1],categoria:l[2],subcategoria:l[3],orixa:l[4],entidade:l[5],status:l[6],local:l[7],quantidade:l[8],foto:l[9],observacoes:l[10],dataCadastro:l[11]};})};
+  var result={ok:true,itens:rows.filter(function(l){return l[0]!=='';}).map(function(l){return{id:l[0],nome:l[1],categoria:l[2],subcategoria:l[3],orixa:l[4],entidade:l[5],status:l[6],local:l[7],quantidade:l[8],foto:l[9],observacoes:l[10],dataCadastro:l[11]};})};
+  _cacheSet('acervo',result);return result;
 }
 
 function _listarConsumiveis() {
+  var cached=_cacheGet('consumiveis');if(cached)return cached;
   var aba=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ABA.CONSUMIVEIS);
   if(!aba)return{ok:false,erro:'Aba não encontrada.'};
   var rows=aba.getDataRange().getValues().slice(1);
-  return{ok:true,itens:rows.filter(function(l){return l[0]!=='';}).map(function(l){return{id:l[0],categoria:l[1],nome:l[2],unidade:l[3],atual:l[4],minimo:l[5],pct:l[6],nivel:l[7],fornecedor:l[8],precoUnit:l[9],qtdPacote:l[10],precoPacote:l[11],link:l[12],atualizado:l[13]};})};
+  var result={ok:true,itens:rows.filter(function(l){return l[0]!=='';}).map(function(l){return{id:l[0],categoria:l[1],nome:l[2],unidade:l[3],atual:l[4],minimo:l[5],pct:l[6],nivel:l[7],fornecedor:l[8],precoUnit:l[9],qtdPacote:l[10],precoPacote:l[11],link:l[12],atualizado:l[13]};})};
+  _cacheSet('consumiveis',result);return result;
 }
 
 function _listarEntidades() {
+  var cached=_cacheGet('entidades');if(cached)return cached;
   var aba=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ABA.ENTIDADES);
   if(!aba)return{ok:false,erro:'Aba não encontrada.'};
   var rows=aba.getDataRange().getValues().slice(1);
-  return{ok:true,itens:rows.filter(function(l){return l[0]!=='';}).map(function(l){
+  var result={ok:true,itens:rows.filter(function(l){return l[0]!=='';}).map(function(l){
     var df=l[2];
     // formatar data de festa como dd/MM
     if(df instanceof Date){df=Utilities.formatDate(df,Session.getScriptTimeZone(),'dd/MM');}
@@ -663,7 +668,7 @@ function _listarLog() {
 
 // == INSERÇÕES / EDIÇÕES ==================================
 function _inserirAcervo(d,s) {
-  if(!_tem(s,'acervo_edit'))return{ok:false,erro:'Sem permissão.'};
+  _cacheDel();if(!_tem(s,'acervo_edit'))return{ok:false,erro:'Sem permissão.'};
   var aba=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ABA.ACERVO);
   if(!aba)return{ok:false,erro:'Aba não encontrada.'};
   var id=_uuid('ACE');
@@ -673,7 +678,7 @@ function _inserirAcervo(d,s) {
 }
 
 function _editarAcervo(d,s) {
-  if(!_tem(s,'acervo_edit'))return{ok:false,erro:'Sem permissão.'};
+  _cacheDel();if(!_tem(s,'acervo_edit'))return{ok:false,erro:'Sem permissão.'};
   var aba=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ABA.ACERVO);
   if(!aba)return{ok:false,erro:'Aba não encontrada.'};
   var rows=aba.getDataRange().getValues();
@@ -687,7 +692,7 @@ function _editarAcervo(d,s) {
 }
 
 function _registrarSaida(d,s) {
-  if(!_tem(s,'consumiveis_edit'))return{ok:false,erro:'Sem permissão.'};
+  _cacheDel();if(!_tem(s,'consumiveis_edit'))return{ok:false,erro:'Sem permissão.'};
   var aba=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ABA.CONSUMIVEIS);
   if(!aba)return{ok:false,erro:'Aba não encontrada.'};
   var rows=aba.getDataRange().getValues();
@@ -703,7 +708,7 @@ function _registrarSaida(d,s) {
 }
 
 function _inserirConsumivel(d,s) {
-  if(!_tem(s,'consumiveis_edit'))return{ok:false,erro:'Sem permissão.'};
+  _cacheDel();if(!_tem(s,'consumiveis_edit'))return{ok:false,erro:'Sem permissão.'};
   var aba=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ABA.CONSUMIVEIS);
   if(!aba)return{ok:false,erro:'Aba não encontrada.'};
   var a=Number(d.atual)||0,m=Number(d.minimo)||0,n=_nivel(a,m);
@@ -716,7 +721,7 @@ function _inserirConsumivel(d,s) {
 }
 
 function _editarConsumivel(d,s) {
-  if(!_tem(s,'consumiveis_edit'))return{ok:false,erro:'Sem permissão.'};
+  _cacheDel();if(!_tem(s,'consumiveis_edit'))return{ok:false,erro:'Sem permissão.'};
   var aba=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ABA.CONSUMIVEIS);
   if(!aba)return{ok:false,erro:'Aba não encontrada.'};
   var rows=aba.getDataRange().getValues();
@@ -785,16 +790,18 @@ function _inserirCalendario(d,s) {
 }
 
 function _listarPontos() {
+  var cached=_cacheGet('pontos');if(cached)return cached;
   var aba=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ABA.PONTOS);
   if(!aba)return{ok:false,erro:'Aba nao encontrada.'};
   var rows=aba.getDataRange().getValues().slice(1);
-  return{ok:true,pontos:rows.filter(function(l){return l[0]!=='';}).map(function(l){return{
+  var result={ok:true,pontos:rows.filter(function(l){return l[0]!=='';}).map(function(l){return{
     id:l[0],religiao:l[1],entidade:l[2],nome:l[3],letra:l[4],youtube:l[5],audio:l[6],obs:l[7]
   };})};
+  _cacheSet('pontos',result);return result;
 }
 
 function _inserirPonto(d,s) {
-  if(!_tem(s,'entidades_edit'))return{ok:false,erro:'Sem permissao.'};
+  _cacheDel();if(!_tem(s,'entidades_edit'))return{ok:false,erro:'Sem permissao.'};
   var aba=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ABA.PONTOS);
   if(!aba)return{ok:false,erro:'Aba nao encontrada.'};
   var id=_uuid('PNT');
@@ -836,7 +843,7 @@ function _deletarLista(d,s) {
 }
 
 function _inserirEntidade(d,s) {
-  if(!_tem(s,'entidades_edit'))return{ok:false,erro:'Sem permissão.'};
+  _cacheDel();if(!_tem(s,'entidades_edit'))return{ok:false,erro:'Sem permissão.'};
   var aba=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ABA.ENTIDADES);
   if(!aba)return{ok:false,erro:'Aba não encontrada.'};
   aba.appendRow([d.entidade||'',d.nacao||'',d.dataFesta||'',d.diaSemana||'',d.cores||'',d.oferendas||'',d.bebidas||'',d.itensAcervo||'',d.saudacao||'',d.observacoes||'']);
@@ -846,6 +853,7 @@ function _inserirEntidade(d,s) {
 
 // == DATAS DO MÊS =========================================
 function _datasDoMes() {
+  var cached=_cacheGet('datas');if(cached)return cached;
   var ss=SpreadsheetApp.getActiveSpreadsheet(),hoje=new Date(),mes=hoje.getMonth(),ano=hoje.getFullYear();
   var r={aniversariantes:[],festas:[],obrigacoes:[],eventos:[]};
   var aF=ss.getSheetByName(ABA.FILHOS);
@@ -854,7 +862,7 @@ function _datasDoMes() {
   if(aE&&aE.getLastRow()>1){aE.getDataRange().getValues().slice(1).filter(function(l){return l[0]!=='';}).forEach(function(l){if(l[2]&&l[2]!==''){var p=String(l[2]).split('/');if(p.length>=2&&(parseInt(p[1])-1)===mes)r.festas.push({entidade:l[0],data:l[2],saudacao:l[8]||''});}});}
   var aC=ss.getSheetByName(ABA.CALENDARIO);
   if(aC&&aC.getLastRow()>1){aC.getDataRange().getValues().slice(1).filter(function(l){return l[0]!=='';}).forEach(function(l){try{var d=new Date(l[1]);if(d.getMonth()===mes&&d.getFullYear()===ano)r.eventos.push({titulo:l[2],tipo:l[3],data:_fmt(l[1])});}catch(e){}});}
-  return{ok:true,...r};
+  var res={ok:true,...r};_cacheSet('datas',res);return res;
 }
 
 function _buscarML(q) {
@@ -906,6 +914,12 @@ function verObrigacoes() {
   prox.forEach(function(r){var dias=Math.round((new Date(r[9])-hoje)/(864e5));msg+='  * '+(r[1]||r[2])+' -- '+_fmt(r[9])+' (em '+dias+' dias)\n';});
   SpreadsheetApp.getUi().alert(msg);
 }
+
+
+// == CACHE (5 min) =========================================
+function _cacheGet(k){try{var v=CacheService.getScriptCache().get(k);return v?JSON.parse(v):null;}catch(e){return null;}}
+function _cacheSet(k,v){try{CacheService.getScriptCache().put(k,JSON.stringify(v),300);}catch(e){}}
+function _cacheDel(){try{CacheService.getScriptCache().removeAll(['consumiveis','acervo','entidades','calendario','pontos','datas']);}catch(e){}}
 
 function _saida(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
