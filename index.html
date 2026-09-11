@@ -239,7 +239,6 @@ nav::-webkit-scrollbar{display:none}
 </nav>
 <div class="nav-links">
   <a href="mobile.html">&#128241; Vers&atilde;o celular</a>
-  <a href="player.html">&#9835; Player de Pontos</a>
   <a href="admin.html">&#128100; Admin</a>
   <a href="faq.html">&#10067; Ajuda</a>
 </div>
@@ -323,6 +322,10 @@ nav::-webkit-scrollbar{display:none}
 
 <!-- PONTOS -->
 <div class="section" id="sec-pontos">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <div style="font-size:11px;color:var(--cinza)">Clique num ponto para ver a letra e acessar os áudios</div>
+    <a href="player.html" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--ouro-lt);background:rgba(201,168,76,.12);border:1px solid var(--borda);border-radius:8px;padding:6px 14px;text-decoration:none;transition:background .15s">&#9835; Player completo</a>
+  </div>
   <div class="filter-bar">
     <input type="search" id="pt-busca" placeholder="Buscar ponto..." oninput="renderPontos()"/>
     <select id="pt-rel" onchange="renderPontos()">
