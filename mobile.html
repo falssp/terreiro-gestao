@@ -143,7 +143,7 @@ html{height:100%}body{font-family:var(--fb);background:var(--bg);color:var(--cre
 
 /* BOTTOM NAV */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;height:var(--bottom);background:#111;border-top:1px solid var(--borda);display:flex;align-items:stretch;z-index:50;padding-bottom:env(safe-area-inset-bottom)}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;background:none;border:none;color:var(--cinza);font-family:var(--fb);font-size:8px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color .15s}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:none;border:none;color:var(--cinza);font-family:var(--fb);font-size:9px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color .15s}
 .nav-btn .ic{font-size:17px;line-height:1}
 .nav-btn.active{color:var(--ouro-lt)}
 .nav-btn.active::after{content:'';display:block;width:20px;height:2px;background:var(--ouro);border-radius:1px;margin-top:2px}
@@ -324,7 +324,7 @@ html{height:100%}body{font-family:var(--fb);background:var(--bg);color:var(--cre
   <div class="page" id="page-pontos">
     <div style="padding-top:14px">
       <div class="filter-bar">
-        <input type="search" id="pt-busca" placeholder="Buscar ponto..." oninput="renderPontos()"/>
+        <input type="search" id="pt-busca" placeholder="🔍 Buscar ponto..." oninput="renderPontos()"/>
         <select id="pt-rel" onchange="renderPontos()">
           <option value="">Todas as religi&otilde;es</option>
           <option value="Umbanda">Umbanda</option>
@@ -536,11 +536,22 @@ function renderCalendario(){
 
 // ENTIDADES
 async function carregarEntidades(){
+  var el=document.getElementById('ent-lista');
+  if(el)el.innerHTML='<div class="empty">Carregando Orixás e Entidades...</div>';
   try{
-    var r=await fetch(GS+'?acao=entidades-listar'),j=await r.json();
+    var r=await Promise.race([
+      fetch(GS+'?acao=entidades-listar'),
+      new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'));},8000);})
+    ]);
+    var j=await r.json();
     if(j.ok){entidades=j.itens||[];renderEntidades();}
-  }catch(e){document.getElementById('ent-lista').innerHTML='<div class="empty">Erro ao carregar.</div>';}
+    else{if(el)el.innerHTML='<div class="empty">Erro ao carregar: '+( j.erro||'resposta inválida')+'</div>';}
+  }catch(e){
+    if(el)el.innerHTML='<div class="empty">Não foi possível carregar. Verifique sua conexão e tente novamente.</div>';
+    console.warn('carregarEntidades erro:',e);
+  }
 }
+
 function setGrupoEnt(grupo, btn){
   _grupoEnt=grupo;
   document.querySelectorAll('.btn-grupo-ent').forEach(function(b){
