@@ -361,7 +361,21 @@ const CAT_IC={Velas:'vela',Bebidas:'bebida',Fumo:'fumo','Ervas e Defumacao':'erv
 let acervo=[],consumiveis=[],calendario=[],entidades=[],pontos=[];
 
 window.addEventListener('DOMContentLoaded',function(){
-  Promise.all([carregarHome(),carregarAcervo(),carregarConsumiveis(),carregarCalendario(),carregarEntidades(),carregarPontos()]).catch(function(){});
+  // Carregar cada seção independentemente — falha isolada não afeta as outras
+  [
+    ['home',carregarHome],
+    ['acervo',carregarAcervo],
+    ['consumiveis',carregarConsumiveis],
+    ['calendario',carregarCalendario],
+    ['entidades',carregarEntidades],
+    ['pontos',carregarPontos]
+  ].forEach(function(par){
+    var nome=par[0],fn=par[1];
+    try{
+      var p=fn();
+      if(p&&p.catch)p.catch(function(e){console.warn('Erro em '+nome+':',e);});
+    }catch(e){console.warn('Erro ao iniciar '+nome+':',e);}
+  });
   if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
 });
 
