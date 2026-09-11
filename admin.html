@@ -183,8 +183,8 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
     <!-- Financeiro resumo topo -->
     <div id="sec-fin-bar" style="display:none">
       <div class="fin-bar">
-        <div class="fc ent"><div class="num" id="f-ent">--</div><div class="rot">Entradas mes</div></div>
-        <div class="fc sai"><div class="num" id="f-sai">--</div><div class="rot">Saidas mes</div></div>
+        <div class="fc ent"><div class="num" id="f-ent">--</div><div class="rot">Entradas do mês</div></div>
+        <div class="fc sai"><div class="num" id="f-sai">--</div><div class="rot">Saídas do mês</div></div>
         <div class="fc sal"><div class="num" id="f-sal">--</div><div class="rot">Saldo total</div></div>
       </div>
     </div>
@@ -194,7 +194,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
       <div class="sec-titulo">&#128305; Estoque</div>
       <div class="btn-grid" style="margin-bottom:12px">
         <button class="btn-adm" onclick="listaComprasMes()"><span class="ic">&#128722;</span><span class="lb">Compras do m&ecirc;s</span><span class="dc">Itens a repor com base no estoque</span></button>
-        <button class="btn-adm" onclick="statusEstoque()"><span class="ic">&#128202;</span><span class="lb">Status do estoque</span><span class="dc">Visao por categoria e nivel</span></button>
+        <button class="btn-adm" onclick="statusEstoque()"><span class="ic">&#128202;</span><span class="lb">Status do estoque</span><span class="dc">Visão por categoria e nível</span></button>
         <button class="btn-adm" onclick="abrirListaPontual()"><span class="ic">&#128221;</span><span class="lb">Compras pontuais</span><span class="dc">Itens avulsos para compra espec&iacute;fica</span></button>
       </div>
       <div class="resultado" id="resultado-estoque"></div>
@@ -206,7 +206,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
           <input class="field-inp" type="text" id="lst-unid" placeholder="Unidade" style="flex:.8;margin-bottom:0" autocomplete="off"/>
           <button class="btn-sm primary" onclick="adicionarLista()" style="flex-shrink:0;align-self:flex-start;margin-top:0">+ Add</button>
         </div>
-        <input class="field-inp" type="text" id="lst-obs" placeholder="Observacao (opcional)" autocomplete="off"/>
+        <input class="field-inp" type="text" id="lst-obs" placeholder="Observação (opcional)" autocomplete="off"/>
         <div id="lista-pontual-items" style="margin:8px 0"></div>
         <button class="btn-sm primary" onclick="gerarListaCompleta()" style="width:100%;margin-top:8px">Gerar lista completa</button>
       </div>
@@ -418,6 +418,42 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
         <span class="ic">&#128203;</span><span class="lb">Carregar log</span><span class="dc">Hist&oacute;rico de todas as altera&ccedil;&otilde;es</span>
       </button>
       <div id="log-lista"></div>
+
+    <!-- Pontos Cantados -->
+    <div id="sec-pontos" style="display:none">
+      <div class="sec-titulo">&#9835; Pontos Cantados</div>
+      <div class="btn-grid" style="margin-bottom:12px">
+        <button class="btn-adm" onclick="listarPontosAdmin()"><span class="ic">&#9835;</span><span class="lb">Ver pontos</span><span class="dc">Lista completa de pontos cadastrados</span></button>
+        <button class="btn-adm" onclick="toggleForm('form-ponto')"><span class="ic">&#43;</span><span class="lb">Novo ponto</span><span class="dc">Cadastrar letra, YouTube e entidade</span></button>
+        <button class="btn-adm" onclick="window.open('player.html','_blank')"><span class="ic">&#9654;</span><span class="lb">Abrir player</span><span class="dc">Player completo de áudios do R2</span></button>
+      </div>
+      <div class="resultado" id="resultado-pontos"></div>
+      <div class="inner-form" id="form-ponto" style="display:none">
+        <div class="sec-titulo" style="margin-top:0">&#9835; Novo Ponto</div>
+        <label class="field-lbl">Religião</label>
+        <select class="field-inp" id="pt-religiao">
+          <option value="Umbanda">Umbanda</option>
+          <option value="Candomblé / Ketu">Candomblé / Ketu</option>
+          <option value="Ambos">Ambos</option>
+        </select>
+        <label class="field-lbl">Entidade / Orixá</label>
+        <input class="field-inp" type="text" id="pt-entidade" placeholder="Ex: Ogum, Pretos-Velhos..." autocomplete="off"/>
+        <label class="field-lbl">Nome do Ponto</label>
+        <input class="field-inp" type="text" id="pt-nome" placeholder="Ex: Ogum em seu cavalo" autocomplete="off"/>
+        <label class="field-lbl">Letra</label>
+        <textarea class="field-inp" id="pt-letra" rows="6" placeholder="Letra do ponto linha a linha..." style="resize:vertical"></textarea>
+        <label class="field-lbl">Link YouTube (opcional)</label>
+        <input class="field-inp" type="url" id="pt-youtube" placeholder="https://youtube.com/watch?v=..." autocomplete="off"/>
+        <label class="field-lbl">Observações (opcional)</label>
+        <input class="field-inp" type="text" id="pt-obs" placeholder="Ex: Ponto de abertura de gira" autocomplete="off"/>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <button class="btn-sm primary" onclick="salvarPonto()">Salvar ponto</button>
+          <button class="btn-sm" onclick="toggleForm('form-ponto')">Cancelar</button>
+        </div>
+        <div class="resultado" id="resultado-ponto-form" style="margin-top:8px"></div>
+      </div>
+    </div>
+
     </div>
 
     <!-- Info -->
@@ -503,6 +539,121 @@ function mostrar(elId, txt) {
   el.style.display = 'block';
   el.textContent = txt;
   el.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+}
+
+
+// PONTOS ADMIN
+function listarPontosAdmin() {
+  var el = document.getElementById('resultado-pontos');
+  el.innerHTML = '<div style="color:var(--cinza);font-size:12px;padding:8px 0">Carregando...</div>';
+  _get('pontos-listar').then(function(j) {
+    if (!j.ok) { mostrar('resultado-pontos', '❌ ' + (j.erro||'Erro')); return; }
+    var pts = j.pontos || [];
+    if (!pts.length) { el.innerHTML = '<div style="color:var(--cinza);font-size:12px;padding:8px 0">Nenhum ponto cadastrado.</div>'; return; }
+    var html = '<div style="margin-bottom:8px;font-size:11px;color:var(--cinza)">'+pts.length+' pontos cadastrados</div>';
+    // Agrupar por religião > entidade
+    var grupos = {};
+    pts.forEach(function(p) {
+      var chave = (p.religiao||'Outros') + '|||' + (p.entidade||'Outros');
+      if (!grupos[chave]) grupos[chave] = [];
+      grupos[chave].push(p);
+    });
+    Object.keys(grupos).sort().forEach(function(chave) {
+      var partes = chave.split('|||');
+      html += '<div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--ouro);font-weight:600;margin:16px 0 8px;display:flex;align-items:center;gap:8px">'+partes[0]+' — '+partes[1]+'<span style="flex:1;height:1px;background:var(--borda)"></span></div>';
+      grupos[chave].forEach(function(p) {
+        html += '<div style="background:var(--card);border:1px solid var(--borda);border-radius:8px;padding:10px 14px;margin-bottom:6px;display:flex;align-items:center;gap:10px">'
+          + '<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--creme)">'+p.nome+'</div>'
+          + (p.youtube ? '<div style="font-size:10px;color:var(--ouro);margin-top:3px">♪ YouTube</div>' : '')
+          + '</div>'
+          + '<button onclick="editarPonto(''+p.id+'')" style="background:rgba(201,168,76,.1);border:1px solid var(--borda);border-radius:6px;padding:4px 10px;color:var(--ouro);font-size:11px;cursor:pointer">Editar</button>'
+          + '</div>';
+      });
+    });
+    el.innerHTML = html;
+  }).catch(function(e) { mostrar('resultado-pontos', '❌ Erro: ' + e.message); });
+}
+
+function salvarPonto() {
+  var dados = {
+    acao: 'ponto-inserir',
+    token: TOKEN,
+    religiao: document.getElementById('pt-religiao').value,
+    entidade: document.getElementById('pt-entidade').value.trim(),
+    nome: document.getElementById('pt-nome').value.trim(),
+    letra: document.getElementById('pt-letra').value.trim(),
+    youtube: document.getElementById('pt-youtube').value.trim(),
+    obs: document.getElementById('pt-obs').value.trim()
+  };
+  if (!dados.entidade || !dados.nome) {
+    mostrar('resultado-ponto-form', '❌ Preencha entidade e nome do ponto.');
+    return;
+  }
+  var btn = document.querySelector('#form-ponto .btn-sm.primary');
+  btn.disabled = true; btn.textContent = 'Salvando...';
+  _post(dados).then(function(j) {
+    btn.disabled = false; btn.textContent = 'Salvar ponto';
+    if (j.ok) {
+      mostrar('resultado-ponto-form', '✅ Ponto cadastrado! ID: ' + j.id);
+      ['pt-entidade','pt-nome','pt-letra','pt-youtube','pt-obs'].forEach(function(id) {
+        document.getElementById(id).value = '';
+      });
+      listarPontosAdmin();
+    } else {
+      mostrar('resultado-ponto-form', '❌ ' + (j.erro||'Erro ao salvar'));
+    }
+  }).catch(function(e) {
+    btn.disabled = false; btn.textContent = 'Salvar ponto';
+    mostrar('resultado-ponto-form', '❌ Erro: ' + e.message);
+  });
+}
+
+function editarPonto(id) {
+  // Buscar o ponto e preencher o form de edição
+  _get('pontos-listar').then(function(j) {
+    if (!j.ok) return;
+    var p = (j.pontos||[]).find(function(x) { return x.id === id; });
+    if (!p) return;
+    document.getElementById('pt-religiao').value = p.religiao || 'Umbanda';
+    document.getElementById('pt-entidade').value = p.entidade || '';
+    document.getElementById('pt-nome').value = p.nome || '';
+    document.getElementById('pt-letra').value = p.letra || '';
+    document.getElementById('pt-youtube').value = p.youtube || '';
+    document.getElementById('pt-obs').value = p.obs || '';
+    // Mostrar form
+    var form = document.getElementById('form-ponto');
+    form.style.display = 'block';
+    form.scrollIntoView({ behavior: 'smooth' });
+    // Mudar botão para Atualizar
+    var btn = document.querySelector('#form-ponto .btn-sm.primary');
+    btn.textContent = 'Atualizar ponto';
+    btn.onclick = function() { atualizarPonto(id); };
+  });
+}
+
+function atualizarPonto(id) {
+  var dados = {
+    acao: 'ponto-editar',
+    token: TOKEN,
+    id: id,
+    religiao: document.getElementById('pt-religiao').value,
+    entidade: document.getElementById('pt-entidade').value.trim(),
+    nome: document.getElementById('pt-nome').value.trim(),
+    letra: document.getElementById('pt-letra').value.trim(),
+    youtube: document.getElementById('pt-youtube').value.trim(),
+    obs: document.getElementById('pt-obs').value.trim()
+  };
+  _post(dados).then(function(j) {
+    if (j.ok) {
+      mostrar('resultado-ponto-form', '✅ Ponto atualizado!');
+      var btn = document.querySelector('#form-ponto .btn-sm.primary');
+      btn.textContent = 'Salvar ponto';
+      btn.onclick = function() { salvarPonto(); };
+      listarPontosAdmin();
+    } else {
+      mostrar('resultado-ponto-form', '❌ ' + (j.erro||'Erro'));
+    }
+  });
 }
 
 // INIT
@@ -656,6 +807,7 @@ function mostrarAdmin() {
   if (tem('filhos_view') || tem('filhos_edit')) document.getElementById('sec-filhos').style.display = 'block';
   if (tem('usuarios') || tem('configuracoes')) document.getElementById('sec-usuarios').style.display = 'block';
   if (tem('log')) document.getElementById('sec-log').style.display = 'block';
+  if (tem('entidades_view') || tem('entidades_edit')) document.getElementById('sec-pontos').style.display = 'block';
 }
 
 function _get(acao, extra) {
