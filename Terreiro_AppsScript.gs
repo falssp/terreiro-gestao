@@ -1,5 +1,5 @@
 // ================================================================
-//  GESTÃO DO TERREIRO -- Ile Ase Vodun Ogum Ayres -- Apps Script v17.0
+//  GESTÃO DO TERREIRO -- Ile Ase Vodun Ogum Ayres -- Apps Script v17.1
 //
 //  ABAS:
 //  Públicas:  Acervo | Consumíveis | Entidades e Orixás | Calendário
@@ -548,6 +548,7 @@ function doPost(e) {
     if (d.acao==='entidade-inserir')   return _saida(_inserirEntidade(d,sessao));
     if (d.acao==='lista-inserir')      return _saida(_inserirLista(d,sessao));
     if (d.acao==='ponto-inserir')       return _saida(_inserirPonto(d,sessao));
+    if (d.acao==='ponto-editar')        return _saida(_editarPonto(d,sessao));
     if (d.acao==='lista-deletar')      return _saida(_deletarLista(d,sessao));
     if (d.acao==='admin-criar')        return _saida(_criarAdmin(d,sessao));
     if (d.acao==='admin-desbloquear')  return _saida(_desbloquearAdmin(d.email,sessao));
@@ -807,6 +808,21 @@ function _inserirPonto(d,s) {
   aba.appendRow([id,d.religiao||'',d.entidade||'',d.nome||'',d.letra||'',d.youtube||'',d.audio||'',d.obs||'']);
   _log(s.nome,s.email,'INSERIR',ABA.PONTOS,id,'-','-',d.nome);
   return{ok:true,id};
+}
+
+function _editarPonto(d,s) {
+  if(!_tem(s,'entidades_edit'))return{ok:false,erro:'Sem permissão.'};
+  var aba=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ABA.PONTOS);
+  if(!aba)return{ok:false,erro:'Aba não encontrada.'};
+  var rows=aba.getDataRange().getValues();
+  for(var i=1;i<rows.length;i++){
+    if(rows[i][0]!==d.id)continue;
+    var campos={religiao:1,entidade:2,nome:3,letra:4,youtube:5,audio:6,obs:7};
+    Object.entries(campos).forEach(function(e){var campo=e[0],col=e[1];if(d[campo]!==undefined){_log(s.nome,s.email,'EDITAR',ABA.PONTOS,d.id,campo,rows[i][col-1],d[campo]);aba.getRange(i+1,col).setValue(d[campo]);}});
+    _cacheDel();
+    return{ok:true};
+  }
+  return{ok:false,erro:'Ponto não encontrado.'};
 }
 
 function _listarLista() {
