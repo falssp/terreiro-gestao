@@ -378,7 +378,20 @@ let _grupoEnt='todos';
 let deferredPrompt=null;
 
 window.addEventListener('DOMContentLoaded',function(){
-  Promise.all([carregarHome(),carregarConsumiveis(),carregarAcervo(),carregarCalendario(),carregarEntidades(),carregarPontos()]).catch(function(){});
+  [
+    ['home',carregarHome],
+    ['consumiveis',carregarConsumiveis],
+    ['acervo',carregarAcervo],
+    ['calendario',carregarCalendario],
+    ['entidades',carregarEntidades],
+    ['pontos',carregarPontos]
+  ].forEach(function(par){
+    var nome=par[0],fn=par[1];
+    try{
+      var p=fn();
+      if(p&&p.catch)p.catch(function(e){console.warn('Erro em '+nome+':',e);});
+    }catch(e){console.warn('Erro ao iniciar '+nome+':',e);}
+  });
   if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
 });
 window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;document.getElementById('pwa-banner').style.display='flex';});
