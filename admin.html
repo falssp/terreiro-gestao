@@ -546,9 +546,12 @@ function mostrar(elId, txt) {
 
 // PONTOS ADMIN
 function listarPontosAdmin() {
+  console.log('listarPontosAdmin chamado, GS='+GS);
   var el = document.getElementById('resultado-pontos');
-  el.innerHTML = '<div style="color:var(--cinza);font-size:12px;padding:8px 0">Carregando...</div>';
+  if(!el){console.error('resultado-pontos não encontrado');return;}
+  el.innerHTML = '<div style="color:var(--cinza);font-size:12px;padding:8px 0">Carregando pontos...</div>';
   _get('pontos-listar').then(function(j) {
+    console.log('pontos-listar resposta:', j);
     if (!j.ok) { mostrar('resultado-pontos', '❌ ' + (j.erro||'Erro')); return; }
     var pts = j.pontos || [];
     if (!pts.length) { el.innerHTML = '<div style="color:var(--cinza);font-size:12px;padding:8px 0">Nenhum ponto cadastrado.</div>'; return; }
@@ -573,7 +576,10 @@ function listarPontosAdmin() {
       });
     });
     el.innerHTML = html;
-  }).catch(function(e) { mostrar('resultado-pontos', '❌ Erro: ' + e.message); });
+  }).catch(function(e) {
+    console.error('Erro listarPontosAdmin:', e);
+    mostrar('resultado-pontos', '❌ Erro: ' + e.message);
+  });
 }
 
 function salvarPonto() {
