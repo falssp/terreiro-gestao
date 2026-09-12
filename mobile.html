@@ -828,6 +828,11 @@ function abrirModalPonto(id){
     corpo+='<a href="'+p.drive+'" target="_blank" style="font-size:12px;color:var(--cinza);text-decoration:none;border:1px solid var(--borda);border-radius:6px;padding:5px 12px;display:inline-block">\ud83d\udcc2 🎵 Ouvir pontos</a>';
     corpo+='</div>';
   }
+  // Botão player sempre disponível se entidade tiver áudios no R2
+  var entPlayer=encodeURIComponent(p.entidade||'');
+  corpo+='<div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07)">';
+  corpo+='<a href="player.html?ent='+entPlayer+'" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--ouro-lt);background:rgba(201,168,76,.12);border:1px solid var(--borda);border-radius:8px;padding:8px 14px;text-decoration:none">&#9835; Pontos cantados desta entidade</a>';
+  corpo+='</div>';
   document.getElementById('modal-corpo').innerHTML=corpo;
   MODAL_OPEN();
 }
