@@ -1,5 +1,5 @@
 // ================================================================
-//  GESTÃO DO TERREIRO -- Ile Ase Vodun Ogum Ayres -- Apps Script v17.1
+//  GESTÃO DO TERREIRO -- Ile Ase Vodun Ogum Ayres -- Apps Script v17.2
 //
 //  ABAS:
 //  Públicas:  Acervo | Consumíveis | Entidades e Orixás | Calendário
@@ -930,6 +930,36 @@ function verObrigacoes() {
   SpreadsheetApp.getUi().alert(msg);
 }
 
+
+
+// == AQUECIMENTO (trigger a cada 5 min) ===================
+function warmup() {
+  try {
+    _listarConsumiveis();
+    _listarEntidades();
+    _listarAcervo();
+    _listarPontos();
+    Logger.log('Warmup OK: ' + new Date());
+  } catch(e) {
+    Logger.log('Warmup erro: ' + e);
+  }
+}
+
+// Instalar trigger de aquecimento (roda uma vez para configurar)
+function instalarTriggerWarmup() {
+  // Remover triggers existentes de warmup
+  ScriptApp.getProjectTriggers().forEach(function(t) {
+    if (t.getHandlerFunction() === 'warmup') {
+      ScriptApp.deleteTrigger(t);
+    }
+  });
+  // Criar novo trigger a cada 5 minutos
+  ScriptApp.newTrigger('warmup')
+    .timeBased()
+    .everyMinutes(5)
+    .create();
+  Logger.log('Trigger warmup instalado.');
+}
 
 // == CACHE (5 min) =========================================
 function _cacheGet(k){try{var v=CacheService.getScriptCache().get(k);return v?JSON.parse(v):null;}catch(e){return null;}}
