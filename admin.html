@@ -548,37 +548,26 @@ function mostrar(elId, txt) {
 function listarPontosAdmin() {
   console.log('listarPontosAdmin chamado, GS='+GS);
   var el = document.getElementById('resultado-pontos');
-  if(!el){console.error('resultado-pontos não encontrado');return;}
+  if(!el){console.error('resultado-pontos não encontrado');alert('Erro: elemento não encontrado');return;}
+  el.style.display='block';
   el.innerHTML = '<div style="color:var(--cinza);font-size:12px;padding:8px 0">Carregando pontos...</div>';
   _get('pontos-listar').then(function(j) {
-    console.log('pontos-listar resposta:', j);
-    if (!j.ok) { mostrar('resultado-pontos', '❌ ' + (j.erro||'Erro')); return; }
+    console.log('Resposta:', j.ok, j.pontos ? j.pontos.length : 0);
+    if (!j.ok) { el.innerHTML='<div style="color:red">Erro: '+(j.erro||'desconhecido')+'</div>'; return; }
     var pts = j.pontos || [];
-    if (!pts.length) { el.innerHTML = '<div style="color:var(--cinza);font-size:12px;padding:8px 0">Nenhum ponto cadastrado.</div>'; return; }
-    var html = '<div style="margin-bottom:8px;font-size:11px;color:var(--cinza)">'+pts.length+' pontos cadastrados</div>';
-    // Agrupar por religião > entidade
-    var grupos = {};
-    pts.forEach(function(p) {
-      var chave = (p.religiao||'Outros') + '|||' + (p.entidade||'Outros');
-      if (!grupos[chave]) grupos[chave] = [];
-      grupos[chave].push(p);
+    if (!pts.length) { el.innerHTML='<div style="color:var(--cinza)">Nenhum ponto cadastrado.</div>'; return; }
+    var html='<div style="font-size:11px;color:var(--cinza);margin-bottom:10px">'+pts.length+' pontos</div>';
+    pts.forEach(function(p){
+      html+='<div style="background:var(--card);border:1px solid var(--borda);border-radius:8px;padding:10px 14px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between">'
+        +'<div><div style="font-size:13px;font-weight:500;color:var(--creme)">'+p.nome+'</div>'
+        +'<div style="font-size:10px;color:var(--cinza)">'+p.religiao+' — '+p.entidade+'</div></div>'
+        +'<button data-pid="'+p.id+'" onclick="editarPonto(this.dataset.pid)" style="background:rgba(201,168,76,.1);border:1px solid var(--borda);border-radius:6px;padding:4px 10px;color:var(--ouro);font-size:11px;cursor:pointer">Editar</button>'
+        +'</div>';
     });
-    Object.keys(grupos).sort().forEach(function(chave) {
-      var partes = chave.split('|||');
-      html += '<div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--ouro);font-weight:600;margin:16px 0 8px;display:flex;align-items:center;gap:8px">'+partes[0]+' — '+partes[1]+'<span style="flex:1;height:1px;background:var(--borda)"></span></div>';
-      grupos[chave].forEach(function(p) {
-        html += '<div style="background:var(--card);border:1px solid var(--borda);border-radius:8px;padding:10px 14px;margin-bottom:6px;display:flex;align-items:center;gap:10px">'
-          + '<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--creme)">'+p.nome+'</div>'
-          + (p.youtube ? '<div style="font-size:10px;color:var(--ouro);margin-top:3px">♪ YouTube</div>' : '')
-          + '</div>'
-          + '<button data-pid="'+p.id+'" onclick="editarPonto(this.dataset.pid)" style="background:rgba(201,168,76,.1);border:1px solid var(--borda);border-radius:6px;padding:4px 10px;color:var(--ouro);font-size:11px;cursor:pointer">Editar</button>'
-          + '</div>';
-      });
-    });
-    el.innerHTML = html;
-  }).catch(function(e) {
-    console.error('Erro listarPontosAdmin:', e);
-    mostrar('resultado-pontos', '❌ Erro: ' + e.message);
+    el.innerHTML=html;
+  }).catch(function(e){
+    console.error('Erro:', e);
+    el.innerHTML='<div style="color:red">Erro: '+e.message+'</div>';
   });
 }
 
