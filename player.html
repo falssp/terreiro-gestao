@@ -34,21 +34,22 @@ header p{font-size:10px;color:var(--cinza);margin-top:3px;letter-spacing:.12em;t
 .busca:focus{border-color:var(--ouro)}
 
 /* CONTEÚDO — 2 colunas em desktop */
-.content{padding:20px 24px;max-width:1400px;margin:0 auto}
+.content{padding:20px 28px;max-width:1600px;margin:0 auto}
 .grupo-wrap{break-inside:avoid;margin-bottom:8px}
 .grupos-grid{
   columns:2;
-  column-gap:20px;
+  column-gap:24px;
+  column-fill:balance;
 }
 @media(max-width:900px){.grupos-grid{columns:1;}}
 
-.grupo-titulo{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--ouro);font-weight:600;margin:20px 0 8px;display:flex;align-items:center;gap:8px;break-after:avoid}
+.grupo-titulo{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--ouro);font-weight:600;margin:18px 0 8px;display:flex;align-items:center;gap:8px;break-after:avoid}
 .grupo-titulo::after{content:'';flex:1;height:1px;background:var(--borda)}
 
-.audio-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:10px 14px;margin-bottom:6px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:border-color .15s;-webkit-tap-highlight-color:transparent;break-inside:avoid}
+.audio-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:11px 14px;margin-bottom:6px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:border-color .15s;-webkit-tap-highlight-color:transparent;break-inside:avoid;min-height:48px}
 .audio-card:hover{border-color:rgba(201,168,76,.45)}
 .audio-card.playing{border-color:var(--ouro);background:rgba(201,168,76,.06)}
-.ac-num{font-size:10px;color:var(--cinza);width:22px;text-align:right;flex-shrink:0}
+.ac-num{font-size:10px;color:var(--cinza);width:28px;text-align:right;flex-shrink:0;font-variant-numeric:tabular-nums}
 .ac-play{width:28px;height:28px;border-radius:50%;background:rgba(201,168,76,.12);border:1px solid var(--borda);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .audio-card.playing .ac-play{background:rgba(201,168,76,.3);border-color:var(--ouro)}
 .ac-play span{font-size:11px;color:var(--ouro-lt)}
