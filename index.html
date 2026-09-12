@@ -583,9 +583,16 @@ function renderCalendario(){
 // ENTIDADES
 async function carregarEntidades(){
   try{
-    var r=await fetch(GS+'?acao=entidades-listar'),j=await r.json();
+    var r=await Promise.race([
+      fetch(GS+'?acao=entidades-listar'),
+      new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'));},15000);})
+    ]),j=await r.json();
     if(j.ok){entidades=(j.itens||[]);renderEntidades();}
-  }catch(e){document.getElementById('ent-lista').innerHTML='<div class="empty">Erro ao carregar.</div>';}
+    else{document.getElementById('ent-lista').innerHTML='<div class="empty">Erro: '+(j.erro||'resposta inválida')+'</div>';}
+  }catch(e){
+    document.getElementById('ent-lista').innerHTML='<div class="empty">Não foi possível carregar. Tente novamente.</div>';
+    console.warn('carregarEntidades erro:',e);
+  }
 }
 function renderEntidades(){
   var busca=(document.getElementById('ent-busca').value||'').toLowerCase();
