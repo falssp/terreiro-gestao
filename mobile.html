@@ -362,7 +362,7 @@ html{height:100%}body{font-family:var(--fb);background:var(--bg);color:var(--cre
 <div id="toast"></div>
 
 <script>
-const GS='https://script.google.com/macros/s/AKfycbz8XRp-FTZ-laAfyjHqC_mvDwvKDCFieibGTvp7u7Fyls9OcmCc2aDvlvsVwAW706SlWw/exec';
+const GS='https://terreiro-proxy.falssp.workers.dev';
 
 const SUBCATS={
   'Alimentos e Oferendas':['Alimentos rituais','Axé / Ebó','Bebida ritual','Comida de orixá','Flores','Incenso / Defumação','Vela / Bujão'],
@@ -434,7 +434,7 @@ function fecharModal(e){if(!e||e.target.id==='modal-overlay'||e.currentTarget&&e
 // HOME
 async function carregarHome(){
   try{
-    var r=await fetch(GS+'?acao=datas-mes',{redirect:'follow'}),j=await r.json();if(!j.ok)return;
+    var r=await fetch(GS+'?acao=datas-mes'),j=await r.json();if(!j.ok)return;
     var html='';
     if(j.eventos&&j.eventos.length){html+='<div class="home-card"><div class="home-card-titulo">&#128197; Eventos do mês</div>';j.eventos.forEach(function(e){html+='<div class="home-item"><span>'+e.titulo+'</span><span class="data">'+e.data+'</span></div>';});html+='</div>';}
     if(j.festas&&j.festas.length){html+='<div class="home-card"><div class="home-card-titulo">&#129345; Festas de Orixás</div>';j.festas.forEach(function(f){html+='<div class="home-item"><span>'+f.entidade+'</span><span class="data">'+f.data+'</span></div>';});html+='</div>';}
@@ -446,7 +446,7 @@ async function carregarHome(){
 // ACERVO
 async function carregarAcervo(){
   try{
-    var r=await fetch(GS+'?acao=acervo-listar',{redirect:'follow'}),j=await r.json();
+    var r=await fetch(GS+'?acao=acervo-listar'),j=await r.json();
     if(j.ok){acervo=(j.itens||[]).sort(function(a,b){return(a.nome||'').localeCompare((b.nome||''),'pt-BR');});renderAcervo();}
   }catch(e){document.getElementById('acervo-lista').innerHTML='<div class="empty">Erro ao carregar.</div>';}
 }
@@ -476,7 +476,7 @@ function abrirModalAcervo(id){
 // CONSUMIVEIS
 async function carregarConsumiveis(){
   try{
-    var r=await fetch(GS+'?acao=consumiveis-listar',{redirect:'follow'}),j=await r.json();
+    var r=await fetch(GS+'?acao=consumiveis-listar'),j=await r.json();
     if(j.ok){
       consumiveis=(j.itens||[]).sort(function(a,b){return(a.nome||'').localeCompare((b.nome||''),'pt-BR');});
       renderConsumiveis();
@@ -517,7 +517,7 @@ function abrirModalCsm(id){
 // CALENDÁRIO
 async function carregarCalendario(){
   try{
-    var r=await fetch(GS+'?acao=calendario-listar',{redirect:'follow'}),j=await r.json();
+    var r=await fetch(GS+'?acao=calendario-listar'),j=await r.json();
     if(j.ok){calendario=(j.eventos||[]).sort(function(a,b){return(a.data||'').localeCompare(b.data||'');});renderCalendario();}
   }catch(e){document.getElementById('cal-lista').innerHTML='<div class="empty">Erro ao carregar.</div>';}
 }
@@ -540,7 +540,7 @@ async function carregarEntidades(){
   if(el)el.innerHTML='<div class="empty">Carregando Orixás e Entidades...</div>';
   try{
     var r=await Promise.race([
-      fetch(GS+'?acao=entidades-listar',{redirect:'follow'}),
+      fetch(GS+'?acao=entidades-listar'),
       new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'));},8000);})
     ]);
     var j=await r.json();
