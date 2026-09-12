@@ -543,7 +543,7 @@ function renderConsumiveis(){
   document.getElementById('csm-lista').innerHTML=f.map(function(i){
     var a=Number(i.atual)||0,m=Number(i.minimo)||0,pct=m>0?Math.min(100,Math.round(a/m*100)):100;
     var sl=nslug(i.nivel),cor=sl==='ok'?'#7fd67f':sl==='repor'?'#e0c040':sl==='alerta'?'#f08080':'#ff6060';
-    return'<div class="csm-card" onclick="abrirModalCsm(\''+i.id+'\')">'+'<div class="csm-top"><div><div class="csm-nome">'+(CAT_IC[i.categoria]||'')+'  '+i.nome+'</div><div class="csm-cat">'+i.categoria+'</div></div><span class="nbadge '+sl+'">'+(i.nivel||'--')+'</span></div>'+'<div class="csm-bar-wrap"><div class="csm-bar" style="width:'+pct+'%;background:'+cor+'"></div></div>'+'<div class="csm-info"><span>'+a+' / '+m+' '+(i.unidade||'')+'</span><span>'+pct+'%</span></div></div>';
+    return'<div class="csm-card" onclick="abrirModalCsm(\''+i.id+'\')">'+'<div class="csm-top"><div><div class="csm-nome">'+i.nome+'</div><div class="csm-cat">'+i.categoria+'</div></div><span class="nbadge '+sl+'">'+(i.nivel||'--')+'</span></div>'+'<div class="csm-bar-wrap"><div class="csm-bar" style="width:'+pct+'%;background:'+cor+'"></div></div>'+'<div class="csm-info"><span>'+a+' / '+m+' '+(i.unidade||'')+'</span><span>'+pct+'%</span></div></div>';
   }).join('');
 }
 function abrirModalCsm(id){
