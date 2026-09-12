@@ -818,6 +818,7 @@ function mostrarAdmin() {
   if (tem('usuarios') || tem('configuracoes')) document.getElementById('sec-usuarios').style.display = 'block';
   if (tem('log')) document.getElementById('sec-log').style.display = 'block';
   if (tem('entidades_view') || tem('entidades_edit')) document.getElementById('sec-pontos').style.display = 'block';
+  if (tem('acervo_view') || tem('acervo_edit')) { var sa=document.getElementById('sec-acervo'); if(sa)sa.style.display='block'; }
 }
 
 function _get(acao, extra) {
