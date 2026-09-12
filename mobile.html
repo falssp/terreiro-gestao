@@ -541,7 +541,7 @@ async function carregarEntidades(){
   try{
     var r=await Promise.race([
       fetch(GS+'?acao=entidades-listar'),
-      new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'));},8000);})
+      new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'));},30000);})
     ]);
     var j=await r.json();
     if(j.ok){entidades=j.itens||[];renderEntidades();}
