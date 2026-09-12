@@ -566,7 +566,7 @@ function listarPontosAdmin() {
           + '<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--creme)">'+p.nome+'</div>'
           + (p.youtube ? '<div style="font-size:10px;color:var(--ouro);margin-top:3px">♪ YouTube</div>' : '')
           + '</div>'
-          + '<button onclick="editarPonto(''+p.id+'')" style="background:rgba(201,168,76,.1);border:1px solid var(--borda);border-radius:6px;padding:4px 10px;color:var(--ouro);font-size:11px;cursor:pointer">Editar</button>'
+          + '<button data-pid="'+p.id+'" onclick="editarPonto(this.dataset.pid)" style="background:rgba(201,168,76,.1);border:1px solid var(--borda);border-radius:6px;padding:4px 10px;color:var(--ouro);font-size:11px;cursor:pointer">Editar</button>'
           + '</div>';
       });
     });
