@@ -158,7 +158,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
 <div class="section" id="sec-calendario"><div id="cal-lista"><div class="empty">Carregando...</div></div></div>
 <div class="section" id="sec-entidades">
   <div class="filter-bar"><input type="search" id="ent-busca" placeholder="&#128269; Buscar orixá ou entidade..." oninput="renderEntidades()"/></div>
-  <div class="ent-tabs"><button class="ent-tab active" data-nacao="" onclick="setNacao(this)">Todos</button><button class="ent-tab" data-nacao="Ketu" onclick="setNacao(this)">Ketu</button><button class="ent-tab" data-nacao="Angola" onclick="setNacao(this)">Angola</button><button class="ent-tab" data-nacao="Jeje" onclick="setNacao(this)">Jeje</button><button class="ent-tab" data-nacao="Umbanda" onclick="setNacao(this)">Umbanda</button></div>
+  <div class="ent-tabs"><button class="ent-tab active" data-nacao="" onclick="setNacao(this)">Todos</button><button class="ent-tab" data-nacao="Angola" onclick="setNacao(this)">Angola</button><button class="ent-tab" data-nacao="Jeje" onclick="setNacao(this)">Jeje</button><button class="ent-tab" data-nacao="Ketu" onclick="setNacao(this)">Ketu</button><button class="ent-tab" data-nacao="Umbanda" onclick="setNacao(this)">Umbanda</button></div>
   <div id="ent-lista"><div class="empty">Carregando...</div></div>
 </div>
 <div class="section" id="sec-pontos">
@@ -448,4 +448,20 @@ window.addEventListener('DOMContentLoaded',function(){
 
 </script>
 </body>
-</html>
+</htmlfunction carregarEntidades(){
+  var STATIC=ENTIDADES_STATIC;
+  entidades=STATIC;
+  _buildEntTabs();
+  renderEntidades();
+  try{fetch(GS+'?acao=entidades-listar').then(function(r){return r.json();}).then(function(j){if(j.ok&&j.itens&&j.itens.length){entidades=j.itens;_buildEntTabs();renderEntidades();}}).catch(function(){});}catch(e){}
+}
+function _buildEntTabs(){
+  var nacoes=[...new Set(entidades.map(function(e){return e.nacao||'';}).filter(Boolean))];
+  // Extrair nações individuais (pode ter "Ketu / Angola")
+  var todas=new Set();nacoes.forEach(function(n){n.split('/').forEach(function(p){todas.add(p.trim());});});
+  var sorted=[...todas].sort();
+  var wrap=document.querySelector('.ent-tabs');if(!wrap)return;
+  var ativo=_nacaoAtiva;
+  wrap.innerHTML='<button class="ent-tab'+(ativo===''?' active':'')+'" data-nacao="" onclick="setNacao(this)">Todos</button>'
+    +sorted.map(function(n){return '<button class="ent-tab'+(ativo===n?' active':'')+'" data-nacao="'+n+'" onclick="setNacao(this)">'+n+'</button>';}).join('');
+}>
