@@ -8,955 +8,438 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0f0f0f;--card:#1a1a1a;--card2:#222;
-  --ouro:#c9a84c;--ouro-lt:#f0d060;--creme:#fff;--cinza:#999;
-  --borda:rgba(201,168,76,.22);--r:12px;
-  --fd:'Cinzel',serif;--fb:'Inter',sans-serif;
-}
+:root{--bg:#0f0f0f;--card:#1a1a1a;--ouro:#c9a84c;--ouro-lt:#f0d060;--creme:#fff;--cinza:#999;--borda:rgba(201,168,76,.22);--r:12px;--fd:'Cinzel',serif;--fb:'Inter',sans-serif;--nav-h:56px}
 html{font-size:16px}
-body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:100dvh;padding-bottom:20px}
+body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:100dvh}
 .topo{background:linear-gradient(135deg,#1a0e06,#0a0a0a);border-bottom:1px solid var(--borda);padding:14px 16px 10px;text-align:center}
 .topo h1{font-family:var(--fd);font-size:1.05rem;color:var(--ouro-lt);letter-spacing:.06em}
 .topo p{font-size:10px;color:var(--cinza);margin-top:3px;letter-spacing:.12em;text-transform:uppercase}
-.progress-bar{height:2px;background:rgba(201,168,76,.12)}
-#prog{height:100%;width:0;background:var(--ouro);transition:width .3s}
-nav{background:#111;border-bottom:1px solid var(--borda);display:flex;overflow-x:auto;scrollbar-width:none}
-nav::-webkit-scrollbar{display:none}
-.tab{flex-shrink:0;padding:11px 16px;font-size:12px;font-weight:500;color:var(--cinza);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;font-family:var(--fb);white-space:nowrap;transition:color .15s}
+.desktop-nav{display:flex;background:#111;border-bottom:1px solid var(--borda);overflow-x:auto;scrollbar-width:none}
+.desktop-nav::-webkit-scrollbar{display:none}
+.tab{background:none;border:none;border-bottom:2px solid transparent;padding:12px 18px;color:var(--cinza);font-family:var(--fb);font-size:13px;cursor:pointer;transition:color .2s,border-color .2s;white-space:nowrap}
 .tab:hover{color:var(--ouro-lt)}
 .tab.active{color:var(--ouro-lt);border-bottom-color:var(--ouro)}
 .nav-links{display:flex;justify-content:flex-end;gap:16px;padding:5px 20px;background:#111;border-bottom:1px solid var(--borda)}
 .nav-links a{font-size:11px;color:var(--cinza);text-decoration:none}
 .nav-links a:hover{color:var(--ouro)}
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:var(--nav-h);background:#111;border-top:1px solid var(--borda);z-index:90;flex-direction:row}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:none;border:none;color:var(--cinza);font-family:var(--fb);font-size:9px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color .15s}
+.nav-btn.active{color:var(--ouro-lt)}
+.nav-btn .ic{font-size:18px;line-height:1}
+#pwa-banner{display:none;align-items:center;justify-content:space-between;padding:8px 16px;background:#111;border-bottom:1px solid var(--borda);font-size:12px;color:var(--cinza)}
+#pwa-banner.show{display:flex}
+.btn-pwa{padding:4px 12px;border-radius:6px;font-size:11px;font-family:var(--fb);cursor:pointer;border:1px solid var(--borda)}
+.btn-pwa.sim{background:var(--ouro);color:#0f0f0f;border-color:var(--ouro)}
+.btn-pwa.nao{background:transparent;color:var(--cinza)}
 .section{display:none;padding:28px 36px}
 .section.active{display:block}
-.skeleton{background:linear-gradient(90deg,rgba(201,168,76,.08) 25%,rgba(201,168,76,.18) 50%,rgba(201,168,76,.08) 75%);background-size:200% 100%;animation:skel 1.4s infinite;border-radius:6px}
-@keyframes skel{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.skel-num{height:1.4rem;width:80px;margin:0 auto 4px}
-
-/* HOME */
-.ornamento{text-align:center;color:var(--ouro);letter-spacing:.4em;font-size:12px;margin:18px 0 16px}
+@media(max-width:767px){.section{padding:14px;padding-bottom:calc(var(--nav-h) + 14px)}.desktop-nav,.nav-links{display:none}.bottom-nav{display:flex}}
 .niveis-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
-.nivel-card{border-radius:12px;padding:24px 8px;text-align:center;border:1px solid transparent;cursor:pointer;transition:transform .1s,opacity .15s}
-.nivel-card:hover{opacity:.82;transform:translateY(-1px)}
-.nivel-card .num{font-family:var(--fd);font-size:2rem;font-weight:600}
-.nivel-card .rot{font-size:11px;text-transform:uppercase;letter-spacing:.07em;margin-top:6px;color:var(--cinza)}
-.nivel-card.ok{background:rgba(30,107,58,.18);border-color:rgba(30,107,58,.3)}.nivel-card.ok .num{color:#7fd67f}
-.nivel-card.repor{background:rgba(180,140,0,.15);border-color:rgba(180,140,0,.3)}.nivel-card.repor .num{color:#e0c040}
-.nivel-card.alerta{background:rgba(180,40,40,.18);border-color:rgba(180,40,40,.3)}.nivel-card.alerta .num{color:#f08080}
-.nivel-card.urgente{background:rgba(120,0,0,.25);border-color:rgba(200,0,0,.35)}.nivel-card.urgente .num{color:#ff6060}
-.home-datas{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
-.home-card{background:var(--card);border:1px solid var(--borda);border-radius:10px;padding:18px 20px}
+@media(max-width:767px){.niveis-grid{grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}}
+.nivel-card{border-radius:var(--r);padding:18px 14px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px}
+.nivel-card .num{font-size:2rem;font-weight:700;min-height:2.5rem;display:flex;align-items:center;justify-content:center}
+.nivel-card .rot{font-size:10px;text-transform:uppercase;letter-spacing:.1em;opacity:.8}
+.nivel-card.ok{background:rgba(40,120,40,.25);border:1px solid rgba(40,180,40,.3)}
+.nivel-card.repor{background:rgba(120,100,20,.25);border:1px solid rgba(200,170,30,.3)}
+.nivel-card.alerta{background:rgba(150,50,50,.25);border:1px solid rgba(220,80,80,.3)}
+.nivel-card.urgente{background:rgba(100,10,10,.35);border:1px solid rgba(200,20,20,.4)}
+.skeleton{background:linear-gradient(90deg,rgba(201,168,76,.08) 25%,rgba(201,168,76,.18) 50%,rgba(201,168,76,.08) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skel-num{width:50px;height:36px;border-radius:6px}
+.home-card{background:var(--card);border:1px solid var(--borda);border-radius:10px;padding:18px 20px;margin-bottom:20px}
 .home-card-titulo{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--ouro);margin-bottom:12px;font-weight:600;padding-bottom:8px;border-bottom:1px solid var(--borda)}
-.home-item{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)}
-.home-item:last-child{border:none}
-.home-item .data{color:var(--cinza);font-size:11px}
-
-/* CADASTRO */
-.cad-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:0}
-.cad-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:40px 20px;cursor:pointer;transition:border-color .2s,transform .15s,background .2s;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%}
-.cad-card:hover{border-color:var(--ouro);transform:translateY(-2px);background:rgba(201,168,76,.06)}
-.cad-ic{font-size:48px;margin-bottom:14px;line-height:1}
-.cad-lb{font-size:15px;font-weight:600;color:var(--ouro-lt);margin-bottom:8px}
-.cad-dc{font-size:12px;color:var(--cinza);line-height:1.5}
-
-/* FORMS */
-.form-wrap{display:none}
-.form-wrap.ativo{display:block}
-.btn-voltar{display:inline-flex;align-items:center;gap:6px;background:none;border:none;color:var(--cinza);cursor:pointer;font-family:var(--fb);font-size:12px;padding:0;margin-bottom:18px}
-.btn-voltar:hover{color:var(--ouro)}
-.secao-titulo{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--ouro);font-weight:600;margin:0 0 14px;display:flex;align-items:center;gap:8px}
-.secao-titulo::after{content:'';flex:1;height:1px;background:var(--borda)}
-.form-box{background:rgba(10,20,10,.3);border:1px solid rgba(150,200,150,.15);border-radius:var(--r);padding:20px;margin-bottom:20px}
-.form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
-.field{display:flex;flex-direction:column;gap:5px}
-.field.full{grid-column:1/-1}
-.field label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ouro)}
-.field input,.field select,.field textarea{background:rgba(0,0,0,.35);border:1px solid var(--borda);border-radius:8px;color:var(--creme);font-size:13px;padding:9px 11px;outline:none;font-family:var(--fb);-webkit-appearance:none;width:100%}
-.field textarea{resize:vertical;min-height:60px;line-height:1.5}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--ouro)}
-.field input[type=date]{color-scheme:dark}
-.btn-row{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
-.btn{padding:9px 20px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:var(--fb)}
-.btn-primary{background:linear-gradient(135deg,var(--ouro),#a07820);color:#0f0f0f}
-.btn-ghost{background:transparent;border:1px solid var(--borda);color:var(--cinza)}
-.btn:hover{opacity:.85}
-.foto-thumb{width:100%;max-height:120px;object-fit:cover;border-radius:8px;margin-top:4px}
-
-/* FILTROS */
-.filter-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
-.filter-bar input,.filter-bar select{background:rgba(0,0,0,.35);border:1px solid var(--borda);border-radius:8px;color:var(--creme);font-size:12px;padding:8px 12px;font-family:var(--fb);outline:none;flex:1;min-width:160px;-webkit-appearance:none}
+.ornamento{text-align:center;color:var(--ouro);letter-spacing:.4em;font-size:12px;margin:18px 0 20px}
+.filter-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.filter-bar input,.filter-bar select{background:var(--card);border:1px solid var(--borda);border-radius:8px;padding:8px 12px;color:var(--creme);font-size:13px;font-family:var(--fb);outline:none;flex:1;min-width:120px}
 .filter-bar input:focus,.filter-bar select:focus{border-color:var(--ouro)}
-.results-count{font-size:11px;color:var(--cinza);margin-bottom:10px}
-
-/* ACERVO */
-.acervo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-.item-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:14px;cursor:pointer;transition:border-color .15s}
-.item-card:hover{border-color:var(--ouro)}
-.item-nome{font-size:13px;font-weight:600;margin-bottom:4px}
-.item-cat{font-size:10px;color:var(--cinza);margin-bottom:6px}
-.item-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:99px;display:inline-block}
-
-/* CONSUMIVEIS */
-.csm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
-.csm-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:14px 16px;cursor:pointer;transition:border-color .15s}
+.filter-bar select option{background:#1a1a1a}
+.lbl-count{font-size:12px;color:var(--cinza);margin-bottom:12px}
+.csm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+@media(max-width:767px){.csm-grid{grid-template-columns:1fr}}
+.csm-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:14px 16px;cursor:pointer;transition:border-color .15s;-webkit-tap-highlight-color:transparent}
 .csm-card:hover{border-color:var(--ouro)}
 .csm-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
 .csm-nome{font-size:14px;font-weight:600;flex:1}
 .csm-cat{font-size:11px;color:var(--cinza);margin-top:2px}
-.csm-bar-wrap{height:5px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;margin-bottom:4px}
-.csm-bar{height:100%;border-radius:99px}
+.csm-bar-wrap{height:5px;background:rgba(255,255,255,.08);border-radius:3px;margin-bottom:6px}
+.csm-bar{height:100%;border-radius:3px}
 .csm-info{display:flex;justify-content:space-between;font-size:10px;color:var(--cinza)}
-.nbadge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:99px;flex-shrink:0}
-.nbadge.ok{background:#e6f4ea22;color:#7fd67f;border:1px solid #7fd67f44}
-.nbadge.repor{background:#fef9e722;color:#e0c040;border:1px solid #e0c04044}
-.nbadge.alerta{background:#fdecea22;color:#f08080;border:1px solid #f0808044}
-.nbadge.urgente{background:#5c000022;color:#ff6060;border:1px solid #ff606044}
-
-/* CALENDÁRIO */
-.cal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
-.cal-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:14px 16px}
-.cal-data{font-size:10px;color:var(--ouro);font-weight:600;margin-bottom:4px}
-.cal-titulo{font-size:13px;font-weight:600;margin-bottom:4px}
-.cal-tipo{font-size:10px;color:var(--cinza)}
-.cal-desc{font-size:11px;color:#bbb;margin-top:6px;line-height:1.5}
-.tipo-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:99px;display:inline-block;margin-left:6px}
-.tipo-Festa{background:rgba(201,168,76,.15);color:var(--ouro-lt);border:1px solid rgba(201,168,76,.3)}
-.tipo-Gira{background:rgba(150,80,200,.15);color:#c090f0;border:1px solid rgba(150,80,200,.3)}
-.tipo-Obrigação{background:rgba(180,40,40,.15);color:#f08080;border:1px solid rgba(180,40,40,.3)}
-.tipo-Reunião{background:rgba(30,107,58,.15);color:#7fd67f;border:1px solid rgba(30,107,58,.3)}
-.tipo-Outro{background:rgba(100,100,100,.15);color:#999;border:1px solid rgba(100,100,100,.3)}
-
-/* ENTIDADES */
-.ent-lista-wrap{display:block}
-.ent-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:8px}
-.ent-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:14px 16px}
-.ent-nome{font-size:14px;font-weight:600;color:var(--ouro-lt);margin-bottom:2px}
-.ent-nacao{font-size:10px;color:var(--cinza);margin-bottom:8px}
-.ent-row{display:flex;justify-content:space-between;font-size:11px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)}
-.ent-row:last-child{border:none}
-.ent-rot{color:var(--cinza)}
-.ent-saudacao{font-size:11px;color:var(--ouro);font-style:italic;margin-top:6px}
-
-/* ML */
-.ml-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px;margin-top:10px}
-.ml-item{background:rgba(0,0,0,.3);border:1px solid var(--borda);border-radius:8px;padding:10px;display:flex;gap:10px;align-items:center}
-.ml-thumb{width:44px;height:44px;object-fit:contain;border-radius:6px;flex-shrink:0;background:#111}
-.ml-info{flex:1;min-width:0}
-.ml-nome{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ml-preco{font-size:13px;font-weight:700;color:var(--ouro-lt);margin-top:2px}
-.btn-ml{font-size:11px;padding:5px 10px;border-radius:8px;background:rgba(201,168,76,.15);border:1px solid var(--borda);color:var(--ouro);cursor:pointer;font-family:var(--fb)}
-.btn-ml:hover{background:rgba(201,168,76,.3)}
-
-/* MODAL */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:100}
-.modal-bg.aberto{display:flex}
-.modal{background:#1a1a1a;border:1px solid var(--borda);border-radius:var(--r);padding:28px 24px;width:100%;max-width:560px;max-height:85dvh;overflow-y:auto}
-.modal-titulo{font-family:var(--fd);font-size:1rem;color:var(--ouro-lt);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
-.modal-x{cursor:pointer;color:var(--cinza);font-size:18px}
-.modal-row{display:flex;justify-content:space-between;font-size:14px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)}
-.modal-row:last-child{border:none}
-.modal-rot{color:var(--cinza);font-size:13px}
-
-.pontos-grupo{margin-bottom:28px}
-.pontos-grupo-titulo{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--ouro);font-weight:600;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+.nbadge{font-size:10px;padding:2px 8px;border-radius:99px;white-space:nowrap;flex-shrink:0}
+.nb-ok{background:rgba(40,120,40,.25);color:#6d6;border:1px solid rgba(40,180,40,.3)}
+.nb-repor{background:rgba(120,100,20,.25);color:#cc6;border:1px solid rgba(200,170,30,.3)}
+.nb-alerta{background:rgba(150,50,50,.25);color:#f88;border:1px solid rgba(220,80,80,.3)}
+.nb-urgente{background:rgba(100,10,10,.35);color:#f44;border:1px solid rgba(200,20,20,.4)}
+.pontos-grupo-titulo{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--ouro);font-weight:600;margin:20px 0 10px;display:flex;align-items:center;gap:8px}
 .pontos-grupo-titulo::after{content:'';flex:1;height:1px;background:var(--borda)}
-.pontos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
-.ponto-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);margin-bottom:8px;overflow:hidden;transition:border-color .15s}
-.ponto-card:hover{border-color:rgba(201,168,76,.45)}
-.ponto-header{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;user-select:none}
 .ponto-badge{font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:99px;flex-shrink:0}
 .ponto-badge.umb{background:rgba(100,160,100,.18);color:#90d090;border:1px solid rgba(100,160,100,.3)}
 .ponto-badge.can{background:rgba(160,100,30,.2);color:#e0b060;border:1px solid rgba(160,100,30,.3)}
-.ponto-info{flex:1;min-width:0}
-.ponto-nome{font-size:14px;font-weight:600;color:var(--ouro-lt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ponto-sub{font-size:11px;color:var(--cinza);margin-top:2px}
-.ponto-chevron{color:var(--cinza);font-size:14px;flex-shrink:0;transition:transform .2s}
-.ponto-card.open .ponto-chevron{transform:rotate(180deg)}
-.ponto-body{display:none;border-top:1px solid var(--borda);padding:16px}
-.ponto-card.open .ponto-body{display:block}
-.ponto-letra{font-size:13px;color:#ccc;line-height:1.75;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:14px 16px;margin-bottom:12px;white-space:pre-line}
-.ponto-letra em{color:var(--ouro);font-style:normal;font-size:11px;font-weight:600;letter-spacing:.06em}
-.ponto-yt{position:relative;width:100%;padding-top:56.25%;border-radius:8px;overflow:hidden;margin-bottom:12px;background:#000}
-.ponto-yt iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
-.ponto-obs{font-size:11px;color:var(--cinza);margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05)}
-.ponto-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
-.ponto-link{font-size:11px;color:var(--ouro);text-decoration:none;border:1px solid var(--borda);border-radius:6px;padding:4px 10px}
-.ponto-link:hover{border-color:var(--ouro)}
-.empty{text-align:center;color:var(--cinza);font-size:13px;padding:40px 20px;font-style:italic}
-#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#111;border:1px solid var(--ouro);border-radius:99px;color:var(--ouro-lt);padding:8px 20px;font-size:12px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:999;white-space:nowrap}
-#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-#toast.erro{border-color:#f08080;color:#f08080}
-
-@media(max-width:768px){
-  .section{padding:16px}
-  .niveis-grid{grid-template-columns:repeat(2,1fr);gap:10px}
-  .form-grid{grid-template-columns:1fr}
-  .field.full{grid-column:auto}
-  .acervo-grid{grid-template-columns:1fr 1fr}
-  .csm-grid,.cad-grid,.ml-grid{grid-template-columns:1fr}
-  .nav-links{display:none}
-}
-
-/* MINI PLAYER */
-#mini-player{position:fixed;bottom:0;left:0;right:0;background:#111;border-top:1px solid var(--borda);z-index:200;display:none;flex-direction:column}
-#mini-player.ativo{display:flex}
-.mp-barra{height:3px;background:rgba(201,168,76,.15);cursor:pointer;position:relative}
-.mp-progresso{height:100%;background:var(--ouro);width:0%;transition:width .5s linear;pointer-events:none}
-.mp-corpo{display:flex;align-items:center;gap:10px;padding:8px 14px}
-.mp-thumb{width:36px;height:36px;border-radius:6px;background:rgba(201,168,76,.1);border:1px solid var(--borda);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.ent-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:14px 16px;cursor:pointer;transition:border-color .15s;margin-bottom:8px}
+.ent-card:hover{border-color:var(--ouro)}
+.ent-nome{font-size:15px;font-weight:600;color:var(--ouro-lt);margin-bottom:4px}
+.ent-nacao{font-size:11px;color:var(--cinza)}
+.ent-tabs{display:flex;gap:0;margin-bottom:16px}
+.ent-tab{flex:1;padding:8px;text-align:center;font-size:12px;background:var(--card);border:1px solid var(--borda);cursor:pointer;color:var(--cinza);font-family:var(--fb)}
+.ent-tab:first-child{border-radius:8px 0 0 8px}
+.ent-tab:last-child{border-radius:0 8px 8px 0}
+.ent-tab.active{background:rgba(201,168,76,.15);color:var(--ouro-lt);border-color:var(--ouro)}
+.item-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:12px 14px;margin-bottom:6px;cursor:pointer;transition:border-color .15s;display:flex;align-items:center;justify-content:space-between}
+.item-card:hover{border-color:var(--ouro)}
+.item-nome{font-size:13px;font-weight:500}
+.item-cat{font-size:10px;color:var(--cinza);margin-top:2px}
+#mini-player{position:fixed;bottom:0;left:0;right:0;background:#111;border-top:1px solid var(--borda);z-index:200;display:none}
+#mini-player.ativo{display:block}
+@media(max-width:767px){#mini-player{bottom:var(--nav-h)}}
+.mp-barra{height:3px;background:rgba(201,168,76,.15);cursor:pointer}
+.mp-prog{height:100%;background:var(--ouro);width:0%}
+.mp-corpo{display:flex;align-items:center;gap:10px;padding:10px 20px}
 .mp-info{flex:1;min-width:0}
 .mp-nome{font-size:12px;font-weight:600;color:var(--ouro-lt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mp-sub{font-size:10px;color:var(--cinza);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mp-controles{display:flex;align-items:center;gap:4px;flex-shrink:0}
-.mp-btn{background:none;border:none;color:var(--cinza);cursor:pointer;padding:6px;font-size:16px;line-height:1;border-radius:6px;transition:color .15s}
-.mp-btn:hover,.mp-btn:active{color:var(--ouro-lt)}
-.mp-btn.play{font-size:20px;color:var(--ouro-lt)}
-.mp-btn.fechar{font-size:13px}
-/* iframe YT oculto para controle via API */
-#yt-player-hidden{position:fixed;bottom:-9999px;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
-/* GRUPO de pontos */
-.pontos-grupo-titulo{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--ouro);font-weight:600;margin:20px 0 10px;display:flex;align-items:center;gap:8px}
-.pontos-grupo-titulo::after{content:'';flex:1;height:1px;background:var(--borda)}
-.pontos-grupo-titulo:first-child{margin-top:0}
-
+.mp-ent{font-size:10px;color:var(--cinza)}
+.mp-ctrls{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.mp-btn{background:none;border:none;color:var(--cinza);cursor:pointer;padding:7px;font-size:18px;line-height:1;border-radius:6px;transition:color .15s}
+.mp-btn:hover{color:var(--ouro-lt)}
+.mp-btn.main{font-size:22px;color:var(--ouro-lt)}
+.mp-tempo{font-size:10px;color:var(--cinza);flex-shrink:0;min-width:70px;text-align:center}
+#modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
+#modal-bg.aberto{display:flex}
+.modal{background:#1a1a1a;border:1px solid var(--borda);border-radius:var(--r);padding:28px 24px;width:100%;max-width:560px;max-height:85dvh;overflow-y:auto}
+.modal-nome{font-family:var(--fd);font-size:1.15rem;color:var(--ouro-lt);margin-bottom:16px}
+.modal-row{display:flex;justify-content:space-between;font-size:14px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.modal-rot{color:var(--cinza);font-size:13px}
+.modal-x{float:right;background:none;border:none;color:var(--cinza);font-size:1.2rem;cursor:pointer;margin-left:12px}
+.empty{text-align:center;padding:60px 20px;color:var(--cinza);font-style:italic;font-size:13px}
+.toast{position:fixed;bottom:calc(var(--nav-h) + 10px);left:50%;transform:translateX(-50%) translateY(20px);background:#111;border:1px solid var(--ouro);border-radius:99px;color:var(--ouro-lt);padding:8px 20px;font-size:12px;opacity:0;transition:all .3s;z-index:300;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
-<div class="topo">
-  <h1>&#10022; Ile Ase Vodun Ogum Ayres &#10022;</h1>
-  <p>Terreiro de Umbanda</p>
-</div>
-<div class="progress-bar"><div id="prog"></div></div>
-<nav>
-  <button class="tab active" onclick="irPara('home',this)">&#127968; In&iacute;cio</button>
+<div id="pwa-banner"><span>&#128241; Instalar na tela inicial?</span><div style="display:flex;gap:8px"><button class="btn-pwa nao" onclick="document.getElementById('pwa-banner').classList.remove('show')">Não</button><button class="btn-pwa sim" onclick="installPwa()">Instalar</button></div></div>
+<div class="topo"><h1>&#10022; Ile Ase Vodun Ogum Ayres &#10022;</h1><p>Terreiro de Umbanda</p></div>
+<nav class="desktop-nav">
+  <button class="tab active" onclick="irPara('home',this)">&#127968; Início</button>
   <button class="tab" onclick="irPara('acervo',this)">&#128230; Acervo</button>
-  <button class="tab" onclick="irPara('consumiveis',this)">&#128305; Consum&iacute;veis</button>
-  <button class="tab" onclick="irPara('calendario',this)">&#128197; Calend&aacute;rio</button>
-  <button class="tab" onclick="irPara('entidades',this)">&#10024; Orix&aacute;s &amp; Entidades</button>
-  <button class="tab" onclick="irPara('pontos',this)">&#127925; Pontos</button>
+  <button class="tab" onclick="irPara('consumiveis',this)">&#128305; Consumíveis</button>
+  <button class="tab" onclick="irPara('calendario',this)">&#128197; Calendário</button>
+  <button class="tab" onclick="irPara('entidades',this)">&#10024; Orixás &amp; Entidades</button>
+  <button class="tab" onclick="irPara('pontos',this)">&#9835; Pontos</button>
 </nav>
-<div class="nav-links">
-  <a href="mobile.html">&#128241; Vers&atilde;o celular</a>
-  <a href="admin.html">&#128100; Admin</a>
-  <a href="faq.html">&#10067; Ajuda</a>
-</div>
-
-<!-- HOME -->
+<div class="nav-links"><a href="admin.html">&#128100; Admin</a><a href="faq.html">&#10067; Ajuda</a><a href="player.html">&#9835; Player de Pontos</a></div>
 <div class="section active" id="sec-home">
   <div class="ornamento">&#10022; &#10022; &#10022;</div>
-  <div class="home-card" style="margin-bottom:24px;margin-top:8px;background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(100,50,200,.08));border-color:rgba(201,168,76,.3)"><div class="home-card-titulo">&#127775; Consultas Espirituais</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px;padding-top:2px"><div style="font-size:13px"><div style="color:var(--ouro-lt);font-weight:600;margin-bottom:6px">&#127775; Jogo de Búzios</div><div style="color:var(--cinza);line-height:1.7;font-size:13px">Leitura oracular africana com os búzios sagrados. Consulte os orixás e receba orientações para sua vida.</div></div><div style="font-size:13px"><div style="color:var(--ouro-lt);font-weight:600;margin-bottom:6px">&#127183; Tarot</div><div style="color:var(--cinza);line-height:1.7;font-size:13px">Leitura de tarot para orientação espiritual, esclarecimento de situações e apoio nas decisões da vida.</div></div></div><div style="margin-top:10px;font-size:11px;color:var(--cinza);text-align:center">Para agendamento: <a href="https://wa.me/5511989202958" target="_blank" style="color:var(--ouro);text-decoration:none">WhatsApp (11) 98920-2958</a></div></div>
+  <div class="home-card" style="margin-bottom:24px;background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(100,50,200,.08));border-color:rgba(201,168,76,.3)">
+    <div class="home-card-titulo">&#127775; Consultas Espirituais</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px">
+      <div style="font-size:13px"><div style="color:var(--ouro-lt);font-weight:600;margin-bottom:6px">&#127775; Jogo de Búzios</div><div style="color:var(--cinza);line-height:1.7">Leitura oracular africana com os búzios sagrados. Consulte os orixás e receba orientações para sua vida.</div></div>
+      <div style="font-size:13px"><div style="color:var(--ouro-lt);font-weight:600;margin-bottom:6px">&#127183; Tarot</div><div style="color:var(--cinza);line-height:1.7">Leitura de tarot para orientação espiritual, esclarecimento de situações e apoio nas decisões da vida.</div></div>
+    </div>
+    <div style="text-align:center;margin-top:14px;font-size:12px;color:var(--cinza)">Para agendamento: <a href="https://wa.me/5511989202958" style="color:var(--ouro);text-decoration:none;font-weight:600">WhatsApp (11) 98920-2958</a></div>
+  </div>
   <div class="niveis-grid">
-    <div class="nivel-card ok" onclick="irParaFiltro('ok')"><div class="num skeleton skel-num" id="cnt-ok"></div><div class="rot">OK</div></div>
-    <div class="nivel-card repor" onclick="irParaFiltro('repor')"><div class="num skeleton skel-num" id="cnt-repor"></div><div class="rot">Repor</div></div>
-    <div class="nivel-card alerta" onclick="irParaFiltro('alerta')"><div class="num skeleton skel-num" id="cnt-alerta"></div><div class="rot">Alerta</div></div>
-    <div class="nivel-card urgente" onclick="irParaFiltro('urgente')"><div class="num skeleton skel-num" id="cnt-urgente"></div><div class="rot">Urgente</div></div>
+    <div class="nivel-card ok" onclick="irPara('consumiveis')"><div class="num skeleton skel-num" id="cnt-ok"></div><div class="rot">OK</div></div>
+    <div class="nivel-card repor" onclick="irPara('consumiveis')"><div class="num skeleton skel-num" id="cnt-repor"></div><div class="rot">Repor</div></div>
+    <div class="nivel-card alerta" onclick="irPara('consumiveis')"><div class="num skeleton skel-num" id="cnt-alerta"></div><div class="rot">Alerta</div></div>
+    <div class="nivel-card urgente" onclick="irPara('consumiveis')"><div class="num skeleton skel-num" id="cnt-urgente"></div><div class="rot">Urgente</div></div>
   </div>
-  <div class="home-datas" id="home-datas"></div>
+  <div class="home-card"><div class="home-card-titulo">&#128197; Próximos eventos</div><div id="home-eventos-lista" style="font-size:13px;color:var(--cinza);font-style:italic">Carregando...</div></div>
 </div>
-
-<!-- ACERVO -->
 <div class="section" id="sec-acervo">
-  <div class="filter-bar">
-    <input type="search" id="a-busca" placeholder="Buscar item..." oninput="renderAcervo()"/>
-    <select id="a-cat" onchange="renderAcervo()">
-      <option value="">Todas as Categorias</option>
-      <option>Alimentos e Oferendas</option><option>Ervas e Plantas</option>
-      <option>Ferramentas e Objetos Rituais</option><option>Roupas e Indumentárias</option><option>Outro</option>
-    </select>
-    <select id="a-status" onchange="renderAcervo()">
-      <option value="">Todos os Status</option>
-      <option value="Danificado">Danificado</option>
-      <option value="Disponível">Disponível</option>
-      <option value="Em Uso">Em Uso</option>
-      <option value="Necessita Reposição">Necessita Reposição</option>
-    </select>
-  </div>
-  <div class="results-count" id="a-count"></div>
-  <div class="acervo-grid" id="acervo-lista"><div class="empty">Carregando...</div></div>
+  <div class="filter-bar"><input type="search" id="acervo-busca" placeholder="&#128269; Buscar acervo..." oninput="renderAcervo()"/><select id="acervo-cat" onchange="renderAcervo()"><option value="">Todas as Categorias</option></select></div>
+  <div class="lbl-count" id="acervo-count"></div><div id="acervo-lista"><div class="empty">Carregando...</div></div>
 </div>
-
-<!-- CONSUMIVEIS -->
 <div class="section" id="sec-consumiveis">
   <div class="filter-bar">
-    <input type="search" id="cf-busca" placeholder="Buscar consumível..." oninput="renderConsumiveis()"/>
-    <select id="cf-cat" onchange="renderConsumiveis()">
-      <option value="">Todas as Categorias</option>
-      <option>Alimentos</option><option>Bebidas</option><option>Ervas e Defumação</option>
-      <option>Flores e Naturais</option><option>Fumo</option><option>Velas</option>
-    </select>
-    <select id="cf-nivel" onchange="renderConsumiveis()">
-      <option value="">Todos os Níveis</option>
-      <option value="alerta">Alerta</option><option value="ok">OK</option>
-      <option value="repor">Repor</option><option value="urgente">Urgente</option>
-    </select>
+    <input type="search" id="csm-busca" placeholder="&#128269; Buscar consumível..." oninput="renderConsumiveis()"/>
+    <select id="csm-cat" onchange="renderConsumiveis()"><option value="">Todas as Categorias</option></select>
+    <select id="csm-nivel" onchange="renderConsumiveis()"><option value="">Todos os Níveis</option><option value="ok">OK</option><option value="repor">Repor</option><option value="alerta">Alerta</option><option value="urgente">Urgente</option></select>
   </div>
-  <div class="results-count" id="cf-count"></div>
-  <div class="csm-grid" id="csm-lista"><div class="empty">Carregando...</div></div>
+  <div class="lbl-count" id="csm-count"></div><div class="csm-grid" id="csm-lista"><div class="empty">Carregando...</div></div>
 </div>
-
-<!-- CALENDÁRIO -->
-<div class="section" id="sec-calendario">
-  <div class="filter-bar">
-    <input type="search" id="cal-busca" placeholder="Buscar evento..." oninput="renderCalendario()"/>
-    <select id="cal-tipo" onchange="renderCalendario()">
-      <option value="">Todos os Tipos</option>
-      <option>Consulta / Búzios</option><option>Consulta / Tarot</option>
-      <option>Festa</option><option>Gira</option><option>Obrigação</option>
-      <option>Reunião</option><option>Outro</option>
-    </select>
-  </div>
-  <div class="results-count" id="cal-count"></div>
-  <div class="cal-grid" id="cal-lista"><div class="empty">Carregando...</div></div>
-</div>
-
-<!-- ENTIDADES E ORIXÁS -->
+<div class="section" id="sec-calendario"><div id="cal-lista"><div class="empty">Carregando...</div></div></div>
 <div class="section" id="sec-entidades">
-  <div class="filter-bar">
-    <input type="search" id="ent-busca" placeholder="Buscar orixá ou entidade..." oninput="renderEntidades()"/>
-  </div>
-  <div class="results-count" id="ent-count"></div>
+  <div class="filter-bar"><input type="search" id="ent-busca" placeholder="&#128269; Buscar orixá ou entidade..." oninput="renderEntidades()"/></div>
+  <div class="ent-tabs"><button class="ent-tab active" data-nacao="" onclick="setNacao(this)">Todos</button><button class="ent-tab" data-nacao="Ketu" onclick="setNacao(this)">Ketu</button><button class="ent-tab" data-nacao="Umbanda" onclick="setNacao(this)">Umbanda</button></div>
   <div id="ent-lista"><div class="empty">Carregando...</div></div>
 </div>
-
-<!-- PONTOS -->
 <div class="section" id="sec-pontos">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-    <div style="font-size:11px;color:var(--cinza)">Clique num ponto para ver a letra e acessar os áudios</div>
-    <a href="player.html" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--ouro-lt);background:rgba(201,168,76,.12);border:1px solid var(--borda);border-radius:8px;padding:6px 14px;text-decoration:none;transition:background .15s">&#9835; Player completo</a>
+    <div style="font-size:11px;color:var(--cinza)">Clique num ponto para ver a letra</div>
+    <a href="player.html" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--ouro-lt);background:rgba(201,168,76,.12);border:1px solid var(--borda);border-radius:8px;padding:6px 14px;text-decoration:none">&#9835; Player completo</a>
   </div>
   <div class="filter-bar">
-    <input type="search" id="pt-busca" placeholder="Buscar ponto..." oninput="renderPontos()"/>
-    <select id="pt-rel" onchange="renderPontos()">
-      <option value="">Todas as religi&otilde;es</option>
-      <option value="Umbanda">Umbanda</option>
-      <option value="Candomblé / Ketu">Candomblé / Ketu</option>
-      <option value="Ambos">Ambos</option>
-    </select>
-    <select id="pt-ent" onchange="renderPontos()">
-      <option value="">Todas as entidades</option>
-    </select>
+    <input type="search" id="pt-busca" placeholder="&#128269; Buscar ponto..." oninput="renderPontos()"/>
+    <select id="pt-rel" onchange="renderPontos()"><option value="">Todas as tradições</option><option value="Umbanda">Umbanda</option><option value="Candomblé / Ketu">Candomblé / Ketu</option></select>
+    <select id="pt-ent" onchange="renderPontos()"><option value="">Todas as entidades</option></select>
   </div>
-  <div class="results-count" id="pt-count"></div>
-  <div id="pontos-lista"><div class="empty">Carregando...</div></div>
+  <div class="lbl-count" id="pt-count"></div><div id="pontos-lista"></div>
 </div>
-
-<!-- MODAL -->
-<div class="modal-bg" id="modal-bg" onclick="fecharModal(event)">
-  <div class="modal">
-    <div class="modal-titulo"><span id="modal-nome">--</span><span class="modal-x" onclick="fecharModal()">&#x2715;</span></div>
-    <div id="modal-corpo"></div>
+<nav class="bottom-nav">
+  <button class="nav-btn active" onclick="irPara('home',this)"><span class="ic">&#127968;</span>Início</button>
+  <button class="nav-btn" onclick="irPara('consumiveis',this)"><span class="ic">&#128305;</span>Consumíveis</button>
+  <button class="nav-btn" onclick="irPara('pontos',this)"><span class="ic">&#9835;</span>Pontos</button>
+  <button class="nav-btn" onclick="irPara('acervo',this)"><span class="ic">&#128230;</span>Acervo</button>
+  <button class="nav-btn" onclick="irPara('entidades',this)"><span class="ic">&#10024;</span>Orixás</button>
+</nav>
+<div id="modal-bg" onclick="if(event.target===this)fecharModal()"><div class="modal"><button class="modal-x" onclick="fecharModal()">&#10005;</button><div class="modal-nome" id="modal-nome"></div><div id="modal-corpo"></div></div></div>
+<div id="yt-hidden"></div>
+<div id="mini-player">
+  <div class="mp-barra" onclick="mpSeek(event)"><div class="mp-prog" id="mp-prog"></div></div>
+  <div class="mp-corpo">
+    <div class="mp-info"><div class="mp-nome" id="mp-nome">--</div><div class="mp-ent" id="mp-ent"></div></div>
+    <div class="mp-tempo" id="mp-tempo">0:00 / 0:00</div>
+    <div class="mp-ctrls">
+      <button class="mp-btn" onclick="MP.anterior()">&#9198;</button>
+      <button class="mp-btn main" id="mp-play" onclick="MP.pausePlay()">&#9654;</button>
+      <button class="mp-btn" onclick="MP.proximo()">&#9197;</button>
+      <button class="mp-btn" onclick="MP.fechar()" style="font-size:14px">&#10005;</button>
+    </div>
   </div>
 </div>
-<div id="toast"></div>
-
+<audio id="audio" preload="none"></audio>
+<div class="toast" id="toast"></div>
 <script>
 const GS='https://terreiro-proxy.falssp.workers.dev';
+var PONTOS_STATIC=[{"id": "PNT-7DD28B", "religiao": "Umbanda", "entidade": "Geral / Abertura", "nome": "Prece de Cáritas", "letra": "Deus Nosso Pai, vós que sois todo poder e bondade.\nDai força àquele que passa pela provação.\nDai luz àquele que procura a verdade.\nPondo no coração do homem a compaixão e caridade.\nQue Assim Seja!", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Geral%20%2F%20Abertura"}, {"id": "PNT-790F97", "religiao": "Umbanda", "entidade": "Geral / Abertura", "nome": "Pai Nosso Umbandista", "letra": "Pai nosso que estais nos céus, nos mares, nas matas e em todo o mundo habitado.\nSantificado seja o vosso nome, pelos teus filhos, pela natureza, pelas águas, pela luz e pelo ar que respiramos.\nQue Assim Seja!", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Geral%20%2F%20Abertura"}, {"id": "PNT-153CBB", "religiao": "Umbanda", "entidade": "Geral / Abertura", "nome": "Credo Umbandista", "letra": "Creio em Deus, Onipotente e Supremo, no Seu poder, na Sua luz e no Seu perdão.\nCreio nos Orixás amparando as nossas vidas.\nNa comunicação dos Guias, encaminhando-nos para a caridade e a prática do bem.\nCreio na Umbanda como missão e caminho para seguir a evolução.\nQue Assim Seja!", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Geral%20%2F%20Abertura"}, {"id": "PNT-E8E0C7", "religiao": "Umbanda", "entidade": "Geral / Abertura", "nome": "Hino da Umbanda", "letra": "Refletiu a luz Divina.\nEm todo seu esplendor.\nVem do Reino de Oxalá.\nAonde há paz e amor.\nLuz que refletiu na Terra.\nLuz que refletiu no mar.\nLuz que vem de Aruanda.\nPara tudo iluminar.\nA Umbanda é paz e amor.\nÉ um mundo cheio de luz.\nÉ a força que nos dá vida.\nE a grandeza nos conduz.\nAvante filhos de fé.\nComo a nossa lei não há.\nLevando ao mundo inteiro.\nA bandeira de Oxalá.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Geral%20%2F%20Abertura"}, {"id": "PNT-0FBF7B", "religiao": "Umbanda", "entidade": "Geral / Abertura", "nome": "Defumação", "letra": "Defuma com as ervas da Jurema,\nDefuma com arruda e guiné, BIS.\nAlecrim, benjoim e alfazema,\nVamos defumar filhos de fé.\nCorre e gira Pai Ogum,\nFilho quer se defumar, BIS.\nA Umbanda tem fundamento é preciso preparar,\nCom incenso e benjoim, alecrim e alfazema,\nDefumar filhos de fé, com as ervas da Jurema.\nNossa Senhora incensou a Jesus Cristo,\nJesus Cristo incensou os filhos seus,\nEu incenso, eu incenso essa casa, BIS.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Geral%20%2F%20Abertura"}, {"id": "PNT-6919D8", "religiao": "Umbanda", "entidade": "Geral / Abertura", "nome": "Abertura de Gira", "letra": "Abrimos a nossa gira, pedindo a proteção,\nAo nosso pai Oxalá, para cumprir nossa missão.\nEu abro a nossa gira com Deus e Nossa Senhora.\nEu abro a nossa gira samboreô, pemba de Angola.\nEsta aberta nossa gira com Deus e Nossa Senhora.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Geral%20%2F%20Abertura"}, {"id": "PNT-505B24", "religiao": "Umbanda", "entidade": "Geral / Abertura", "nome": "Encerramento de Gira", "letra": "Fechamos a nossa gira, pedindo a proteção,\nAo nosso Pai Oxalá, para cumprir nossa missão.\nEu fecho a nossa gira com Deus e Nossa Senhora.\nEu fecho a nossa gira samboreô, pemba de Angola.\nEsta fechada nossa gira com Deus e Nossa Senhora.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Geral%20%2F%20Abertura"}, {"id": "PNT-656E70", "religiao": "Umbanda", "entidade": "Exus e Pombagiras", "nome": "Saudação ao Exú Tranca Ruas", "letra": "O sino da igrejinha faz belém blém blom.\nDeu meia noite o galo já cantou,\nSeu Tranca Ruas que o dono da gira, BIS.\nOi corre gira que Ogum mandou.\nExú, Exú Tranca Ruas, BIS.\nMe abre o terreiro, oi me fecha a rua.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Exus%20e%20Pombagiras"}, {"id": "PNT-BDB237", "religiao": "Umbanda", "entidade": "Oxalá", "nome": "Meu pai Oxalá é o rei", "letra": "Meu pai Oxalá é o rei venha me valer.\nMeu pai Oxalá é o rei venha me valer.\nÓ Deus nos salve essa casa Santa,\nOnde Deus fez a sua morada,\nOnde mora o cálice bento, BIS.\nE a hóstia consagrada.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Oxal%C3%A1"}, {"id": "PNT-6BDE80", "religiao": "Umbanda", "entidade": "Ogum", "nome": "Ogum em seu cavalo", "letra": "Ogum em seu cavalo corre e sua espada reluz.\nOgum, Ogum Megê sua bandeira cobre os filhos de Jesus Ogum nhê.\nE quem está de ronda é São Jorge deixa São Jorge rondar.\nSão Jorge é guerreiro que manda na terra, que manda no mar.\nSaravá meu Pai, saravá meu Pai.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Ogum"}, {"id": "PNT-0C2D2A", "religiao": "Umbanda", "entidade": "Oxum", "nome": "Foi na beira do rio", "letra": "Foi na beira do rio, aonde Oxum chorou.\nChora iê iê ô, choram os filhos seus.\nAtraca, atraca que aí vem Nanã eh ah.\nÉ Nanã, é Oxum, é quem vem saravá eh ah.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Oxum"}, {"id": "PNT-61878F", "religiao": "Umbanda", "entidade": "Xangô", "nome": "Xangô — Ele vem de Aruanda", "letra": "Ele vem de Aruanda, ele vem trabalhar, BIS.\nEle vence demanda, ele é seu arirá.\nKaô, kaô, kaô, kaô a justiça chegou Xangô.\nKaô kabiesilê é de mussusú ai como ele vem.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Xang%C3%B4"}, {"id": "PNT-824BFD", "religiao": "Umbanda", "entidade": "Iansã", "nome": "Iansã tem um leque", "letra": "Iansã tem um leque que venta, pra abanar dia de calor.\nIansã mora na pedreira, eu quero ver meu pai Xangô.\nOiá é moça rica, ela é filha de Xangô.\nIansã chegou na Umbanda, em seu reino saravou.", "youtube": "", "audio": "", "obs": "", "drive": "https://drive.google.com/drive/folders/1uyY6aJJ5IXLep6bGB1ctbbFwxL4zWgVO"}, {"id": "PNT-6844BE", "religiao": "Umbanda", "entidade": "Oxóssi", "nome": "Oxóssi — Oí lá nas matas", "letra": "Oí lá nas matas, lá na Jurema. BIS.\nÉ uma lei severa, é uma lei sem pena.\nSenhor Oxóssi que é dono da Lua,\nSó veio ao mundo para clarear. BIS.\nOxóssi na mata é rei,\nQuem passa pelos caminhos sem deixar marca do pé.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Ox%C3%B3ssi"}, {"id": "PNT-3B1737", "religiao": "Umbanda", "entidade": "Iemanjá", "nome": "Eu sou filho de Iabá", "letra": "Eu sou filho de Iabá, Iabá é minha Mãe.\nOh Rainha do tesouro e odociabá no fundo do mar.\nComo é lindo o canto de Iemanjá,\nFaz até o pescador chorar,\nIê Iemanjá, rainha das ondas sereia do mar.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Iemanj%C3%A1"}, {"id": "PNT-ED7B4C", "religiao": "Umbanda", "entidade": "Obaluaê / Omolu", "nome": "Omolu é Orixá", "letra": "Seu Omulu ê, seu Omulu ê, Omulu é Orixá.\nSaravá seu Omulu, Omulu ê, BIS.\nMeu pai venha me ajudar, meu pai venha me valer, BIS.\nÉ um grande Orixá, Atotô Obaluaiê.\nVem dançando a muzenza, trás na mão seu xaxará.", "youtube": "", "audio": "", "obs": "", "drive": ""}, {"id": "PNT-76D3EF", "religiao": "Umbanda", "entidade": "Nanã", "nome": "Nanã Buruquê — Atraca", "letra": "Atraca, atraca que aí vem Nanã eh ah.\nÉ Nanã, é Oxum, é quem vem saravá eh ah.\nEu vi Nanã, eu vi Nanã,\nEu vi Nanã, eu vi Nanã auê,\nÉ Nanã Buruquê, é Nanã Buruquê.", "youtube": "", "audio": "", "obs": "", "drive": "https://drive.google.com/drive/folders/1b3W0xsfxliwyD-ZZU0hRO7Yi-xhACTBx"}, {"id": "PNT-9CF6C4", "religiao": "Umbanda", "entidade": "Crianças / Erês", "nome": "Cosme, Damião e Doum", "letra": "Fui no jardim colher as rosas, BIS.\nCosme e Damião, oi Doum, BIS.\nCrispim, Crispiniano são os filhos de Ogum.\nCosme e Damião, Damião cadê Doum,\nDoum tá passeando no cavalo de Ogum.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Crian%C3%A7as%20%2F%20Er%C3%AAs"}, {"id": "PNT-E2928C", "religiao": "Umbanda", "entidade": "Zé Pilintra", "nome": "Zé Pilintra — Dim dim dim", "letra": "Dim, dim, dim, dim, dim, dim, dim, dim, dim, dim, dim, risca ponto. BIS.\nPulando cruzado no meio do terreiro chegou, BIS.\nChegou Zé Pilintra que veio do lado de lá, BIS.\nFumando e bebendo e gritando vamos Saravá.\nSaravá oh oh Saravá, BIS.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Z%C3%A9%20Pilintra"}, {"id": "PNT-4BD3B6", "religiao": "Umbanda", "entidade": "Pretos-Velhos", "nome": "Pai Jacinto de Angola", "letra": "Quem vem de longe é Pai Jacinto de Angola. BIS.\nCom seus cabelos brancos e encaracolados,\nTem a brancura da pureza e da alegria,\nSão abençoados pelo filho de Maria.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Pretos-Velhos"}, {"id": "PNT-CD5CA5", "religiao": "Umbanda", "entidade": "Pretos-Velhos", "nome": "Adorei as almas", "letra": "Adorei as almas e as almas me atenderam.\nEram as santas almas, lá no cruzeiro.\nO lelê meu Deus do céu que alegria,\nO preto-Velho não carrega a soberbia. BIS.\nMinha cachimba tem mironga, minha cachimba tem dendê. BIS.\nQuem duvida da minha cachimba que venha vê. BIS.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Pretos-Velhos"}, {"id": "PNT-A22F45", "religiao": "Umbanda", "entidade": "Ciganos", "nome": "Ela é uma cigana faceira", "letra": "Ela é uma cigana faceira, ela é,\nEla é das 7 linhas,\nEla vem de muito longe os seus filhos ajudar,\nEla vem de muito longe Saravá este congá.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Ciganos"}, {"id": "PNT-BF203E", "religiao": "Umbanda", "entidade": "Caboclos", "nome": "Caboclos da Jurema", "letra": "Oxalá chamou e já mandou buscar, BIS.\nOs caboclos da Jurema, no seu Juremá.\nPai Oxalá é o rei do mundo inteiro,\nE já deu ordens pra Jurema, mandar seus capangueiros.\nSaravá seu 7 flechas que ele é o rei das matas.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Caboclos"}, {"id": "PNT-C1A14E", "religiao": "Umbanda", "entidade": "Boiadeiros", "nome": "Salve Boiadeiro", "letra": "Salve Boiadeiro, salve a boiada,\nSalve a Virgem Maria, salve esta morada.\nSalve a luz Divina, um rei lá na chapada,\nSalve a santa cruz, salve a Virgem Imaculada.\nSeu Boiadeiro no clarão da lua.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Boiadeiros"}, {"id": "PNT-AC9179", "religiao": "Umbanda", "entidade": "Baianos", "nome": "Olha eu Camarada", "letra": "Mais olha eu Camarada, camarada meu,\nEle quebra a mandinga, ele vence demanda,\nEle vem de Aruanda, vamos todos Saravá.\nNossa Senhora da Lapa, da Lapa de bom Jesus,\nBaiano quebra mandinga, nos pés da santa cruz.\nBaiano é povo bom tem mironga no congá, BIS.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Baianos"}, {"id": "PNT-CB7002", "religiao": "Umbanda", "entidade": "Marinheiros", "nome": "Eu não sou daqui marinheiro só", "letra": "Eu não sou daqui, marinheiro só,\nEu não tenho amor, marinheiro só, BIS.\nEu sou da Bahia, marinheiro só, de São Salvador,\nO marinheiro, marinheiro, marinheiro só,\nQuem te ensinou a nadar, marinheiro só, BIS.\nOu foi o tombo do navio, ou foi o balanço do mar.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Marinheiros"}, {"id": "PNT-26D510", "religiao": "Umbanda", "entidade": "Crianças / Erês", "nome": "No jardim do céu brincam as crianças", "letra": "No jardim do céu brincam as crianças, BIS.\nQuando elas vêm em terra traz amor e esperança.\nVenham crianças, venham brincar, BIS.\nA criança é uma flor que merece nosso amor.\nBahia é terra de dois irmãos,\nGovernador na Bahia e Cosme e São Damião.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Crian%C3%A7as%20%2F%20Er%C3%AAs"}, {"id": "PNT-285867", "religiao": "Umbanda", "entidade": "Exus e Pombagiras", "nome": "Mojibá — Saudação aos Exús", "letra": "É mojibá, seu Exú rei é mojibá. BIS.\nSeu Tranca Ruas na quimbanda é mojibá,\nSete Trunqueiras na magia é mojibá,\nA Pomba-Gira na defesa é mojibá,\nExú Veludo no inferno é mojibá,\nSeu Gira Mundo na virada é mojibá.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Exus%20e%20Pombagiras"}, {"id": "PNT-E5882A", "religiao": "Umbanda", "entidade": "Exus e Pombagiras", "nome": "Pomba-Gira — Ela gira no ar", "letra": "Ela gira no ar, ela gira na praça, ela gira na rua, BIS.\nEla canta, ela dança, ela vive sorrindo em noite de lua.\nEla é sincera, ela é de verdade, BIS.\nCuidado amigo que ela não gosta de falsidade.\nPomba-Gira tem sete maridos.\nPomba-Gira Maria Mulambo, Maria Padilha rainha das almas.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Exus%20e%20Pombagiras"}, {"id": "PNT-899C5F", "religiao": "Umbanda", "entidade": "Exus e Pombagiras", "nome": "Exú Mirim não bambeia", "letra": "A meia-noite na encruzilhada, dando a sua gargalhada, BIS.\nExú Mirim não bambeia.\nNão bambeia, não bambeia, BIS.\nExú Mirim é um exú que não bambeia.\nExú Mirim já vem, fazendo careta,\nSalve Exú Mirim, Saravá seu Capa Preta.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Exus%20e%20Pombagiras"}, {"id": "PNT-B3C837", "religiao": "Candomblé / Ketu", "entidade": "Exu", "nome": "Egbá Rà Bó, Elégbára Rewá", "letra": "Egba rà bó ago mojuba rà\nEgba Kose\nE mó dé ko e ko\nLè gbálè èsù loná\nElégbára Rewá\nÀwa se àwo\nIná iná e mojúbà e\nAgô mojúbà\nEsú Lò bi wa\nSo so Obé\nOdara kolobi ebó\nLaaròyé", "youtube": "https://www.youtube.com/watch?v=jAiVVy5IVnQ", "audio": "", "obs": "Saudação ao guardião dos caminhos. Ketu.", "drive": "https://drive.google.com/drive/folders/1J3qNeGVtuDckrs8MN6hRfAE9HKSDShtP"}, {"id": "PNT-46D231", "religiao": "Candomblé / Ketu", "entidade": "Exu", "nome": "Laaróyè Èsù, Egbá Rà Bó", "letra": "Laaróyè Èsù\nEgbá rà bó\nAgô mojúbà\nLaaróyè Èsù", "youtube": "https://www.youtube.com/watch?v=UCIXyochfN8", "audio": "", "obs": "Pedido de licença ao dono dos caminhos. Ketu.", "drive": "https://drive.google.com/drive/folders/1J3qNeGVtuDckrs8MN6hRfAE9HKSDShtP"}, {"id": "PNT-0CE65F", "religiao": "Candomblé / Ketu", "entidade": "Ogum", "nome": "Ogún Onire Alágbára", "letra": "Ogún Onire Alágbára\nOgún Onire\nOgún awo ò\nOgún Onire Alágbára", "youtube": "https://www.youtube.com/watch?v=47KrpqmDdrY", "audio": "", "obs": "Louvor ao guerreiro que abre os caminhos. Ketu.", "drive": "player.html?ent=Ogum"}, {"id": "PNT-B84BA9", "religiao": "Candomblé / Ketu", "entidade": "Oxóssi", "nome": "Arolè O Inaio Ke O Ajô", "letra": "Arolè o inaio ke o ajô\nArolè o inaio\nOdé inaió\nArolè o inaio ke o ajô", "youtube": "https://www.youtube.com/watch?v=lIitJWJJdn0", "audio": "", "obs": "Pedido de luz ao rei das matas. Toque aguerê. Ketu.", "drive": "player.html?ent=Ox%C3%B3ssi"}, {"id": "PNT-96E08B", "religiao": "Candomblé / Ketu", "entidade": "Oxóssi", "nome": "Farere Fibi Odé Fibô", "letra": "Farere fibi odé fibô\nFarere fibi\nOdé fibô\nFarere fibi odé fibô", "youtube": "https://www.youtube.com/watch?v=R_bSALywiZk", "audio": "", "obs": "Louvor ao caçador da mata. Toque aguerê. Ketu.", "drive": "player.html?ent=Ox%C3%B3ssi"}, {"id": "PNT-64A9A8", "religiao": "Candomblé / Ketu", "entidade": "Ossain", "nome": "Ewé Ó, Ossã, Ewé Ó", "letra": "Ewé ó, Ossã, ewé ó\nEwé ó, ewé\nOssã ewé ó\nEwé ó, Ossã, ewé ó", "youtube": "https://www.youtube.com/watch?v=QKP9OKFO9sA", "audio": "", "obs": "Saudação às folhas e à natureza. Ketu.", "drive": ""}, {"id": "PNT-02725C", "religiao": "Candomblé / Ketu", "entidade": "Ossain", "nome": "Abebe Ni Bo Wa, Peregun", "letra": "Abebe ni bo wa\nPeregun alaso titun\nAbebe ni bo wa\nOssain ewé ó", "youtube": "https://www.youtube.com/watch?v=MuRjEAFetNE", "audio": "", "obs": "Louvor às folhas sagradas. Ketu.", "drive": ""}, {"id": "PNT-9DFFA3", "religiao": "Candomblé / Ketu", "entidade": "Xangô", "nome": "Ikitê Re O Lokê Odô", "letra": "Ikitê re o lokê odô\nKabiyesi oba\nIkitê re o lokê odô\nKaô kabiesilê", "youtube": "https://www.youtube.com/watch?v=6K8cjDHOI7w", "audio": "", "obs": "Louvor ao rei de Kossô. Toque alujá. Ketu.", "drive": "player.html?ent=Xang%C3%B4"}, {"id": "PNT-203E32", "religiao": "Candomblé / Ketu", "entidade": "Xangô", "nome": "Oba Sá Rewa", "letra": "Oba sá rewa\nKabiyesi oba\nOba sá rewa\nKaô kabiesilê", "youtube": "https://www.youtube.com/watch?v=i0c13eljjjk", "audio": "", "obs": "Louvor ao rei belo e justiceiro. Toque alujá. Ketu.", "drive": "player.html?ent=Xang%C3%B4"}, {"id": "PNT-4F3C15", "religiao": "Candomblé / Ketu", "entidade": "Iansã", "nome": "Ajé Mito Ti Oyá", "letra": "Ajé mito ti Oyá\nOyá re wa o\nAjé mito ti Oyá\nEparrei Oyá", "youtube": "https://www.youtube.com/watch?v=PxpXMV8fKV4", "audio": "", "obs": "Louvor à senhora dos ventos. Ketu.", "drive": "https://drive.google.com/drive/folders/1uyY6aJJ5IXLep6bGB1ctbbFwxL4zWgVO"}, {"id": "PNT-282383", "religiao": "Candomblé / Ketu", "entidade": "Iansã", "nome": "Oyá Koro Un Le, O Guerê Gue", "letra": "Oyá koro un le\nO guerê gue\nOyá koro un le\nEparrei Oyá", "youtube": "https://www.youtube.com/watch?v=K1y8Ak_89D8", "audio": "", "obs": "Louvor à guerreira dos ventos. Ketu.", "drive": "https://drive.google.com/drive/folders/1uyY6aJJ5IXLep6bGB1ctbbFwxL4zWgVO"}, {"id": "PNT-FE96B0", "religiao": "Candomblé / Ketu", "entidade": "Oxum", "nome": "Adé Kojú Iyá, Meiwura", "letra": "Adé kojú iyá\nMeiwura\nAdé kojú iyá\nOra iê iê ô", "youtube": "https://www.youtube.com/watch?v=-yWCImyT_ic", "audio": "", "obs": "Louvor à Orixá da beleza, do ouro e do espelho. Ketu.", "drive": "player.html?ent=Oxum"}, {"id": "PNT-BEA5AF", "religiao": "Candomblé / Ketu", "entidade": "Oxum", "nome": "Yá Badé Lodô, Oxum Ma Yeyeô", "letra": "Yá badé lodô\nOxum ma yeyeô\nYá badé lodô\nOra iê iê ô", "youtube": "https://www.youtube.com/watch?v=bqjTQHmcvFs", "audio": "", "obs": "Saudação à Orixá das águas doces e do amor. Ketu.", "drive": "player.html?ent=Oxum"}, {"id": "PNT-23F4A2", "religiao": "Candomblé / Ketu", "entidade": "Nanã", "nome": "Ibi Nàná Iyô, Olú Obó", "letra": "Ibi nàná iyô\nOlú obó\nIbi nàná iyô\nSalúbà Nanã", "youtube": "https://www.youtube.com/watch?v=drQ_jzGm3c8", "audio": "", "obs": "Louvor à matriarca dos Orixás. Ketu.", "drive": "https://drive.google.com/drive/folders/1b3W0xsfxliwyD-ZZU0hRO7Yi-xhACTBx"}, {"id": "PNT-FB54C4", "religiao": "Candomblé / Ketu", "entidade": "Obaluaê / Omolu", "nome": "Ejì Bará Loko Panzuê", "letra": "Ejì bará loko panzuê\nAtotô Obaluaiê\nEjì bará loko panzuê\nAtotô babá", "youtube": "https://www.youtube.com/watch?v=OmjQ3pQubBI", "audio": "", "obs": "Louvor ao senhor da terra e da cura. Ketu.", "drive": ""}, {"id": "PNT-89FB06", "religiao": "Candomblé / Ketu", "entidade": "Oxumaré", "nome": "A Mara Ká Moborum", "letra": "A mara ká moborum\nOxumarê\nA mara ká moborum\nArrôbô Oxumarê", "youtube": "https://www.youtube.com/watch?v=kDXrK0uv4rk", "audio": "", "obs": "Louvor à serpente do arco-íris. Ketu.", "drive": ""}, {"id": "PNT-2BD0E8", "religiao": "Candomblé / Ketu", "entidade": "Oxumaré", "nome": "Oxumarê Lele Mare", "letra": "Oxumarê lele mare\nArrôbô\nOxumarê lele mare\nArrôbô Oxumarê", "youtube": "https://www.youtube.com/watch?v=QXT-zILeSy0", "audio": "", "obs": "Louvor ao Orixá do arco-íris e da serpente. Ketu.", "drive": ""}, {"id": "PNT-F4B59E", "religiao": "Candomblé / Ketu", "entidade": "Oxalá", "nome": "Oni Saurê, Aul Axé", "letra": "Oni saurê\nAul axé\nOni saurê\nÊpa Babá", "youtube": "https://www.youtube.com/watch?v=LF6RxpLIbxA", "audio": "", "obs": "Louvor ao pai de todos os Orixás. Toque ijexá. Ketu.", "drive": "player.html?ent=Oxal%C3%A1"}, {"id": "PNT-D1154E", "religiao": "Candomblé / Ketu", "entidade": "Oxalá", "nome": "Ofurufú é Aláyê, Ajalá", "letra": "Ofurufú é aláyê\nAjalá babá\nOfurufú é aláyê\nÊpa Babá", "youtube": "https://www.youtube.com/watch?v=ly2Kx-GFAw4", "audio": "", "obs": "Louvor ao senhor do firmamento. Toque ijexá. Ketu.", "drive": "player.html?ent=Oxal%C3%A1"}, {"id": "PNT-41C23D", "religiao": "Candomblé / Ketu", "entidade": "Ewá", "nome": "Ewá Ewá Majô", "letra": "Ewá ewá majô\nEwá ewá\nMajô ewá\nEwá ewá majô", "youtube": "https://www.youtube.com/watch?v=w_nTSrU4WMM", "audio": "", "obs": "Louvor à Orixá da beleza, do mistério e das fontes. Ketu.", "drive": ""}, {"id": "PNT-D75D8B", "religiao": "Candomblé / Ketu", "entidade": "Logun Edé", "nome": "Kerê Kerê Odé Ô", "letra": "Kerê kerê odé ô\nLogun edé\nKerê kerê odé ô\nOdé inaió", "youtube": "https://www.youtube.com/watch?v=udIGGNcrT6g", "audio": "", "obs": "Louvor ao príncipe caçador das águas. Ketu.", "drive": ""}];
+var ENTIDADES_STATIC=[{"entidade": "Exu", "nacao": "Todas", "dataFesta": "", "diaSemana": "Segunda", "cores": "Preto e vermelho", "oferendas": "Pimenta, dendê, farofa, cachaça", "bebidas": "Cachaça, vinho tinto", "itensAcervo": "Ogó, tridentes, sete chaves", "saudacao": "Laroyê Exu!", "observacoes": "Guardião dos caminhos, mensageiro entre os homens e os deuses"}, {"entidade": "Ogum", "nacao": "Ketu / Angola", "dataFesta": "23/04", "diaSemana": "Terça", "cores": "Verde e preto", "oferendas": "Feijão preto, carne, dendê", "bebidas": "Cerveja preta, vinho tinto", "itensAcervo": "Espada, ferramentas de ferro", "saudacao": "Ogum Yê!", "observacoes": "Orixá do ferro, da guerra e dos caminhos abertos"}, {"entidade": "Oxossi", "nacao": "Ketu", "dataFesta": "", "diaSemana": "Quinta", "cores": "Azul e verde", "oferendas": "Milho branco, inhame, mel", "bebidas": "Mel, água de coco", "itensAcervo": "Arco e flecha", "saudacao": "Okê Arô!", "observacoes": "Orixá da caça, da fartura e das matas"}, {"entidade": "Xangô", "nacao": "Ketu", "dataFesta": "04/12", "diaSemana": "Quarta", "cores": "Vermelho e branco", "oferendas": "Acarajé, vatapá, azeite", "bebidas": "Vinho tinto, cerveja", "itensAcervo": "Machado duplo (oxé)", "saudacao": "Kaô Kabiesilê!", "observacoes": "Orixá da justiça, do fogo e dos trovões"}, {"entidade": "Oxum", "nacao": "Ketu", "dataFesta": "08/12", "diaSemana": "Sábado", "cores": "Amarelo e dourado", "oferendas": "Mel, acarajé, milho amarelo", "bebidas": "Mel, champanhe, laranja", "itensAcervo": "Abebê, espelho, leque", "saudacao": "Ora Iê Iê Ô!", "observacoes": "Rainha da água doce, do amor e da fertilidade"}, {"entidade": "Iemanjá", "nacao": "Ketu", "dataFesta": "02/02", "diaSemana": "Sábado", "cores": "Azul e branco", "oferendas": "Melão, uva branca, arroz", "bebidas": "Champanhe, água, leite", "itensAcervo": "Abebê de prata", "saudacao": "Odoyá!", "observacoes": "Rainha do mar, mãe protetora e geradora de vida"}, {"entidade": "Oxalá", "nacao": "Ketu", "dataFesta": "", "diaSemana": "Sexta", "cores": "Branco", "oferendas": "Inhame, arroz, canjica branca", "bebidas": "Água, leite", "itensAcervo": "Opaxorô, pano da costa branco", "saudacao": "Êpa Babá!", "observacoes": "Orixá maior, criador, símbolo de paz e sabedoria"}, {"entidade": "Iansã (Oyá)", "nacao": "Ketu", "dataFesta": "04/12", "diaSemana": "Terça", "cores": "Vermelho e marrom", "oferendas": "Acarajé, abará", "bebidas": "Vinho tinto, cerveja", "itensAcervo": "Espada, eruexim", "saudacao": "Eparrêi Iansã!", "observacoes": "Orixá dos ventos, tempestades e mudanças repentinas"}, {"entidade": "Nanã", "nacao": "Ketu", "dataFesta": "26/07", "diaSemana": "Segunda", "cores": "Roxo e branco", "oferendas": "Inhame, milho, canjica", "bebidas": "Água, leite", "itensAcervo": "Ibiri (vassoura de palha)", "saudacao": "Salúbà Nanã!", "observacoes": "A mais velha das deusas das águas, ligada à lama e à ancestralidade"}, {"entidade": "Obaluaê / Omolu", "nacao": "Ketu", "dataFesta": "", "diaSemana": "Segunda", "cores": "Preto, branco e vermelho", "oferendas": "Pipoca, milho, coco", "bebidas": "Vinho tinto, dendê", "itensAcervo": "Xaxará", "saudacao": "Atotô Obaluaê!", "observacoes": "Orixá da cura, da saúde e das doenças"}, {"entidade": "Oxumarê", "nacao": "Ketu", "dataFesta": "", "diaSemana": "Quinta", "cores": "Verde e amarelo", "oferendas": "Milho, inhame, azeite", "bebidas": "Mel, cerveja", "itensAcervo": "Arco-íris, cobra", "saudacao": "Arrôbô Oxumarê!", "observacoes": "Orixá da renovação, representado pelo arco-íris e a serpente"}, {"entidade": "Ossãe", "nacao": "Ketu", "dataFesta": "", "diaSemana": "Quinta", "cores": "Verde e branco", "oferendas": "Folhas sagradas, ervas", "bebidas": "Água, mel", "itensAcervo": "Folhas, ervas medicinais", "saudacao": "Ewé Ó!", "observacoes": "Orixá das folhas sagradas, da medicina e das plantas"}, {"entidade": "Caboclos", "nacao": "Umbanda", "dataFesta": "", "diaSemana": "Terça", "cores": "Verde e amarelo", "oferendas": "Mel, frutas, charuto", "bebidas": "Cerveja, cachaça", "itensAcervo": "Arco e flecha, cocar", "saudacao": "Okê Caboclo!", "observacoes": "Espíritos de indígenas ligados às matas, à cura e à coragem"}, {"entidade": "Pretos-Velhos", "nacao": "Umbanda", "dataFesta": "13/05", "diaSemana": "Segunda", "cores": "Branco e preto", "oferendas": "Fumo, cachaça, mel", "bebidas": "Cachaça, mel", "itensAcervo": "Cachimbo, bengala", "saudacao": "Ave, meu filho!", "observacoes": "Espíritos de africanos escravizados, símbolos de paciência e sabedoria"}, {"entidade": "Exus e Pombagiras", "nacao": "Umbanda", "dataFesta": "", "diaSemana": "Segunda e sexta", "cores": "Vermelho e preto", "oferendas": "Rosa vermelha, pimenta, champanhe", "bebidas": "Champanhe, vinho tinto", "itensAcervo": "Rosas, tridentes, ogó", "saudacao": "Laroyê!", "observacoes": "Guardiões dos caminhos, trabalham na limpeza de energias densas"}, {"entidade": "Crianças / Erês", "nacao": "Umbanda", "dataFesta": "", "diaSemana": "Domingo", "cores": "Branco e azul claro", "oferendas": "Doces, refrigerante, bala", "bebidas": "Refrigerante, guaraná", "itensAcervo": "Brinquedos, balão", "saudacao": "Viva o Erê!", "observacoes": "Espíritos infantis que trazem alegria, pureza e renovação de energias"}, {"entidade": "Boiadeiros", "nacao": "Umbanda", "dataFesta": "", "diaSemana": "Sábado", "cores": "Vermelho e marrom", "oferendas": "Fumo de corda, cachaça, rapadura", "bebidas": "Cachaça, leite", "itensAcervo": "Laço, chapéu de couro", "saudacao": "Boa noite seu Boiadeiro!", "observacoes": "Espíritos do campo, focados em desmanchar demandas e fortes descargas"}, {"entidade": "Marinheiros", "nacao": "Umbanda", "dataFesta": "", "diaSemana": "Segunda", "cores": "Azul e branco", "oferendas": "Peixe, camarão, frutas do mar", "bebidas": "Cachaça, vinho", "itensAcervo": "Âncora, remo, redes", "saudacao": "Salve o Marinheiro!", "observacoes": "Espíritos do mar, conhecidos pelos passes de cura emocional"}, {"entidade": "Ciganos", "nacao": "Umbanda", "dataFesta": "", "diaSemana": "Sexta", "cores": "Vermelho, laranja e dourado", "oferendas": "Vinho, frutas, flores", "bebidas": "Vinho, champanhe", "itensAcervo": "Baralho, véu, pandeiro", "saudacao": "Salve os Ciganos!", "observacoes": "Entidades da alegria, da leitura de energias e da prosperidade"}];
+var acervo=[],consumiveis=[],calendario=[],entidades=[],pontos=[];
+var _nacaoAtiva='';
 
-const SUBCATS={
-  'Alimentos e Oferendas':['Alimentos rituais','Axé / Ebó','Bebida ritual','Comida de orixá','Flores','Incenso / Defumação','Vela / Bujão'],
-  'Ervas e Plantas':['Folha para Banho','Folha para Defumação','Raiz','Semente'],
-  'Ferramentas e Objetos Rituais':['Arco e Flecha','Atabaques / Instrumento','Espada / Ogó','Ferramenta de Orixá','Ibá / Sopera','Leque','Pemba / Efun','Xaxará'],
-  'Roupas e Indumentárias':['Calçado','Capa / Manto','Capacete / Coroa','Guia / Colar','Ojá / Torço','Pulseira / Oxê','Saia','Vestido']
-};
-const CAT_IC={Velas:'vela',Bebidas:'bebida',Fumo:'fumo','Ervas e Defumacao':'erva',Alimentos:'alim','Flores e Naturais':'flor'};
-
-let acervo=[],consumiveis=[],calendario=[],entidades=[],pontos=[];
-
-window.addEventListener('DOMContentLoaded',function(){
-  // Carregar cada seção independentemente — falha isolada não afeta as outras
-  [
-    ['home',carregarHome],
-    ['acervo',carregarAcervo],
-    ['consumiveis',carregarConsumiveis],
-    ['calendario',carregarCalendario],
-    ['entidades',carregarEntidades],
-    ['pontos',carregarPontos]
-  ].forEach(function(par){
-    var nome=par[0],fn=par[1];
-    try{
-      var p=fn();
-      if(p&&p.catch)p.catch(function(e){console.warn('Erro em '+nome+':',e);});
-    }catch(e){console.warn('Erro ao iniciar '+nome+':',e);}
-  });
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
-});
-
-function toast(msg,ok){var t=document.getElementById('toast');t.textContent=msg;t.className='show'+(ok===false?' erro':'');clearTimeout(t._t);t._t=setTimeout(function(){t.className='';},3200);}
-function prog(p){document.getElementById('prog').style.width=p+'%';}
-function fmtBRL(v){return'R$\u00a0'+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2});}
-function fmtData(s){if(!s||s==='--')return'--';try{if(String(s).includes('/'))return s;return new Date(s).toLocaleDateString('pt-BR');}catch(e){return s;}}
-function fillNum(id,val){var el=document.getElementById(id);if(!el)return;el.classList.remove('skeleton','skel-num');el.textContent=val;}
-
-function irPara(id,el){
-  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+function irPara(sec,btn){
   document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  var el=document.getElementById('sec-'+sec);
   if(el)el.classList.add('active');
-  var sec=document.getElementById('sec-'+id);
-  if(sec)sec.classList.add('active');
+  document.querySelectorAll('.tab,.nav-btn').forEach(function(b){b.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+  else{document.querySelectorAll('.tab,.nav-btn').forEach(function(b){if((b.getAttribute('onclick')||'').indexOf("'"+sec+"'")>=0)b.classList.add('active');});}
 }
-function irParaFiltro(nivel){
-  document.getElementById('cf-nivel').value=nivel;
-  renderConsumiveis();
-  irPara('consumiveis',document.querySelectorAll('.tab')[3]);
-}
-function abrirForm(id){
-  document.getElementById('cad-cards').style.display='none';
-  ['acervo','consumivel','ml'].forEach(function(f){
-    var el=document.getElementById('fw-'+f);
-    if(el)el.classList.toggle('ativo',f===id);
-  });
-}
-function fecharForm(){
-  document.getElementById('cad-cards').style.display='grid';
-  ['acervo','consumivel','ml'].forEach(function(f){
-    var el=document.getElementById('fw-'+f);
-    if(el)el.classList.remove('ativo');
-  });
-}
-function toggleOutro(selId,inputId){
-  var sel=document.getElementById(selId),inp=document.getElementById(inputId);
-  if(!sel||!inp)return;
-  inp.style.display=sel.value==='Outro'?'block':'none';
-  if(sel.value!=='Outro')inp.value='';
-}
-function getVal(selId,inputId){
-  var sel=document.getElementById(selId);
-  if(!sel)return'';
-  if(sel.value==='Outro'){var inp=document.getElementById(inputId);return inp?inp.value.trim():'Outro';}
-  return sel.value;
-}
-function previewFoto(url){
-  var w=document.getElementById('foto-preview');
-  if(!url){w.innerHTML='';return;}
-  w.innerHTML=url.startsWith('http')?'<img class="foto-thumb" src="'+url+'" onerror="this.style.display=\'none\'"/>':'';
-}
-function atualizarSubcat(){
-  var cat=document.getElementById('c-cat').value,sel=document.getElementById('c-subcat');
-  sel.innerHTML='<option value="">--</option>';
-  (SUBCATS[cat]||[]).forEach(function(s){var o=document.createElement('option');o.textContent=s;sel.appendChild(o);});
-}
-function fmtFesta(d){
-  if(!d)return'';
-  // Se já é dd/MM retorna direto
-  if(typeof d==='string'&&d.includes('/')&&d.length<=5)return d;
-  // Se é timestamp ISO ou Date
-  try{var dt=new Date(d);if(!isNaN(dt))return String(dt.getDate()).padStart(2,'0')+'/'+(String(dt.getMonth()+1).padStart(2,'0'));}catch(e){}
-  return d;
-}
-function nslug(n){
-  var nl=(n||'').toLowerCase();
-  if(nl.includes('urgente')||nl.includes('zero'))return'urgente';
-  if(nl.includes('alerta'))return'alerta';
-  if(nl.includes('repor'))return'repor';
-  return'ok';
-}
+function fillNum(id,v){var el=document.getElementById(id);if(!el)return;el.classList.remove('skeleton','skel-num');el.textContent=v;}
+function fecharModal(){document.getElementById('modal-bg').classList.remove('aberto');}
+function nslug(n){if(!n)return'';var s=n.toLowerCase();if(s.includes('ok'))return'ok';if(s.includes('repor'))return'repor';if(s.includes('alerta'))return'alerta';if(s.includes('urgente'))return'urgente';return'';}
 
-// HOME
 async function carregarHome(){
   try{
-    var r=await fetch(GS+'?acao=datas-mes'),j=await r.json();
-    if(!j.ok)return;
+    var r=await Promise.race([fetch(GS+'?acao=datas-mes'),new Promise(function(_,rej){setTimeout(function(){rej(new Error('t'));},30000);})]);
+    var j=await r.json();if(!j.ok)return;
     var html='';
-    if(j.eventos&&j.eventos.length){
-      html+='<div class="home-card"><div class="home-card-titulo">&#128197; Eventos do mês</div>';
-      j.eventos.forEach(function(e){html+='<div class="home-item"><span>'+e.titulo+'<span class="tipo-badge tipo-'+e.tipo+'">'+e.tipo+'</span></span><span class="data">'+e.data+'</span></div>';});
-      html+='</div>';
-    }
-    if(j.festas&&j.festas.length){
-      html+='<div class="home-card"><div class="home-card-titulo">&#129345; Festas de Orixás</div>';
-      j.festas.forEach(function(f){html+='<div class="home-item"><span>'+f.entidade+(f.saudacao?' -- '+f.saudacao:'')+'</span><span class="data">'+f.data+'</span></div>';});
-      html+='</div>';
-    }
-    if(!html)html='<div class="home-card"><div style="color:var(--cinza);font-size:12px;font-style:italic">Nenhum evento este mês.</div></div>';
-    document.getElementById('home-datas').innerHTML=html;
-  }catch(e){}
+    if(j.aniversariantes&&j.aniversariantes.length){html+='<div style="margin-bottom:10px"><strong style="color:var(--ouro);font-size:11px">&#127874; ANIVERSARIANTES</strong><br>';j.aniversariantes.forEach(function(a){html+='<div style="font-size:13px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)">'+a.nome+' &#8212; '+a.data+'</div>';});html+='</div>';}
+    if(j.festas&&j.festas.length){html+='<div><strong style="color:var(--ouro);font-size:11px">&#11088; FESTAS DO M&#202;S</strong><br>';j.festas.forEach(function(f){html+='<div style="font-size:13px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)">'+f.entidade+' &#8212; '+f.data+'</div>';});html+='</div>';}
+    document.getElementById('home-eventos-lista').innerHTML=html||'<span style="font-style:italic">Nenhum evento este m&#234;s.</span>';
+  }catch(e){document.getElementById('home-eventos-lista').innerHTML='<span style="font-style:italic">Nenhum evento este m&#234;s.</span>';}
 }
-
-// ACERVO
 async function carregarAcervo(){
   try{
-    prog(20);
-    var r=await fetch(GS+'?acao=acervo-listar'),j=await r.json();
-    prog(60);
-    if(j.ok){acervo=(j.itens||[]).sort(function(a,b){return(a.nome||'').localeCompare((b.nome||''),'pt-BR');});renderAcervo();}
-    prog(100);setTimeout(function(){prog(0);},500);
-  }catch(e){document.getElementById('acervo-lista').innerHTML='<div class="empty">Erro ao carregar acervo.</div>';}
+    var r=await Promise.race([fetch(GS+'?acao=acervo-listar'),new Promise(function(_,rej){setTimeout(function(){rej(new Error('t'));},30000);})]);
+    var j=await r.json();
+    if(j.ok){acervo=j.itens||[];var cats=[...new Set(acervo.map(function(i){return i.categoria||''}).filter(Boolean))].sort();var sel=document.getElementById('acervo-cat');cats.forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});renderAcervo();}
+  }catch(e){document.getElementById('acervo-lista').innerHTML='<div class="empty">N&#227;o foi poss&#237;vel carregar.</div>';}
 }
-function renderAcervo(){
-  var busca=(document.getElementById('a-busca').value||'').toLowerCase();
-  var cat=document.getElementById('a-cat').value;
-  var status=document.getElementById('a-status').value;
-  var f=acervo.filter(function(i){return(!busca||(i.nome||'').toLowerCase().includes(busca))&&(!cat||i.categoria===cat)&&(!status||i.status===status);});
-  document.getElementById('a-count').textContent=f.length+' item(s)';
-  if(!f.length){document.getElementById('acervo-lista').innerHTML='<div class="empty">Nenhum item encontrado.</div>';return;}
-  document.getElementById('acervo-lista').innerHTML=f.map(function(i){
-    return'<div class="item-card" onclick="abrirModalAcervo(\''+i.id+'\')">'+'<div class="item-nome">'+(i.nome||'--')+'</div>'+'<div class="item-cat">'+(i.categoria||'')+(i.subcategoria?' > '+i.subcategoria:'')+'</div>'+(i.status?'<span class="item-badge">'+i.status+'</span>':'')+'</div>';
-  }).join('');
-}
-function abrirModalAcervo(id){
-  var i=acervo.find(function(x){return x.id===id;});if(!i)return;
-  document.getElementById('modal-nome').textContent=i.nome||'--';
-  document.getElementById('modal-corpo').innerHTML=[
-    ['Categoria',(i.categoria||'')+(i.subcategoria?' > '+i.subcategoria:'')],
-    ['Orixá de Cabeça',i.orixa||'--'],['Entidade / Linha',i.entidade||'--'],
-    ['Status',i.status||'--'],['Localização',i.local||'--'],
-    ['Quantidade',i.quantidade||'--'],['Observações',i.observacoes||'--'],
-    ['Cadastrado em',fmtData(i.dataCadastro)]
-  ].map(function(p){return'<div class="modal-row"><span class="modal-rot">'+p[0]+'</span><span>'+p[1]+'</span></div>';}).join('')+(i.foto?'<img src="'+i.foto+'" style="width:100%;border-radius:8px;margin-top:10px" onerror="this.style.display=\'none\'"/>':'');
-  document.getElementById('modal-bg').classList.add('aberto');
-}
-function fecharModal(e){if(!e||e.target.id==='modal-bg')document.getElementById('modal-bg').classList.remove('aberto');}
-
-// CONSUMIVEIS
 async function carregarConsumiveis(){
   try{
-    var r=await Promise.race([
-        fetch(GS+'?acao=consumiveis-listar'),
-        new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'));},30000);})
-      ]),j=await r.json();
+    var r=await Promise.race([fetch(GS+'?acao=consumiveis-listar'),new Promise(function(_,rej){setTimeout(function(){rej(new Error('t'));},30000);})]);
+    var j=await r.json();
     if(j.ok){
-      var dl=document.getElementById('csm-list');
-      if(dl){dl.innerHTML='';(j.itens||[]).forEach(function(i){var o=document.createElement('option');o.value=i.nome;dl.appendChild(o);});}
-      consumiveis=(j.itens||[]).sort(function(a,b){return(a.nome||'').localeCompare((b.nome||''),'pt-BR');});
+      consumiveis=j.itens||[];
+      var ok=0,repor=0,alerta=0,urgente=0;
+      consumiveis.forEach(function(i){var sl=nslug(i.nivel||'');if(sl==='ok')ok++;else if(sl==='repor')repor++;else if(sl==='alerta')alerta++;else urgente++;});
+      fillNum('cnt-ok',ok);fillNum('cnt-repor',repor);fillNum('cnt-alerta',alerta);fillNum('cnt-urgente',urgente);
+      var cats=[...new Set(consumiveis.map(function(i){return i.categoria||''}).filter(Boolean))].sort();
+      var sel=document.getElementById('csm-cat');cats.forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
       renderConsumiveis();
-      var counts={ok:0,repor:0,alerta:0,urgente:0};
-      consumiveis.forEach(function(i){var s=nslug(i.nivel);if(counts[s]!==undefined)counts[s]++;});
-      fillNum('cnt-ok',counts.ok);fillNum('cnt-repor',counts.repor);
-      fillNum('cnt-alerta',counts.alerta);fillNum('cnt-urgente',counts.urgente);
     }
-  }catch(e){
-    console.error('carregarConsumiveis erro:',e);
-    document.getElementById('csm-lista').innerHTML='<div class="empty">Erro ao carregar consumíveis.</div>';
-    // Mostrar -- nos contadores em vez de skeleton
-    ['cnt-ok','cnt-repor','cnt-alerta','cnt-urgente'].forEach(function(id){fillNum(id,'--');});
-  }
+  }catch(e){['cnt-ok','cnt-repor','cnt-alerta','cnt-urgente'].forEach(function(id){fillNum(id,'--');});document.getElementById('csm-lista').innerHTML='<div class="empty">N&#227;o foi poss&#237;vel carregar.</div>';}
 }
-function renderConsumiveis(){
-  var busca=(document.getElementById('cf-busca').value||'').toLowerCase();
-  var cat=document.getElementById('cf-cat').value;
-  var nivel=document.getElementById('cf-nivel').value;
-  var f=consumiveis.filter(function(i){return(!busca||(i.nome||'').toLowerCase().includes(busca))&&(!cat||i.categoria===cat)&&(!nivel||nslug(i.nivel)===nivel);});
-  document.getElementById('cf-count').textContent=f.length+' item(s)';
-  if(!f.length){document.getElementById('csm-lista').innerHTML='<div class="empty">Nenhum item encontrado.</div>';return;}
-  document.getElementById('csm-lista').innerHTML=f.map(function(i){
-    var a=Number(i.atual)||0,m=Number(i.minimo)||0,pct=m>0?Math.min(100,Math.round(a/m*100)):100;
-    var sl=nslug(i.nivel),cor=sl==='ok'?'#7fd67f':sl==='repor'?'#e0c040':sl==='alerta'?'#f08080':'#ff6060';
-    return'<div class="csm-card" onclick="abrirModalCsm(\''+i.id+'\')">'+'<div class="csm-top"><div><div class="csm-nome">'+i.nome+'</div><div class="csm-cat">'+i.categoria+'</div></div><span class="nbadge '+sl+'">'+(i.nivel||'--')+'</span></div>'+'<div class="csm-bar-wrap"><div class="csm-bar" style="width:'+pct+'%;background:'+cor+'"></div></div>'+'<div class="csm-info"><span>'+a+' / '+m+' '+(i.unidade||'')+'</span><span>'+pct+'%</span></div></div>';
-  }).join('');
-}
-function abrirModalCsm(id){
-  var i=consumiveis.find(function(x){return x.id===id;});if(!i)return;
-  document.getElementById('modal-nome').textContent=i.nome||'--';
-  document.getElementById('modal-corpo').innerHTML=[
-    ['Categoria',i.categoria||'--'],['Nível',i.nivel||'--'],
-    ['Estoque',(i.atual||0)+' / '+(i.minimo||0)+' '+(i.unidade||'')],
-    ['Fornecedor',i.fornecedor||'--'],
-    ['Preço unit.',i.precoUnit?fmtBRL(i.precoUnit):'--'],
-    ['Qtd por Pacote',i.qtdPacote||'--'],
-    ['Atualizado em',fmtData(i.atualizado)]
-  ].map(function(p){return'<div class="modal-row"><span class="modal-rot">'+p[0]+'</span><span>'+p[1]+'</span></div>';}).join('')+(i.link?'<div style="margin-top:10px;text-align:center"><a href="'+i.link+'" target="_blank" style="color:var(--ouro);font-size:12px">Ver link de compra &#8594;</a></div>':'');
-  document.getElementById('modal-bg').classList.add('aberto');
-}
-
-// CALENDÁRIO
+setTimeout(function(){['cnt-ok','cnt-repor','cnt-alerta','cnt-urgente'].forEach(function(id){var el=document.getElementById(id);if(el&&el.classList.contains('skeleton'))fillNum(id,'--');});},30000);
 async function carregarCalendario(){
   try{
-    var r=await fetch(GS+'?acao=calendario-listar'),j=await r.json();
-    if(j.ok){calendario=(j.eventos||[]).sort(function(a,b){return(a.data||'').localeCompare(b.data||'');});renderCalendario();}
-  }catch(e){document.getElementById('cal-lista').innerHTML='<div class="empty">Erro ao carregar.</div>';}
+    var r=await Promise.race([fetch(GS+'?acao=calendario-listar'),new Promise(function(_,rej){setTimeout(function(){rej(new Error('t'));},30000);})]);
+    var j=await r.json();if(j.ok){calendario=j.itens||[];renderCalendario();}
+  }catch(e){document.getElementById('cal-lista').innerHTML='<div class="empty">N&#227;o foi poss&#237;vel carregar.</div>';}
+}
+function carregarEntidades(){
+  entidades=ENTIDADES_STATIC;renderEntidades();
+  try{fetch(GS+'?acao=entidades-listar').then(function(r){return r.json();}).then(function(j){if(j.ok&&j.itens&&j.itens.length){entidades=j.itens;renderEntidades();}}).catch(function(){});}catch(e){}
+}
+function carregarPontos(){
+  pontos=PONTOS_STATIC;
+  var sel=document.getElementById('pt-ent');
+  var ents=[...new Set(pontos.map(function(p){return p.entidade;}).filter(Boolean))].sort();
+  ents.forEach(function(e){var o=document.createElement('option');o.value=e;o.textContent=e;sel.appendChild(o);});
+  renderPontos();MP.setLista(pontos.filter(function(p){return !!p.youtube;}));
+  try{fetch(GS+'?acao=pontos-listar').then(function(r){return r.json();}).then(function(j){if(j.ok&&j.pontos&&j.pontos.length){pontos=j.pontos;renderPontos();MP.setLista(pontos.filter(function(p){return !!p.youtube;}));}}).catch(function(){});}catch(e){}
+}
+
+function renderAcervo(){
+  var busca=(document.getElementById('acervo-busca').value||'').toLowerCase();
+  var cat=document.getElementById('acervo-cat').value;
+  var f=acervo.filter(function(i){return(!busca||(i.nome||'').toLowerCase().includes(busca))&&(!cat||i.categoria===cat);});
+  document.getElementById('acervo-count').textContent=f.length+' item(s)';
+  document.getElementById('acervo-lista').innerHTML=f.length?f.map(function(i){
+    return '<div class="item-card" data-id="'+i.id+'" onclick="abrirModalAcervo(this.dataset.id)"><div><div class="item-nome">'+i.nome+'</div><div class="item-cat">'+(i.categoria||'')+(i.subcategoria?' \u00b7 '+i.subcategoria:'')+'</div></div><div style="font-size:11px;color:var(--cinza)">'+i.quantidade+'</div></div>';
+  }).join(''):'<div class="empty">Nenhum item encontrado.</div>';
+}
+function renderConsumiveis(){
+  var busca=(document.getElementById('csm-busca').value||'').toLowerCase();
+  var cat=document.getElementById('csm-cat').value;
+  var nivel=document.getElementById('csm-nivel').value;
+  var f=consumiveis.filter(function(i){return(!busca||(i.nome||'').toLowerCase().includes(busca))&&(!cat||i.categoria===cat)&&(!nivel||nslug(i.nivel||'')===nivel);});
+  document.getElementById('csm-count').textContent=f.length+' item(s)';
+  document.getElementById('csm-lista').innerHTML=f.length?f.map(function(i){
+    var sl=nslug(i.nivel||'');var pct=parseFloat(i.pct)||0;
+    var bc=sl==='ok'?'#4d4':'rgba(200,170,30,.8)';if(sl==='alerta')bc='#f88';if(sl==='urgente')bc='#f44';
+    var nlabel=(i.nivel||'').replace(/[\u2705\u26a0\ufe0f\ud83d\udea8\ud83d\udd34\ud83d\udea8]/g,'').replace('Urgente / Zero','Urgente').trim();
+    return '<div class="csm-card" data-id="'+i.id+'" onclick="abrirModalCsm(this.dataset.id)">'
+      +'<div class="csm-top"><div><div class="csm-nome">'+i.nome+'</div><div class="csm-cat">'+i.categoria+'</div></div><span class="nbadge nb-'+sl+'">'+nlabel+'</span></div>'
+      +'<div class="csm-bar-wrap"><div class="csm-bar" style="width:'+Math.min(pct,100)+'%;background:'+bc+'"></div></div>'
+      +'<div class="csm-info"><span>'+(i.atual||0)+' / '+(i.minimo||0)+' '+(i.unidade||'')+'</span><span>'+Math.round(pct)+'%</span></div>'
+      +'</div>';
+  }).join(''):'<div class="empty">Nenhum item encontrado.</div>';
 }
 function renderCalendario(){
-  var busca=(document.getElementById('cal-busca').value||'').toLowerCase();
-  var tipo=document.getElementById('cal-tipo').value;
-  var f=calendario.filter(function(e){return(!busca||(e.titulo||'').toLowerCase().includes(busca))&&(!tipo||e.tipo===tipo);});
-  document.getElementById('cal-count').textContent=f.length+' evento(s)';
-  if(!f.length){document.getElementById('cal-lista').innerHTML='<div class="empty">Nenhum evento encontrado.</div>';return;}
-  var TIPO_IC={Festa:'&#129345;',Gira:'&#127949;&#65039;',Obrigação:'&#9888;&#65039;',Reunião:'&#128101;','Consulta / Búzios':'&#127775;','Consulta / Tarot':'&#127183;',Outro:'&#128197;'};
-  document.getElementById('cal-lista').innerHTML=f.map(function(e){
-    var ic=TIPO_IC[e.tipo]||'&#128197;';
-    return'<div class="cal-card"><div class="cal-data">'+e.data+'<span class="tipo-badge tipo-'+e.tipo+'">'+e.tipo+'</span></div><div class="cal-titulo">'+ic+' '+(e.titulo||'--')+'</div>'+(e.descricao?'<div class="cal-desc">'+e.descricao+'</div>':'')+(e.responsavel?'<div style="font-size:10px;color:var(--cinza);margin-top:6px">&#128100; '+e.responsavel+'</div>':'')+'</div>';
+  if(!calendario.length){document.getElementById('cal-lista').innerHTML='<div class="empty">Nenhum evento cadastrado.</div>';return;}
+  document.getElementById('cal-lista').innerHTML=calendario.map(function(e){
+    return '<div style="background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:14px;margin-bottom:8px">'
+      +'<div style="font-size:13px;font-weight:600;color:var(--ouro-lt)">'+e.titulo+'</div>'
+      +'<div style="font-size:11px;color:var(--cinza);margin-top:4px">'+e.data+(e.tipo?' \u00b7 '+e.tipo:'')+'</div>'
+      +(e.descricao?'<div style="font-size:12px;color:#ccc;margin-top:6px">'+e.descricao+'</div>':'')
+      +'</div>';
   }).join('');
 }
-
-// ENTIDADES
-async function carregarEntidades(){
-  // Dados estáticos — carregamento instantâneo
-  var ENTIDADES_STATIC=[{"entidade": "Exu", "nacao": "Todas", "dataFesta": "", "diaSemana": "Segunda", "cores": "Preto e vermelho", "oferendas": "Pimenta, dendê, farofa, cachaça", "bebidas": "Cachaça, vinho tinto", "itensAcervo": "Ogó, tridentes, sete chaves", "saudacao": "Laroyê Exu!", "observacoes": "Guardião dos caminhos, mensageiro entre os homens e os deuses"}, {"entidade": "Ogum", "nacao": "Ketu / Angola", "dataFesta": "23/04", "diaSemana": "Terça", "cores": "Verde e preto", "oferendas": "Feijão preto, carne, dendê", "bebidas": "Cerveja preta, vinho tinto", "itensAcervo": "Espada, ferramentas de ferro", "saudacao": "Ogum Yê!", "observacoes": "Orixá do ferro, da guerra e dos caminhos abertos"}, {"entidade": "Oxossi", "nacao": "Ketu", "dataFesta": "", "diaSemana": "Quinta", "cores": "Azul e verde", "oferendas": "Milho branco, inhame, mel", "bebidas": "Mel, água de coco", "itensAcervo": "Arco e flecha", "saudacao": "Okê Arô!", "observacoes": "Orixá da caça, da fartura e das matas"}, {"entidade": "Xangô", "nacao": "Ketu", "dataFesta": "04/12", "diaSemana": "Quarta", "cores": "Vermelho e branco", "oferendas": "Acarajé, vatapá, azeite", "bebidas": "Vinho tinto, cerveja", "itensAcervo": "Machado duplo (oxé)", "saudacao": "Kaô Kabiesilê!", "observacoes": "Orixá da justiça, do fogo e dos trovões"}, {"entidade": "Oxum", "nacao": "Ketu", "dataFesta": "08/12", "diaSemana": "Sábado", "cores": "Amarelo e dourado", "oferendas": "Mel, acarajé, milho amarelo", "bebidas": "Mel, champanhe, laranja", "itensAcervo": "Abebê, espelho, leque", "saudacao": "Ora Iê Iê Ô!", "observacoes": "Rainha da água doce, do amor e da fertilidade"}, {"entidade": "Iemanjá", "nacao": "Ketu", "dataFesta": "02/02", "diaSemana": "Sábado", "cores": "Azul e branco", "oferendas": "Melão, uva branca, arroz", "bebidas": "Champanhe, água, leite", "itensAcervo": "Abebê de prata", "saudacao": "Odoyá!", "observacoes": "Rainha do mar, mãe protetora e geradora de vida"}, {"entidade": "Oxalá", "nacao": "Ketu", "dataFesta": "", "diaSemana": "Sexta", "cores": "Branco", "oferendas": "Inhame, arroz, canjica branca", "bebidas": "Água, leite", "itensAcervo": "Opaxorô, pano da costa branco", "saudacao": "Êpa Babá!", "observacoes": "Orixá maior, criador, símbolo de paz e sabedoria"}, {"entidade": "Iansã (Oyá)", "nacao": "Ketu", "dataFesta": "04/12", "diaSemana": "Terça", "cores": "Vermelho e marrom", "oferendas": "Acarajé, abará", "bebidas": "Vinho tinto, cerveja", "itensAcervo": "Espada, eruexim", "saudacao": "Eparrêi Iansã!", "observacoes": "Orixá dos ventos, tempestades e mudanças repentinas"}, {"entidade": "Nanã", "nacao": "Ketu", "dataFesta": "26/07", "diaSemana": "Segunda", "cores": "Roxo e branco", "oferendas": "Inhame, milho, canjica", "bebidas": "Água, leite", "itensAcervo": "Ibiri (vassoura de palha)", "saudacao": "Salúbà Nanã!", "observacoes": "A mais velha das deusas das águas, ligada à lama e à ancestralidade"}, {"entidade": "Obaluaê / Omolu", "nacao": "Ketu", "dataFesta": "", "diaSemana": "Segunda", "cores": "Preto, branco e vermelho", "oferendas": "Pipoca, milho, coco", "bebidas": "Vinho tinto, dendê", "itensAcervo": "Xaxará", "saudacao": "Atotô Obaluaê!", "observacoes": "Orixá da cura, da saúde e das doenças"}, {"entidade": "Oxumarê", "nacao": "Ketu", "dataFesta": "", "diaSemana": "Quinta", "cores": "Verde e amarelo", "oferendas": "Milho, inhame, azeite", "bebidas": "Mel, cerveja", "itensAcervo": "Arco-íris, cobra", "saudacao": "Arrôbô Oxumarê!", "observacoes": "Orixá da renovação, representado pelo arco-íris e a serpente"}, {"entidade": "Ossãe", "nacao": "Ketu", "dataFesta": "", "diaSemana": "Quinta", "cores": "Verde e branco", "oferendas": "Folhas sagradas, ervas", "bebidas": "Água, mel", "itensAcervo": "Folhas, ervas medicinais", "saudacao": "Ewé Ó!", "observacoes": "Orixá das folhas sagradas, da medicina e das plantas"}, {"entidade": "Caboclos", "nacao": "Umbanda", "dataFesta": "", "diaSemana": "Terça", "cores": "Verde e amarelo", "oferendas": "Mel, frutas, charuto", "bebidas": "Cerveja, cachaça", "itensAcervo": "Arco e flecha, cocar", "saudacao": "Okê Caboclo!", "observacoes": "Espíritos de indígenas ligados às matas, à cura e à coragem"}, {"entidade": "Pretos-Velhos", "nacao": "Umbanda", "dataFesta": "13/05", "diaSemana": "Segunda", "cores": "Branco e preto", "oferendas": "Fumo, cachaça, mel", "bebidas": "Cachaça, mel", "itensAcervo": "Cachimbo, bengala", "saudacao": "Ave, meu filho!", "observacoes": "Espíritos de africanos escravizados, símbolos de paciência e sabedoria"}, {"entidade": "Exus e Pombagiras", "nacao": "Umbanda", "dataFesta": "", "diaSemana": "Segunda e sexta", "cores": "Vermelho e preto", "oferendas": "Rosa vermelha, pimenta, champanhe", "bebidas": "Champanhe, vinho tinto", "itensAcervo": "Rosas, tridentes, ogó", "saudacao": "Laroyê!", "observacoes": "Guardiões dos caminhos, trabalham na limpeza de energias densas"}, {"entidade": "Crianças / Erês", "nacao": "Umbanda", "dataFesta": "", "diaSemana": "Domingo", "cores": "Branco e azul claro", "oferendas": "Doces, refrigerante, bala", "bebidas": "Refrigerante, guaraná", "itensAcervo": "Brinquedos, balão", "saudacao": "Viva o Erê!", "observacoes": "Espíritos infantis que trazem alegria, pureza e renovação de energias"}, {"entidade": "Boiadeiros", "nacao": "Umbanda", "dataFesta": "", "diaSemana": "Sábado", "cores": "Vermelho e marrom", "oferendas": "Fumo de corda, cachaça, rapadura", "bebidas": "Cachaça, leite", "itensAcervo": "Laço, chapéu de couro", "saudacao": "Boa noite seu Boiadeiro!", "observacoes": "Espíritos do campo, focados em desmanchar demandas e fortes descargas"}, {"entidade": "Marinheiros", "nacao": "Umbanda", "dataFesta": "", "diaSemana": "Segunda", "cores": "Azul e branco", "oferendas": "Peixe, camarão, frutas do mar", "bebidas": "Cachaça, vinho", "itensAcervo": "Âncora, remo, redes", "saudacao": "Salve o Marinheiro!", "observacoes": "Espíritos do mar, conhecidos pelos passes de cura emocional"}, {"entidade": "Ciganos", "nacao": "Umbanda", "dataFesta": "", "diaSemana": "Sexta", "cores": "Vermelho, laranja e dourado", "oferendas": "Vinho, frutas, flores", "bebidas": "Vinho, champanhe", "itensAcervo": "Baralho, véu, pandeiro", "saudacao": "Salve os Ciganos!", "observacoes": "Entidades da alegria, da leitura de energias e da prosperidade"}];
-  entidades=ENTIDADES_STATIC;
-  renderEntidades();
-  // Tentar atualizar do GAS em segundo plano (sem bloquear)
-  try{
-    fetch(GS+'?acao=entidades-listar')
-      .then(function(r){return r.json();})
-      .then(function(j){
-        if(j.ok&&j.itens&&j.itens.length){entidades=j.itens;renderEntidades();}
-      }).catch(function(){});
-  }catch(e){}
-}
-
+function setNacao(btn){document.querySelectorAll('.ent-tab').forEach(function(t){t.classList.remove('active');});btn.classList.add('active');_nacaoAtiva=btn.dataset.nacao;renderEntidades();}
 function renderEntidades(){
   var busca=(document.getElementById('ent-busca').value||'').toLowerCase();
-  var f=entidades.filter(function(i){return!busca||(i.entidade||'').toLowerCase().includes(busca)||(i.nacao||'').toLowerCase().includes(busca);});
-  document.getElementById('ent-count').textContent=f.length+' registro(s)';
-  if(!f.length){document.getElementById('ent-lista').innerHTML='<div class="empty">Nenhum resultado.</div>';return;}
-  // Separar orixás (Ketu/Angola/Jeje/etc) de entidades de Umbanda
-  var UMBANDA=['Umbanda'];
-  var ENT_NAMES=['Exu','Exu / Pombagira','Pombagira'];
-  var ent_list=f.filter(function(i){return UMBANDA.includes(i.nacao)||ENT_NAMES.includes(i.entidade);});
-  var orixa_list=f.filter(function(i){return !UMBANDA.includes(i.nacao)&&!ENT_NAMES.includes(i.entidade);});
-  function fmtFesta(d){
-    if(!d||d==='')return'';
-    // Se vier como ISO (ex: 2026-04-23T...) converte para dd/MM
-    if(String(d).includes('T')||String(d).includes('-')){
-      try{var dt=new Date(d);return String(dt.getDate()).padStart(2,'0')+'/'+(String(dt.getMonth()+1).padStart(2,'0'));}catch(e){return'';}
-    }
-    return String(d); // já está no formato dd/MM
-  }
-  function renderCard(i){
-    var festa=fmtFesta(i.dataFesta);
-    return'<div class="ent-card">'+'<div class="ent-nome">'+(i.entidade||'--')+'</div>'+'<div class="ent-nacao">'+(i.nacao||'')+(i.diaSemana?' · '+i.diaSemana:'')+(festa?'<span style="margin-left:6px;font-size:10px;color:var(--ouro)">Festa: '+festa+'</span>':'')+'</div>'+
-    (i.cores?'<div class="ent-row"><span class="ent-rot">Cores</span><span>'+i.cores+'</span></div>':'')+
-    (i.oferendas?'<div class="ent-row"><span class="ent-rot">Oferendas</span><span>'+i.oferendas+'</span></div>':'')+
-    (i.bebidas?'<div class="ent-row"><span class="ent-rot">Bebidas</span><span>'+i.bebidas+'</span></div>':'')+
-    (i.itensAcervo?'<div class="ent-row"><span class="ent-rot">Itens</span><span>'+i.itensAcervo+'</span></div>':'')+
-    (i.saudacao?'<div class="ent-saudacao">'+i.saudacao+'</div>':'')+'</div>';
-  }
-  var html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">';
-  html+='<div><div class="ent-grupo-titulo">&#10022; Orix&aacute;s</div>'+orixa_list.map(renderCard).join('')+'</div>';
-  html+='<div><div class="ent-grupo-titulo">&#10024; Entidades / Linhas</div>'+ent_list.map(renderCard).join('')+'</div>';
-  html+='</div>';
-  document.getElementById('ent-lista').innerHTML=html;
+  var f=entidades.filter(function(e){return(!busca||(e.entidade||'').toLowerCase().includes(busca)||(e.saudacao||'').toLowerCase().includes(busca))&&(!_nacaoAtiva||(e.nacao||'').includes(_nacaoAtiva));});
+  document.getElementById('ent-lista').innerHTML=f.length?f.map(function(e){
+    return '<div class="ent-card" data-ent="'+e.entidade.replace(/"/g,'&quot;')+'" onclick="abrirModalEnt(this.dataset.ent)">'
+      +'<div class="ent-nome">'+e.entidade+'</div>'
+      +'<div class="ent-nacao">'+(e.nacao||'')+(e.diaSemana?' \u00b7 '+e.diaSemana:'')+(e.saudacao?' \u00b7 <em style="color:var(--ouro-lt)">'+e.saudacao+'</em>':'')+'</div>'
+      +'</div>';
+  }).join(''):'<div class="empty">Nenhuma entidade encontrada.</div>';
 }
-
-// SALVAR ACERVO
-async function salvarAcervo(){
-  var nome=document.getElementById('c-nome').value.trim(),cat=document.getElementById('c-cat').value;
-  if(!nome||!cat){toast('Preencha nome e categoria.',false);return;}
-  var btn=document.getElementById('btnAcervo');btn.disabled=true;btn.textContent='Gravando...';
-  try{
-    var r=await fetch(GS,{method:'POST',body:JSON.stringify({acao:'acervo-inserir',nome:nome,categoria:cat,subcategoria:document.getElementById('c-subcat').value,orixa:getVal('c-orixa','c-orixa-outro'),entidade:getVal('c-entidade','c-entidade-outro'),status:document.getElementById('c-status').value,local:document.getElementById('c-local').value,quantidade:document.getElementById('c-qtd').value,foto:document.getElementById('c-foto').value,observacoes:document.getElementById('c-obs').value})});
-    var j=await r.json();
-    if(j.ok){toast('Item gravado! ID: '+j.id);limparAcervo();acervo=[];carregarAcervo();}
-    else toast(j.erro||'Erro.',false);
-  }catch(e){toast('Erro de conexão.',false);}
-  btn.disabled=false;btn.textContent='Gravar';
-}
-function limparAcervo(){
-  ['c-nome','c-local','c-foto','c-obs','c-orixa-outro','c-entidade-outro'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('c-qtd').value=1;
-  ['c-cat','c-orixa','c-entidade','c-status'].forEach(function(id){var el=document.getElementById(id);if(el)el.selectedIndex=0;});
-  document.getElementById('c-subcat').innerHTML='<option value="">--</option>';
-  document.getElementById('foto-preview').innerHTML='';
-  ['c-orixa-outro','c-entidade-outro'].forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none';});
-}
-
-// SALVAR CONSUMIVEL
-async function salvarConsumivel(){
-  var nome=document.getElementById('cu-nome').value.trim();
-  if(!nome){toast('Informe o nome do item.',false);return;}
-  var btn=document.getElementById('btnCsm');btn.disabled=true;btn.textContent='Atualizando...';
-  try{
-    var d={acao:'consumivel-editar',nome:nome};
-    var atual=document.getElementById('cu-atual').value;
-    var minimo=document.getElementById('cu-min').value;
-    if(atual!=='')d.atual=atual;
-    if(minimo!=='')d.minimo=minimo;
-    var forn=document.getElementById('cu-forn').value;if(forn)d.fornecedor=forn;
-    var preco=document.getElementById('cu-preco').value;if(preco&&Number(preco)>0)d.precoPacote=preco;
-    var qtdpac=document.getElementById('cu-qtdpac').value;if(qtdpac&&Number(qtdpac)>1)d.qtdPacote=qtdpac;
-    var link=document.getElementById('cu-link').value;if(link)d.link=link;
-    var r=await fetch(GS,{method:'POST',body:JSON.stringify(d)});
-    var j=await r.json();
-    if(j.ok){toast('Atualizado! Nível: '+j.nivel);limparConsumivel();consumiveis=[];carregarConsumiveis();}
-    else toast(j.erro||'Erro.',false);
-  }catch(e){toast('Erro de conexão.',false);}
-  btn.disabled=false;btn.textContent='Atualizar';
-}
-function limparConsumivel(){['cu-nome','cu-forn','cu-link','cu-atual','cu-min','cu-preco','cu-qtdpac'].forEach(function(id){document.getElementById(id).value='';});}
-
-// ML
-async function buscarML(){
-  var q=document.getElementById('ml-q').value.trim();if(!q){toast('Digite o que deseja buscar.',false);return;}
-  var el=document.getElementById('ml-resultado');el.innerHTML='<div class="empty">Buscando...</div>';
-  try{
-    var r=await fetch(GS+'?acao=ml-buscar&q='+encodeURIComponent(q)),j=await r.json();
-    if(!j.ok||!j.resultados||!j.resultados.length){el.innerHTML='<div class="empty">Nenhum resultado.</div>';return;}
-    el.innerHTML=j.resultados.map(function(x){return'<div class="ml-item"><img class="ml-thumb" src="'+x.thumbnail+'" onerror="this.style.display=\'none\'"/><div class="ml-info"><div class="ml-nome">'+x.titulo+'</div><div class="ml-preco">'+fmtBRL(x.preco)+'</div></div><button class="btn-ml" onclick="usarML(\''+encodeURIComponent(x.titulo)+'\','+x.preco+',\''+encodeURIComponent(x.link||'')+'\')">Usar</button></div>';}).join('');
-  }catch(e){el.innerHTML='<div class="empty">Erro na busca.</div>';}
-}
-function usarML(titulo,preco,link){
-  document.getElementById('cu-nome').value=decodeURIComponent(titulo);
-  document.getElementById('cu-preco').value=preco;
-  document.getElementById('cu-link').value=decodeURIComponent(link);
-  fecharForm();abrirForm('consumivel');
-  toast('Dados preenchidos!');
-}
-async function carregarPontos(){
-  // Tenta GAS primeiro; fallback instantâneo para dados estáticos
-  var PONTOS_STATIC=[{"id": "PNT-7DD28B", "religiao": "Umbanda", "entidade": "Geral / Abertura", "nome": "Prece de Cáritas", "letra": "Deus Nosso Pai, vós que sois todo poder e bondade.\nDai força àquele que passa pela provação.\nDai luz àquele que procura a verdade.\nPondo no coração do homem a compaixão e caridade.\nQue Assim Seja!", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Geral%20%2F%20Abertura"}, {"id": "PNT-790F97", "religiao": "Umbanda", "entidade": "Geral / Abertura", "nome": "Pai Nosso Umbandista", "letra": "Pai nosso que estais nos céus, nos mares, nas matas e em todo o mundo habitado.\nSantificado seja o vosso nome, pelos teus filhos, pela natureza, pelas águas, pela luz e pelo ar que respiramos.\nQue Assim Seja!", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Geral%20%2F%20Abertura"}, {"id": "PNT-153CBB", "religiao": "Umbanda", "entidade": "Geral / Abertura", "nome": "Credo Umbandista", "letra": "Creio em Deus, Onipotente e Supremo, no Seu poder, na Sua luz e no Seu perdão.\nCreio nos Orixás amparando as nossas vidas.\nNa comunicação dos Guias, encaminhando-nos para a caridade e a prática do bem.\nCreio na Umbanda como missão e caminho para seguir a evolução.\nQue Assim Seja!", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Geral%20%2F%20Abertura"}, {"id": "PNT-E8E0C7", "religiao": "Umbanda", "entidade": "Geral / Abertura", "nome": "Hino da Umbanda", "letra": "Refletiu a luz Divina.\nEm todo seu esplendor.\nVem do Reino de Oxalá.\nAonde há paz e amor.\nLuz que refletiu na Terra.\nLuz que refletiu no mar.\nLuz que vem de Aruanda.\nPara tudo iluminar.\nA Umbanda é paz e amor.\nÉ um mundo cheio de luz.\nÉ a força que nos dá vida.\nE a grandeza nos conduz.\nAvante filhos de fé.\nComo a nossa lei não há.\nLevando ao mundo inteiro.\nA bandeira de Oxalá.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Geral%20%2F%20Abertura"}, {"id": "PNT-0FBF7B", "religiao": "Umbanda", "entidade": "Geral / Abertura", "nome": "Defumação", "letra": "Defuma com as ervas da Jurema,\nDefuma com arruda e guiné, BIS.\nAlecrim, benjoim e alfazema,\nVamos defumar filhos de fé.\nCorre e gira Pai Ogum,\nFilho quer se defumar, BIS.\nA Umbanda tem fundamento é preciso preparar,\nCom incenso e benjoim, alecrim e alfazema,\nDefumar filhos de fé, com as ervas da Jurema.\nNossa Senhora incensou a Jesus Cristo,\nJesus Cristo incensou os filhos seus,\nEu incenso, eu incenso essa casa, BIS.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Geral%20%2F%20Abertura"}, {"id": "PNT-6919D8", "religiao": "Umbanda", "entidade": "Geral / Abertura", "nome": "Abertura de Gira", "letra": "Abrimos a nossa gira, pedindo a proteção,\nAo nosso pai Oxalá, para cumprir nossa missão.\nEu abro a nossa gira com Deus e Nossa Senhora.\nEu abro a nossa gira samboreô, pemba de Angola.\nEsta aberta nossa gira com Deus e Nossa Senhora.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Geral%20%2F%20Abertura"}, {"id": "PNT-505B24", "religiao": "Umbanda", "entidade": "Geral / Abertura", "nome": "Encerramento de Gira", "letra": "Fechamos a nossa gira, pedindo a proteção,\nAo nosso Pai Oxalá, para cumprir nossa missão.\nEu fecho a nossa gira com Deus e Nossa Senhora.\nEu fecho a nossa gira samboreô, pemba de Angola.\nEsta fechada nossa gira com Deus e Nossa Senhora.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Geral%20%2F%20Abertura"}, {"id": "PNT-656E70", "religiao": "Umbanda", "entidade": "Exus e Pombagiras", "nome": "Saudação ao Exú Tranca Ruas", "letra": "O sino da igrejinha faz belém blém blom.\nDeu meia noite o galo já cantou,\nSeu Tranca Ruas que o dono da gira, BIS.\nOi corre gira que Ogum mandou.\nExú, Exú Tranca Ruas, BIS.\nMe abre o terreiro, oi me fecha a rua.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Exus%20e%20Pombagiras"}, {"id": "PNT-BDB237", "religiao": "Umbanda", "entidade": "Oxalá", "nome": "Meu pai Oxalá é o rei", "letra": "Meu pai Oxalá é o rei venha me valer.\nMeu pai Oxalá é o rei venha me valer.\nÓ Deus nos salve essa casa Santa,\nOnde Deus fez a sua morada,\nOnde mora o cálice bento, BIS.\nE a hóstia consagrada.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Oxal%C3%A1"}, {"id": "PNT-6BDE80", "religiao": "Umbanda", "entidade": "Ogum", "nome": "Ogum em seu cavalo", "letra": "Ogum em seu cavalo corre e sua espada reluz.\nOgum, Ogum Megê sua bandeira cobre os filhos de Jesus Ogum nhê.\nE quem está de ronda é São Jorge deixa São Jorge rondar.\nSão Jorge é guerreiro que manda na terra, que manda no mar.\nSaravá meu Pai, saravá meu Pai.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Ogum"}, {"id": "PNT-0C2D2A", "religiao": "Umbanda", "entidade": "Oxum", "nome": "Foi na beira do rio", "letra": "Foi na beira do rio, aonde Oxum chorou.\nChora iê iê ô, choram os filhos seus.\nAtraca, atraca que aí vem Nanã eh ah.\nÉ Nanã, é Oxum, é quem vem saravá eh ah.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Oxum"}, {"id": "PNT-61878F", "religiao": "Umbanda", "entidade": "Xangô", "nome": "Xangô — Ele vem de Aruanda", "letra": "Ele vem de Aruanda, ele vem trabalhar, BIS.\nEle vence demanda, ele é seu arirá.\nKaô, kaô, kaô, kaô a justiça chegou Xangô.\nKaô kabiesilê é de mussusú ai como ele vem.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Xang%C3%B4"}, {"id": "PNT-824BFD", "religiao": "Umbanda", "entidade": "Iansã", "nome": "Iansã tem um leque", "letra": "Iansã tem um leque que venta, pra abanar dia de calor.\nIansã mora na pedreira, eu quero ver meu pai Xangô.\nOiá é moça rica, ela é filha de Xangô.\nIansã chegou na Umbanda, em seu reino saravou.", "youtube": "", "audio": "", "obs": "", "drive": "https://drive.google.com/drive/folders/1uyY6aJJ5IXLep6bGB1ctbbFwxL4zWgVO"}, {"id": "PNT-6844BE", "religiao": "Umbanda", "entidade": "Oxóssi", "nome": "Oxóssi — Oí lá nas matas", "letra": "Oí lá nas matas, lá na Jurema. BIS.\nÉ uma lei severa, é uma lei sem pena.\nSenhor Oxóssi que é dono da Lua,\nSó veio ao mundo para clarear. BIS.\nOxóssi na mata é rei,\nQuem passa pelos caminhos sem deixar marca do pé.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Ox%C3%B3ssi"}, {"id": "PNT-3B1737", "religiao": "Umbanda", "entidade": "Iemanjá", "nome": "Eu sou filho de Iabá", "letra": "Eu sou filho de Iabá, Iabá é minha Mãe.\nOh Rainha do tesouro e odociabá no fundo do mar.\nComo é lindo o canto de Iemanjá,\nFaz até o pescador chorar,\nIê Iemanjá, rainha das ondas sereia do mar.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Iemanj%C3%A1"}, {"id": "PNT-ED7B4C", "religiao": "Umbanda", "entidade": "Obaluaê / Omolu", "nome": "Omolu é Orixá", "letra": "Seu Omulu ê, seu Omulu ê, Omulu é Orixá.\nSaravá seu Omulu, Omulu ê, BIS.\nMeu pai venha me ajudar, meu pai venha me valer, BIS.\nÉ um grande Orixá, Atotô Obaluaiê.\nVem dançando a muzenza, trás na mão seu xaxará.", "youtube": "", "audio": "", "obs": "", "drive": ""}, {"id": "PNT-76D3EF", "religiao": "Umbanda", "entidade": "Nanã", "nome": "Nanã Buruquê — Atraca", "letra": "Atraca, atraca que aí vem Nanã eh ah.\nÉ Nanã, é Oxum, é quem vem saravá eh ah.\nEu vi Nanã, eu vi Nanã,\nEu vi Nanã, eu vi Nanã auê,\nÉ Nanã Buruquê, é Nanã Buruquê.", "youtube": "", "audio": "", "obs": "", "drive": "https://drive.google.com/drive/folders/1b3W0xsfxliwyD-ZZU0hRO7Yi-xhACTBx"}, {"id": "PNT-9CF6C4", "religiao": "Umbanda", "entidade": "Crianças / Erês", "nome": "Cosme, Damião e Doum", "letra": "Fui no jardim colher as rosas, BIS.\nCosme e Damião, oi Doum, BIS.\nCrispim, Crispiniano são os filhos de Ogum.\nCosme e Damião, Damião cadê Doum,\nDoum tá passeando no cavalo de Ogum.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Crian%C3%A7as%20%2F%20Er%C3%AAs"}, {"id": "PNT-E2928C", "religiao": "Umbanda", "entidade": "Zé Pilintra", "nome": "Zé Pilintra — Dim dim dim", "letra": "Dim, dim, dim, dim, dim, dim, dim, dim, dim, dim, dim, risca ponto. BIS.\nPulando cruzado no meio do terreiro chegou, BIS.\nChegou Zé Pilintra que veio do lado de lá, BIS.\nFumando e bebendo e gritando vamos Saravá.\nSaravá oh oh Saravá, BIS.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Z%C3%A9%20Pilintra"}, {"id": "PNT-4BD3B6", "religiao": "Umbanda", "entidade": "Pretos-Velhos", "nome": "Pai Jacinto de Angola", "letra": "Quem vem de longe é Pai Jacinto de Angola. BIS.\nCom seus cabelos brancos e encaracolados,\nTem a brancura da pureza e da alegria,\nSão abençoados pelo filho de Maria.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Pretos-Velhos"}, {"id": "PNT-CD5CA5", "religiao": "Umbanda", "entidade": "Pretos-Velhos", "nome": "Adorei as almas", "letra": "Adorei as almas e as almas me atenderam.\nEram as santas almas, lá no cruzeiro.\nO lelê meu Deus do céu que alegria,\nO preto-Velho não carrega a soberbia. BIS.\nMinha cachimba tem mironga, minha cachimba tem dendê. BIS.\nQuem duvida da minha cachimba que venha vê. BIS.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Pretos-Velhos"}, {"id": "PNT-A22F45", "religiao": "Umbanda", "entidade": "Ciganos", "nome": "Ela é uma cigana faceira", "letra": "Ela é uma cigana faceira, ela é,\nEla é das 7 linhas,\nEla vem de muito longe os seus filhos ajudar,\nEla vem de muito longe Saravá este congá.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Ciganos"}, {"id": "PNT-BF203E", "religiao": "Umbanda", "entidade": "Caboclos", "nome": "Caboclos da Jurema", "letra": "Oxalá chamou e já mandou buscar, BIS.\nOs caboclos da Jurema, no seu Juremá.\nPai Oxalá é o rei do mundo inteiro,\nE já deu ordens pra Jurema, mandar seus capangueiros.\nSaravá seu 7 flechas que ele é o rei das matas.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Caboclos"}, {"id": "PNT-C1A14E", "religiao": "Umbanda", "entidade": "Boiadeiros", "nome": "Salve Boiadeiro", "letra": "Salve Boiadeiro, salve a boiada,\nSalve a Virgem Maria, salve esta morada.\nSalve a luz Divina, um rei lá na chapada,\nSalve a santa cruz, salve a Virgem Imaculada.\nSeu Boiadeiro no clarão da lua.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Boiadeiros"}, {"id": "PNT-AC9179", "religiao": "Umbanda", "entidade": "Baianos", "nome": "Olha eu Camarada", "letra": "Mais olha eu Camarada, camarada meu,\nEle quebra a mandinga, ele vence demanda,\nEle vem de Aruanda, vamos todos Saravá.\nNossa Senhora da Lapa, da Lapa de bom Jesus,\nBaiano quebra mandinga, nos pés da santa cruz.\nBaiano é povo bom tem mironga no congá, BIS.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Baianos"}, {"id": "PNT-CB7002", "religiao": "Umbanda", "entidade": "Marinheiros", "nome": "Eu não sou daqui marinheiro só", "letra": "Eu não sou daqui, marinheiro só,\nEu não tenho amor, marinheiro só, BIS.\nEu sou da Bahia, marinheiro só, de São Salvador,\nO marinheiro, marinheiro, marinheiro só,\nQuem te ensinou a nadar, marinheiro só, BIS.\nOu foi o tombo do navio, ou foi o balanço do mar.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Marinheiros"}, {"id": "PNT-26D510", "religiao": "Umbanda", "entidade": "Crianças / Erês", "nome": "No jardim do céu brincam as crianças", "letra": "No jardim do céu brincam as crianças, BIS.\nQuando elas vêm em terra traz amor e esperança.\nVenham crianças, venham brincar, BIS.\nA criança é uma flor que merece nosso amor.\nBahia é terra de dois irmãos,\nGovernador na Bahia e Cosme e São Damião.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Crian%C3%A7as%20%2F%20Er%C3%AAs"}, {"id": "PNT-285867", "religiao": "Umbanda", "entidade": "Exus e Pombagiras", "nome": "Mojibá — Saudação aos Exús", "letra": "É mojibá, seu Exú rei é mojibá. BIS.\nSeu Tranca Ruas na quimbanda é mojibá,\nSete Trunqueiras na magia é mojibá,\nA Pomba-Gira na defesa é mojibá,\nExú Veludo no inferno é mojibá,\nSeu Gira Mundo na virada é mojibá.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Exus%20e%20Pombagiras"}, {"id": "PNT-E5882A", "religiao": "Umbanda", "entidade": "Exus e Pombagiras", "nome": "Pomba-Gira — Ela gira no ar", "letra": "Ela gira no ar, ela gira na praça, ela gira na rua, BIS.\nEla canta, ela dança, ela vive sorrindo em noite de lua.\nEla é sincera, ela é de verdade, BIS.\nCuidado amigo que ela não gosta de falsidade.\nPomba-Gira tem sete maridos.\nPomba-Gira Maria Mulambo, Maria Padilha rainha das almas.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Exus%20e%20Pombagiras"}, {"id": "PNT-899C5F", "religiao": "Umbanda", "entidade": "Exus e Pombagiras", "nome": "Exú Mirim não bambeia", "letra": "A meia-noite na encruzilhada, dando a sua gargalhada, BIS.\nExú Mirim não bambeia.\nNão bambeia, não bambeia, BIS.\nExú Mirim é um exú que não bambeia.\nExú Mirim já vem, fazendo careta,\nSalve Exú Mirim, Saravá seu Capa Preta.", "youtube": "", "audio": "", "obs": "", "drive": "player.html?ent=Exus%20e%20Pombagiras"}, {"id": "PNT-B3C837", "religiao": "Candomblé / Ketu", "entidade": "Exu", "nome": "Egbá Rà Bó, Elégbára Rewá", "letra": "Egba rà bó ago mojuba rà\nEgba Kose\nE mó dé ko e ko\nLè gbálè èsù loná\nElégbára Rewá\nÀwa se àwo\nIná iná e mojúbà e\nAgô mojúbà\nEsú Lò bi wa\nSo so Obé\nOdara kolobi ebó\nLaaròyé", "youtube": "https://www.youtube.com/watch?v=jAiVVy5IVnQ", "audio": "", "obs": "Saudação ao guardião dos caminhos. Ketu.", "drive": "https://drive.google.com/drive/folders/1J3qNeGVtuDckrs8MN6hRfAE9HKSDShtP"}, {"id": "PNT-46D231", "religiao": "Candomblé / Ketu", "entidade": "Exu", "nome": "Laaróyè Èsù, Egbá Rà Bó", "letra": "Laaróyè Èsù\nEgbá rà bó\nAgô mojúbà\nLaaróyè Èsù", "youtube": "https://www.youtube.com/watch?v=UCIXyochfN8", "audio": "", "obs": "Pedido de licença ao dono dos caminhos. Ketu.", "drive": "https://drive.google.com/drive/folders/1J3qNeGVtuDckrs8MN6hRfAE9HKSDShtP"}, {"id": "PNT-0CE65F", "religiao": "Candomblé / Ketu", "entidade": "Ogum", "nome": "Ogún Onire Alágbára", "letra": "Ogún Onire Alágbára\nOgún Onire\nOgún awo ò\nOgún Onire Alágbára", "youtube": "https://www.youtube.com/watch?v=47KrpqmDdrY", "audio": "", "obs": "Louvor ao guerreiro que abre os caminhos. Ketu.", "drive": "player.html?ent=Ogum"}, {"id": "PNT-B84BA9", "religiao": "Candomblé / Ketu", "entidade": "Oxóssi", "nome": "Arolè O Inaio Ke O Ajô", "letra": "Arolè o inaio ke o ajô\nArolè o inaio\nOdé inaió\nArolè o inaio ke o ajô", "youtube": "https://www.youtube.com/watch?v=lIitJWJJdn0", "audio": "", "obs": "Pedido de luz ao rei das matas. Toque aguerê. Ketu.", "drive": "player.html?ent=Ox%C3%B3ssi"}, {"id": "PNT-96E08B", "religiao": "Candomblé / Ketu", "entidade": "Oxóssi", "nome": "Farere Fibi Odé Fibô", "letra": "Farere fibi odé fibô\nFarere fibi\nOdé fibô\nFarere fibi odé fibô", "youtube": "https://www.youtube.com/watch?v=R_bSALywiZk", "audio": "", "obs": "Louvor ao caçador da mata. Toque aguerê. Ketu.", "drive": "player.html?ent=Ox%C3%B3ssi"}, {"id": "PNT-64A9A8", "religiao": "Candomblé / Ketu", "entidade": "Ossain", "nome": "Ewé Ó, Ossã, Ewé Ó", "letra": "Ewé ó, Ossã, ewé ó\nEwé ó, ewé\nOssã ewé ó\nEwé ó, Ossã, ewé ó", "youtube": "https://www.youtube.com/watch?v=QKP9OKFO9sA", "audio": "", "obs": "Saudação às folhas e à natureza. Ketu.", "drive": ""}, {"id": "PNT-02725C", "religiao": "Candomblé / Ketu", "entidade": "Ossain", "nome": "Abebe Ni Bo Wa, Peregun", "letra": "Abebe ni bo wa\nPeregun alaso titun\nAbebe ni bo wa\nOssain ewé ó", "youtube": "https://www.youtube.com/watch?v=MuRjEAFetNE", "audio": "", "obs": "Louvor às folhas sagradas. Ketu.", "drive": ""}, {"id": "PNT-9DFFA3", "religiao": "Candomblé / Ketu", "entidade": "Xangô", "nome": "Ikitê Re O Lokê Odô", "letra": "Ikitê re o lokê odô\nKabiyesi oba\nIkitê re o lokê odô\nKaô kabiesilê", "youtube": "https://www.youtube.com/watch?v=6K8cjDHOI7w", "audio": "", "obs": "Louvor ao rei de Kossô. Toque alujá. Ketu.", "drive": "player.html?ent=Xang%C3%B4"}, {"id": "PNT-203E32", "religiao": "Candomblé / Ketu", "entidade": "Xangô", "nome": "Oba Sá Rewa", "letra": "Oba sá rewa\nKabiyesi oba\nOba sá rewa\nKaô kabiesilê", "youtube": "https://www.youtube.com/watch?v=i0c13eljjjk", "audio": "", "obs": "Louvor ao rei belo e justiceiro. Toque alujá. Ketu.", "drive": "player.html?ent=Xang%C3%B4"}, {"id": "PNT-4F3C15", "religiao": "Candomblé / Ketu", "entidade": "Iansã", "nome": "Ajé Mito Ti Oyá", "letra": "Ajé mito ti Oyá\nOyá re wa o\nAjé mito ti Oyá\nEparrei Oyá", "youtube": "https://www.youtube.com/watch?v=PxpXMV8fKV4", "audio": "", "obs": "Louvor à senhora dos ventos. Ketu.", "drive": "https://drive.google.com/drive/folders/1uyY6aJJ5IXLep6bGB1ctbbFwxL4zWgVO"}, {"id": "PNT-282383", "religiao": "Candomblé / Ketu", "entidade": "Iansã", "nome": "Oyá Koro Un Le, O Guerê Gue", "letra": "Oyá koro un le\nO guerê gue\nOyá koro un le\nEparrei Oyá", "youtube": "https://www.youtube.com/watch?v=K1y8Ak_89D8", "audio": "", "obs": "Louvor à guerreira dos ventos. Ketu.", "drive": "https://drive.google.com/drive/folders/1uyY6aJJ5IXLep6bGB1ctbbFwxL4zWgVO"}, {"id": "PNT-FE96B0", "religiao": "Candomblé / Ketu", "entidade": "Oxum", "nome": "Adé Kojú Iyá, Meiwura", "letra": "Adé kojú iyá\nMeiwura\nAdé kojú iyá\nOra iê iê ô", "youtube": "https://www.youtube.com/watch?v=-yWCImyT_ic", "audio": "", "obs": "Louvor à Orixá da beleza, do ouro e do espelho. Ketu.", "drive": "player.html?ent=Oxum"}, {"id": "PNT-BEA5AF", "religiao": "Candomblé / Ketu", "entidade": "Oxum", "nome": "Yá Badé Lodô, Oxum Ma Yeyeô", "letra": "Yá badé lodô\nOxum ma yeyeô\nYá badé lodô\nOra iê iê ô", "youtube": "https://www.youtube.com/watch?v=bqjTQHmcvFs", "audio": "", "obs": "Saudação à Orixá das águas doces e do amor. Ketu.", "drive": "player.html?ent=Oxum"}, {"id": "PNT-23F4A2", "religiao": "Candomblé / Ketu", "entidade": "Nanã", "nome": "Ibi Nàná Iyô, Olú Obó", "letra": "Ibi nàná iyô\nOlú obó\nIbi nàná iyô\nSalúbà Nanã", "youtube": "https://www.youtube.com/watch?v=drQ_jzGm3c8", "audio": "", "obs": "Louvor à matriarca dos Orixás. Ketu.", "drive": "https://drive.google.com/drive/folders/1b3W0xsfxliwyD-ZZU0hRO7Yi-xhACTBx"}, {"id": "PNT-FB54C4", "religiao": "Candomblé / Ketu", "entidade": "Obaluaê / Omolu", "nome": "Ejì Bará Loko Panzuê", "letra": "Ejì bará loko panzuê\nAtotô Obaluaiê\nEjì bará loko panzuê\nAtotô babá", "youtube": "https://www.youtube.com/watch?v=OmjQ3pQubBI", "audio": "", "obs": "Louvor ao senhor da terra e da cura. Ketu.", "drive": ""}, {"id": "PNT-89FB06", "religiao": "Candomblé / Ketu", "entidade": "Oxumaré", "nome": "A Mara Ká Moborum", "letra": "A mara ká moborum\nOxumarê\nA mara ká moborum\nArrôbô Oxumarê", "youtube": "https://www.youtube.com/watch?v=kDXrK0uv4rk", "audio": "", "obs": "Louvor à serpente do arco-íris. Ketu.", "drive": ""}, {"id": "PNT-2BD0E8", "religiao": "Candomblé / Ketu", "entidade": "Oxumaré", "nome": "Oxumarê Lele Mare", "letra": "Oxumarê lele mare\nArrôbô\nOxumarê lele mare\nArrôbô Oxumarê", "youtube": "https://www.youtube.com/watch?v=QXT-zILeSy0", "audio": "", "obs": "Louvor ao Orixá do arco-íris e da serpente. Ketu.", "drive": ""}, {"id": "PNT-F4B59E", "religiao": "Candomblé / Ketu", "entidade": "Oxalá", "nome": "Oni Saurê, Aul Axé", "letra": "Oni saurê\nAul axé\nOni saurê\nÊpa Babá", "youtube": "https://www.youtube.com/watch?v=LF6RxpLIbxA", "audio": "", "obs": "Louvor ao pai de todos os Orixás. Toque ijexá. Ketu.", "drive": "player.html?ent=Oxal%C3%A1"}, {"id": "PNT-D1154E", "religiao": "Candomblé / Ketu", "entidade": "Oxalá", "nome": "Ofurufú é Aláyê, Ajalá", "letra": "Ofurufú é aláyê\nAjalá babá\nOfurufú é aláyê\nÊpa Babá", "youtube": "https://www.youtube.com/watch?v=ly2Kx-GFAw4", "audio": "", "obs": "Louvor ao senhor do firmamento. Toque ijexá. Ketu.", "drive": "player.html?ent=Oxal%C3%A1"}, {"id": "PNT-41C23D", "religiao": "Candomblé / Ketu", "entidade": "Ewá", "nome": "Ewá Ewá Majô", "letra": "Ewá ewá majô\nEwá ewá\nMajô ewá\nEwá ewá majô", "youtube": "https://www.youtube.com/watch?v=w_nTSrU4WMM", "audio": "", "obs": "Louvor à Orixá da beleza, do mistério e das fontes. Ketu.", "drive": ""}, {"id": "PNT-D75D8B", "religiao": "Candomblé / Ketu", "entidade": "Logun Edé", "nome": "Kerê Kerê Odé Ô", "letra": "Kerê kerê odé ô\nLogun edé\nKerê kerê odé ô\nOdé inaió", "youtube": "https://www.youtube.com/watch?v=udIGGNcrT6g", "audio": "", "obs": "Louvor ao príncipe caçador das águas. Ketu.", "drive": ""}];
-  var GS_URL=typeof GS!=='undefined'?GS:'';
-  try{
-    if(GS_URL){
-      var r=await Promise.race([
-        fetch(GS_URL+'?acao=pontos-listar'),
-        new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'));},5000);})
-      ]);
-      var j=await r.json();
-      if(j.ok&&j.pontos&&j.pontos.length){
-        pontos=j.pontos;
-      } else {
-        pontos=PONTOS_STATIC;
-      }
-    } else {
-      pontos=PONTOS_STATIC;
-    }
-  }catch(e){
-    pontos=PONTOS_STATIC;
-  }
-  var sel=document.getElementById('pt-ent');
-  if(sel){
-    var ents=[...new Set(pontos.map(function(p){return p.entidade;}).filter(Boolean))].sort();
-    ents.forEach(function(e){var o=document.createElement('option');o.value=e;o.textContent=e;sel.appendChild(o);});
-  }
-  renderPontos();
-}
-function MODAL_OPEN(){document.getElementById('modal-bg').classList.add('aberto');}
-function MODAL_CLOSE(){document.getElementById('modal-bg').classList.remove('aberto');}
-
-// ── MINI PLAYER ──────────────────────────────────────────
-var MP = {
-  lista: [],       // pontos com youtube, em ordem
-  idx: -1,         // índice atual
-  tocando: false,
-  ytReady: false,
-  player: null,
-  timer: null,
-
-  // Pega lista filtrada com YT na ordem atual da renderização
-  setLista: function(pontosFiltrados){
-    MP.lista = pontosFiltrados.filter(function(p){return !!p.youtube;});
-  },
-
-  idxDe: function(id){
-    for(var i=0;i<MP.lista.length;i++){if(MP.lista[i].id===id)return i;}
-    return -1;
-  },
-
-  tocar: function(id){
-    var i = MP.idxDe(id);
-    if(i<0) return;
-    MP.idx = i;
-    var p = MP.lista[i];
-    var ytm = p.youtube.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_\-]{11})/);
-    if(!ytm) return;
-    var vid = ytm[1];
-
-    // Mostrar mini player
-    var el = document.getElementById('mini-player');
-    el.classList.add('ativo');
-    document.getElementById('mp-nome').textContent = p.nome;
-    document.getElementById('mp-sub').textContent = p.entidade;
-    MP._atualizarBotoes();
-
-    // Criar/atualizar iframe oculto para controle via YT IFrame API
-    if(MP.player && MP.ytReady){
-      MP.player.loadVideoById(vid);
-      MP.tocando = true;
-    } else {
-      // Criar iframe
-      var wrap = document.getElementById('yt-player-hidden');
-      wrap.innerHTML = '<div id="yt-iframe"></div>';
-      if(window.YT && window.YT.Player){
-        MP._criarPlayer(vid);
-      } else {
-        // Carregar API
-        var tag = document.createElement('script');
-        tag.src = 'https://www.youtube.com/iframe_api';
-        document.head.appendChild(tag);
-        window._ytVidPendente = vid;
-      }
-    }
-    MP._iniciarTimer();
-  },
-
-  _criarPlayer: function(vid){
-    MP.player = new YT.Player('yt-iframe',{
-      videoId: vid,
-      playerVars:{autoplay:1,controls:0},
-      events:{
-        onReady: function(){ MP.ytReady=true; MP.tocando=true; MP._atualizarBotoes(); },
-        onStateChange: function(e){
-          if(e.data===YT.PlayerState.ENDED){ MP.proximo(); }
-          if(e.data===YT.PlayerState.PLAYING){ MP.tocando=true; MP._atualizarBotoes(); }
-          if(e.data===YT.PlayerState.PAUSED){ MP.tocando=false; MP._atualizarBotoes(); }
-        }
-      }
-    });
-  },
-
-  pausePlay: function(){
-    if(!MP.player||!MP.ytReady) return;
-    if(MP.tocando){ MP.player.pauseVideo(); }
-    else { MP.player.playVideo(); }
-  },
-
-  proximo: function(){
-    if(MP.lista.length===0) return;
-    MP.idx = (MP.idx+1) % MP.lista.length;
-    MP.tocar(MP.lista[MP.idx].id);
-  },
-
-  anterior: function(){
-    if(MP.lista.length===0) return;
-    MP.idx = (MP.idx-1+MP.lista.length) % MP.lista.length;
-    MP.tocar(MP.lista[MP.idx].id);
-  },
-
-  fechar: function(){
-    if(MP.player&&MP.ytReady) MP.player.stopVideo();
-    MP.tocando=false;
-    MP.idx=-1;
-    document.getElementById('mini-player').classList.remove('ativo');
-    clearInterval(MP.timer);
-    MP._atualizarProgresso(0);
-  },
-
-  _atualizarBotoes: function(){
-    var btn = document.getElementById('mp-play-btn');
-    if(btn) btn.textContent = MP.tocando ? '⏸' : '▶';
-  },
-
-  _iniciarTimer: function(){
-    clearInterval(MP.timer);
-    MP.timer = setInterval(function(){
-      if(!MP.player||!MP.ytReady) return;
-      try{
-        var dur = MP.player.getDuration();
-        var cur = MP.player.getCurrentTime();
-        if(dur>0) MP._atualizarProgresso(cur/dur*100);
-      }catch(e){}
-    },1000);
-  },
-
-  _atualizarProgresso: function(pct){
-    var el=document.getElementById('mp-progresso');
-    if(el) el.style.width=pct+'%';
-  }
-};
-
-// Callback da YT IFrame API
-function onYouTubeIframeAPIReady(){
-  if(window._ytVidPendente){
-    MP._criarPlayer(window._ytVidPendente);
-    window._ytVidPendente=null;
-  }
-}
-
-// ── RENDER PONTOS (agrupado + badge correto) ──────────────
 function renderPontos(){
   var busca=(document.getElementById('pt-busca').value||'').toLowerCase();
   var rel=document.getElementById('pt-rel').value;
   var ent=document.getElementById('pt-ent').value;
-  var f=pontos.filter(function(p){
-    return(!busca||(p.nome||'').toLowerCase().includes(busca)||(p.letra||'').toLowerCase().includes(busca)||(p.entidade||'').toLowerCase().includes(busca))
-      &&(!rel||p.religiao===rel)
-      &&(!ent||p.entidade===ent);
-  });
+  var f=pontos.filter(function(p){return(!busca||(p.nome||'').toLowerCase().includes(busca)||(p.letra||'').toLowerCase().includes(busca)||(p.entidade||'').toLowerCase().includes(busca))&&(!rel||p.religiao===rel)&&(!ent||p.entidade===ent);});
   document.getElementById('pt-count').textContent=f.length+' ponto(s)';
+  MP.setLista(f.filter(function(p){return !!p.youtube;}));
   if(!f.length){document.getElementById('pontos-lista').innerHTML='<div class="empty">Nenhum ponto encontrado.</div>';return;}
-
-  // Atualizar lista do player com a ordem atual
-  MP.setLista(f);
-
-  // Agrupar por religião > entidade
-  var grupos={};
-  var ordemGrupos=[];
-  f.forEach(function(p){
-    var chave=p.religiao+'|||'+p.entidade;
-    if(!grupos[chave]){grupos[chave]=[];ordemGrupos.push(chave);}
-    grupos[chave].push(p);
-  });
-
-  var html='';
-  ordemGrupos.forEach(function(chave){
-    var partes=chave.split('|||');
-    var rel2=partes[0], ent2=partes[1];
-    var badgeCls=rel2==='Umbanda'?'umb':'can';
-    var badgeTxt=rel2==='Umbanda'?'Umbanda':'Candombl\u00e9 / Ketu';
-    html+='<div class="pontos-grupo-titulo"><span class="ponto-badge '+badgeCls+'">'+badgeTxt+'</span>'+ent2+'</div>';
-    grupos[chave].forEach(function(p){
-      var icons='';
-      if(p.youtube)icons='<span style="color:var(--ouro);font-size:13px">&#9835;</span>';
-      html+='<div class="csm-card" data-pid="'+p.id+'" onclick="abrirModalPonto(this.dataset.pid)">'
-        +'<div class="csm-top">'
-        +'<div style="flex:1;min-width:0"><div class="csm-nome">'+p.nome+'</div></div>'
-        +'<div style="display:flex;align-items:center;gap:6px">'+icons+'</div>'
-        +'</div>'
-        +'</div>';
-    });
-  });
-  document.getElementById('pontos-lista').innerHTML=html;
+  var grupos={},ordem=[];
+  f.forEach(function(p){var k=p.religiao+'|||'+p.entidade;if(!grupos[k]){grupos[k]=[];ordem.push(k);}grupos[k].push(p);});
+  document.getElementById('pontos-lista').innerHTML=ordem.map(function(k){
+    var pts=grupos[k],parts=k.split('|||'),r2=parts[0],e2=parts[1];
+    var bc=r2==='Umbanda'?'umb':'can',bt=r2==='Umbanda'?'Umbanda':'Candombl\u00e9 / Ketu';
+    return '<div class="pontos-grupo-titulo"><span class="ponto-badge '+bc+'">'+bt+'</span>'+e2+'</div>'
+      +pts.map(function(p){return '<div class="csm-card" data-pid="'+p.id+'" onclick="abrirModalPonto(this.dataset.pid)"><div class="csm-top"><div class="csm-nome">'+p.nome+'</div>'+(p.youtube?'<span style="color:var(--ouro);font-size:13px">&#9835;</span>':'')+'</div></div>';}).join('');
+  }).join('');
 }
 
-// ── ABRIR MODAL PONTO ──────────────────────────────────────
+function abrirModalCsm(id){
+  var i=consumiveis.find(function(x){return x.id===id;});if(!i)return;
+  document.getElementById('modal-nome').textContent=i.nome||'--';
+  var c='<div class="modal-row"><span class="modal-rot">Categoria</span><span>'+(i.categoria||'--')+'</span></div>';
+  c+='<div class="modal-row"><span class="modal-rot">N\u00edvel</span><span>'+(i.nivel||'--')+'</span></div>';
+  c+='<div class="modal-row"><span class="modal-rot">Estoque</span><span>'+(i.atual||0)+' / '+(i.minimo||0)+' '+(i.unidade||'')+'</span></div>';
+  if(i.fornecedor)c+='<div class="modal-row"><span class="modal-rot">Fornecedor</span><span>'+i.fornecedor+'</span></div>';
+  if(i.precoUnit)c+='<div class="modal-row"><span class="modal-rot">Pre\u00e7o unit.</span><span>R$ '+i.precoUnit+'</span></div>';
+  if(i.atualizado)c+='<div class="modal-row"><span class="modal-rot">Atualizado em</span><span>'+i.atualizado+'</span></div>';
+  if(i.link)c+='<div style="margin-top:12px"><a href="'+i.link+'" target="_blank" style="font-size:12px;color:var(--ouro);text-decoration:none;border:1px solid var(--borda);border-radius:6px;padding:5px 12px;display:inline-block">&#128722; Link de compra</a></div>';
+  document.getElementById('modal-corpo').innerHTML=c;
+  document.getElementById('modal-bg').classList.add('aberto');
+}
+function abrirModalAcervo(id){
+  var i=acervo.find(function(x){return x.id===id;});if(!i)return;
+  document.getElementById('modal-nome').textContent=i.nome||'--';
+  var c='<div class="modal-row"><span class="modal-rot">Categoria</span><span>'+(i.categoria||'--')+'</span></div>';
+  if(i.subcategoria)c+='<div class="modal-row"><span class="modal-rot">Subcategoria</span><span>'+i.subcategoria+'</span></div>';
+  if(i.orixa)c+='<div class="modal-row"><span class="modal-rot">Orix\u00e1</span><span>'+i.orixa+'</span></div>';
+  if(i.entidade)c+='<div class="modal-row"><span class="modal-rot">Entidade / Linha</span><span>'+i.entidade+'</span></div>';
+  c+='<div class="modal-row"><span class="modal-rot">Status</span><span>'+(i.status||'--')+'</span></div>';
+  if(i.local)c+='<div class="modal-row"><span class="modal-rot">Localiza\u00e7\u00e3o</span><span>'+i.local+'</span></div>';
+  if(i.quantidade)c+='<div class="modal-row"><span class="modal-rot">Quantidade</span><span>'+i.quantidade+'</span></div>';
+  if(i.observacoes)c+='<div style="font-size:12px;color:var(--cinza);margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05)">'+i.observacoes+'</div>';
+  document.getElementById('modal-corpo').innerHTML=c;
+  document.getElementById('modal-bg').classList.add('aberto');
+}
+function abrirModalEnt(nome){
+  var e=entidades.find(function(x){return x.entidade===nome;});if(!e)return;
+  document.getElementById('modal-nome').textContent=e.entidade;
+  var c='';
+  if(e.nacao)c+='<div class="modal-row"><span class="modal-rot">Na\u00e7\u00e3o</span><span>'+e.nacao+'</span></div>';
+  if(e.dataFesta)c+='<div class="modal-row"><span class="modal-rot">Data da Festa</span><span>'+e.dataFesta+'</span></div>';
+  if(e.diaSemana)c+='<div class="modal-row"><span class="modal-rot">Dia da Semana</span><span>'+e.diaSemana+'</span></div>';
+  if(e.cores)c+='<div class="modal-row"><span class="modal-rot">Cores</span><span>'+e.cores+'</span></div>';
+  if(e.oferendas)c+='<div class="modal-row"><span class="modal-rot">Oferendas</span><span>'+e.oferendas+'</span></div>';
+  if(e.bebidas)c+='<div class="modal-row"><span class="modal-rot">Bebidas / Alimentos</span><span>'+e.bebidas+'</span></div>';
+  if(e.itensAcervo)c+='<div class="modal-row"><span class="modal-rot">Itens do Acervo</span><span>'+e.itensAcervo+'</span></div>';
+  if(e.saudacao)c+='<div class="modal-row"><span class="modal-rot">Sauda\u00e7\u00e3o</span><span style="color:var(--ouro-lt);font-weight:600">'+e.saudacao+'</span></div>';
+  if(e.observacoes)c+='<div style="font-size:12px;color:var(--cinza);margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05)">'+e.observacoes+'</div>';
+  document.getElementById('modal-corpo').innerHTML=c;
+  document.getElementById('modal-bg').classList.add('aberto');
+}
 function abrirModalPonto(id){
-  var p=pontos.find(function(x){return x.id===id;});
-  if(!p)return;
+  var p=pontos.find(function(x){return x.id===id;});if(!p)return;
   document.getElementById('modal-nome').textContent=p.nome||'--';
-  var corpo='';
-  corpo+='<div class="modal-row"><span class="modal-rot">Tradi\u00e7\u00e3o</span><span>'+p.religiao+'</span></div>';
-  corpo+='<div class="modal-row"><span class="modal-rot">Entidade / Orix\u00e1</span><span>'+p.entidade+'</span></div>';
-  if(p.letra){
-    var lf=p.letra.replace(/\n/g,'<br>').replace(/BIS/g,'<em style="color:var(--ouro);font-style:normal;font-size:10px;font-weight:600">BIS</em>');
-    corpo+='<div style="margin:12px 0 4px;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ouro)">Letra</div>';
-    corpo+='<div style="font-size:14px;line-height:1.9;color:#ddd;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:14px 16px;margin-bottom:12px">'+lf+'</div>';
-  }
-  if(p.youtube){
-    var isAtual=(MP.lista.length>0 && MP.idx>=0 && MP.lista[MP.idx] && MP.lista[MP.idx].id===id);
-    corpo+='<div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">';
-    corpo+='<button onclick="MP.tocar(\''+id+'\');fecharModalPonto()" style="background:rgba(201,168,76,.15);border:1px solid var(--borda);border-radius:6px;padding:6px 14px;color:var(--ouro-lt);font-size:12px;cursor:pointer;font-family:var(--fb)">&#9835; Tocar no player</button>';
-    corpo+='<a href="'+p.youtube+'" target="_blank" style="font-size:11px;color:var(--cinza);text-decoration:none;border:1px solid var(--borda);border-radius:6px;padding:6px 10px">&#9654; YouTube</a>';
-    corpo+='</div>';
-  }
-  if(p.obs)corpo+='<div style="font-size:11px;color:var(--cinza);margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05)">'+p.obs+'</div>';
-  if(p.drive){
-    corpo+='<div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07)">';
-    corpo+='<div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--cinza);margin-bottom:8px">Mais grava\u00e7\u00f5es desta entidade</div>';
-    corpo+='<a href="'+p.drive+'" target="_blank" style="font-size:12px;color:var(--cinza);text-decoration:none;border:1px solid var(--borda);border-radius:6px;padding:5px 12px;display:inline-block">\ud83d\udcc2 🎵 Ouvir pontos</a>';
-    corpo+='</div>';
-  }
-  document.getElementById('modal-corpo').innerHTML=corpo;
-  MODAL_OPEN();
+  var c='<div class="modal-row"><span class="modal-rot">Tradi\u00e7\u00e3o</span><span>'+p.religiao+'</span></div>';
+  c+='<div class="modal-row"><span class="modal-rot">Entidade / Orix\u00e1</span><span>'+p.entidade+'</span></div>';
+  if(p.letra){var lf=p.letra.replace(/\n/g,'<br>').replace(/BIS/g,'<em style="color:var(--ouro);font-style:normal;font-size:10px;font-weight:600">BIS</em>');c+='<div style="margin:12px 0 4px;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ouro)">Letra</div><div style="font-size:14px;line-height:1.9;color:#ddd;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:14px 16px;margin-bottom:12px">'+lf+'</div>';}
+  if(p.youtube){c+='<div style="display:flex;gap:8px;align-items:center;margin-bottom:4px"><button data-pid="'+id+'" onclick="MP.tocar(this.dataset.pid);fecharModal()" style="background:rgba(201,168,76,.15);border:1px solid var(--borda);border-radius:6px;padding:6px 14px;color:var(--ouro-lt);font-size:12px;cursor:pointer;font-family:var(--fb)">&#9835; Tocar no player</button><a href="'+p.youtube+'" target="_blank" style="font-size:11px;color:var(--cinza);text-decoration:none;border:1px solid var(--borda);border-radius:6px;padding:6px 10px">&#9654; YouTube</a></div>';}
+  if(p.obs)c+='<div style="font-size:11px;color:var(--cinza);margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05)">'+p.obs+'</div>';
+  c+='<div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07)"><a href="player.html?ent='+encodeURIComponent(p.entidade||'')+'" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--ouro-lt);background:rgba(201,168,76,.12);border:1px solid var(--borda);border-radius:8px;padding:8px 14px;text-decoration:none">&#9835; Pontos cantados desta entidade</a></div>';
+  document.getElementById('modal-corpo').innerHTML=c;
+  document.getElementById('modal-bg').classList.add('aberto');
 }
 
-function fecharModalPonto(){
-  MODAL_CLOSE();
-}
+var MP={
+  lista:[],idx:-1,tocando:false,ytReady:false,player:null,timer:null,
+  setLista:function(l){MP.lista=l;},
+  idxDe:function(id){for(var i=0;i<MP.lista.length;i++){if(MP.lista[i].id===id)return i;}return -1;},
+  tocar:function(id){
+    var i=MP.idxDe(id);
+    if(i<0){var p=pontos.find(function(x){return x.id===id;});if(!p||!p.youtube)return;MP.lista=[p];i=0;}
+    MP.idx=i;var p=MP.lista[i];
+    var ytm=p.youtube.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_\-]{11})/);if(!ytm)return;
+    document.getElementById('mp-nome').textContent=p.nome;
+    document.getElementById('mp-ent').textContent=p.entidade;
+    document.getElementById('mini-player').classList.add('ativo');
+    var wrap=document.getElementById('yt-hidden');wrap.innerHTML='<div id="yt-iframe"></div>';
+    if(window.YT&&window.YT.Player){MP._criar(ytm[1]);}
+    else{var t=document.createElement('script');t.src='https://www.youtube.com/iframe_api';document.head.appendChild(t);window._ytVid=ytm[1];}
+  },
+  _criar:function(vid){
+    MP.player=new YT.Player('yt-iframe',{videoId:vid,playerVars:{autoplay:1,controls:0},events:{
+      onReady:function(){MP.ytReady=true;MP.tocando=true;MP._ui();},
+      onStateChange:function(e){if(e.data===YT.PlayerState.ENDED)MP.proximo();if(e.data===YT.PlayerState.PLAYING){MP.tocando=true;MP._ui();}if(e.data===YT.PlayerState.PAUSED){MP.tocando=false;MP._ui();}}
+    }});
+  },
+  pausePlay:function(){if(!MP.player||!MP.ytReady)return;if(MP.tocando)MP.player.pauseVideo();else MP.player.playVideo();},
+  proximo:function(){if(MP.lista.length)MP.tocar(MP.lista[(MP.idx+1)%MP.lista.length].id);},
+  anterior:function(){if(MP.lista.length)MP.tocar(MP.lista[(MP.idx-1+MP.lista.length)%MP.lista.length].id);},
+  fechar:function(){if(MP.player&&MP.ytReady)MP.player.stopVideo();MP.tocando=false;MP.idx=-1;document.getElementById('mini-player').classList.remove('ativo');clearInterval(MP.timer);document.getElementById('mp-prog').style.width='0%';},
+  _ui:function(){
+    document.getElementById('mp-play').innerHTML=MP.tocando?'&#9646;&#9646;':'&#9654;';
+    clearInterval(MP.timer);
+    MP.timer=setInterval(function(){
+      if(!MP.player||!MP.ytReady)return;
+      try{var d=MP.player.getDuration(),c=MP.player.getCurrentTime();
+        if(d>0){document.getElementById('mp-prog').style.width=(c/d*100)+'%';
+          var fm=function(s){return Math.floor(s/60)+':'+(Math.floor(s%60)<10?'0':'')+Math.floor(s%60);};
+          document.getElementById('mp-tempo').textContent=fm(c)+' / '+fm(d);}
+      }catch(e){}
+    },500);
+  }
+};
+function onYouTubeIframeAPIReady(){if(window._ytVid){MP._criar(window._ytVid);window._ytVid=null;}}
+function mpSeek(e){if(!MP.player||!MP.ytReady)return;var b=document.getElementById('mp-prog').parentElement;MP.player.seekTo((e.clientX-b.getBoundingClientRect().left)/b.offsetWidth*MP.player.getDuration(),true);}
+
+var deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;document.getElementById('pwa-banner').classList.add('show');});
+function installPwa(){if(!deferredPrompt)return;deferredPrompt.prompt();deferredPrompt.userChoice.then(function(){deferredPrompt=null;document.getElementById('pwa-banner').classList.remove('show');});}
+
+window.addEventListener('DOMContentLoaded',function(){
+  [carregarHome,carregarAcervo,carregarConsumiveis,carregarCalendario,carregarEntidades,carregarPontos].forEach(function(fn){try{var p=fn();if(p&&p.catch)p.catch(function(){});}catch(e){}});
+  if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
+});
 
 </script>
-
-<div id="yt-player-hidden"></div>
-
-<div id="mini-player">
-  <div class="mp-barra" onclick="var b=this.getBoundingClientRect();var pct=(event.clientX-b.left)/b.width;if(MP.player&&MP.ytReady)MP.player.seekTo(MP.player.getDuration()*pct,true)">
-    <div class="mp-progresso" id="mp-progresso"></div>
-  </div>
-  <div class="mp-corpo">
-    <div class="mp-thumb">&#9835;</div>
-    <div class="mp-info">
-      <div class="mp-nome" id="mp-nome">--</div>
-      <div class="mp-sub" id="mp-sub"></div>
-    </div>
-    <div class="mp-controles">
-      <button class="mp-btn" onclick="MP.anterior()" title="Anterior">&#9664;&#9664;</button>
-      <button class="mp-btn play" id="mp-play-btn" onclick="MP.pausePlay()">&#9654;</button>
-      <button class="mp-btn" onclick="MP.proximo()" title="Próximo">&#9654;&#9654;</button>
-      <button class="mp-btn fechar" onclick="MP.fechar()" title="Fechar">&#10005;</button>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>
