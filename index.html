@@ -271,7 +271,7 @@ function carregarPontos(){
 function renderAcervo(){
   var busca=(document.getElementById('acervo-busca').value||'').toLowerCase();
   var cat=document.getElementById('acervo-cat').value;
-  var f=acervo.filter(function(i){return(!busca||(i.nome||'').toLowerCase().includes(busca))&&(!cat||i.categoria===cat);});
+  var f=acervo.filter(function(i){return(!busca||(i.nome||'').toLowerCase().includes(busca))&&(!cat||i.categoria===cat);});f.sort(function(a,b){return(a.nome||'').localeCompare(b.nome||'','pt');});
   document.getElementById('acervo-count').textContent=f.length+' item(s)';
   document.getElementById('acervo-lista').innerHTML=f.length?f.map(function(i){
     return '<div class="item-card" data-id="'+i.id+'" onclick="abrirModalAcervo(this.dataset.id)"><div><div class="item-nome">'+i.nome+'</div><div class="item-cat">'+(i.categoria||'')+(i.subcategoria?' \u00b7 '+i.subcategoria:'')+'</div></div><div style="font-size:11px;color:var(--cinza)">'+i.quantidade+'</div></div>';
@@ -281,7 +281,7 @@ function renderConsumiveis(){
   var busca=(document.getElementById('csm-busca').value||'').toLowerCase();
   var cat=document.getElementById('csm-cat').value;
   var nivel=document.getElementById('csm-nivel').value;
-  var f=consumiveis.filter(function(i){return(!busca||(i.nome||'').toLowerCase().includes(busca))&&(!cat||i.categoria===cat)&&(!nivel||nslug(i.nivel||'')===nivel);});
+  var f=consumiveis.filter(function(i){return(!busca||(i.nome||'').toLowerCase().includes(busca))&&(!cat||i.categoria===cat)&&(!nivel||nslug(i.nivel||'')===nivel);});f.sort(function(a,b){return(a.nome||'').localeCompare(b.nome||'','pt');});
   document.getElementById('csm-count').textContent=f.length+' item(s)';
   document.getElementById('csm-lista').innerHTML=f.length?f.map(function(i){
     var sl=nslug(i.nivel||'');var pct=parseFloat(i.pct)||0;
@@ -341,7 +341,7 @@ function abrirModalCsm(id){
   c+='<div class="modal-row"><span class="modal-rot">Estoque</span><span>'+(i.atual||0)+' / '+(i.minimo||0)+' '+(i.unidade||'')+'</span></div>';
   if(i.fornecedor)c+='<div class="modal-row"><span class="modal-rot">Fornecedor</span><span>'+i.fornecedor+'</span></div>';
   if(i.precoUnit)c+='<div class="modal-row"><span class="modal-rot">Pre\u00e7o unit.</span><span>R$ '+i.precoUnit+'</span></div>';
-  if(i.atualizado)c+='<div class="modal-row"><span class="modal-rot">Atualizado em</span><span>'+i.atualizado+'</span></div>';
+  if(i.atualizado){var _d=new Date(i.atualizado);var _ds=isNaN(_d)?i.atualizado:_d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});c+='<div class="modal-row"><span class="modal-rot">Atualizado em</span><span>'+_ds+'</span></div>';}
   if(i.link)c+='<div style="margin-top:12px"><a href="'+i.link+'" target="_blank" style="font-size:12px;color:var(--ouro);text-decoration:none;border:1px solid var(--borda);border-radius:6px;padding:5px 12px;display:inline-block">&#128722; Link de compra</a></div>';
   document.getElementById('modal-corpo').innerHTML=c;
   document.getElementById('modal-bg').classList.add('aberto');
