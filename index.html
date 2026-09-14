@@ -307,7 +307,7 @@ function renderCalendario(){
 function setNacao(btn){document.querySelectorAll('.ent-tab').forEach(function(t){t.classList.remove('active');});btn.classList.add('active');_nacaoAtiva=btn.dataset.nacao;renderEntidades();}
 function renderEntidades(){
   var busca=(document.getElementById('ent-busca').value||'').toLowerCase();
-  var f=entidades.filter(function(e){return(!busca||(e.entidade||'').toLowerCase().includes(busca)||(e.saudacao||'').toLowerCase().includes(busca))&&(!_nacaoAtiva||(e.nacao||'').includes(_nacaoAtiva));});
+  var f=entidades.filter(function(e){return(!busca||(e.entidade||'').toLowerCase().includes(busca)||(e.saudacao||'').toLowerCase().includes(busca))&&(!_nacaoAtiva||(e.nacao||'').includes(_nacaoAtiva));});f.sort(function(a,b){return(a.entidade||'').localeCompare(b.entidade||'','pt');});
   document.getElementById('ent-lista').innerHTML=f.length?f.map(function(e){
     return '<div class="ent-card" data-ent="'+e.entidade.replace(/"/g,'&quot;')+'" onclick="abrirModalEnt(this.dataset.ent)">'
       +'<div class="ent-nome">'+e.entidade+'</div>'
