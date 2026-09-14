@@ -457,11 +457,16 @@ window.addEventListener('DOMContentLoaded',function(){
 }
 function _buildEntTabs(){
   var nacoes=[...new Set(entidades.map(function(e){return e.nacao||'';}).filter(Boolean))];
-  // Extrair nações individuais (pode ter "Ketu / Angola")
   var todas=new Set();nacoes.forEach(function(n){n.split('/').forEach(function(p){todas.add(p.trim());});});
   var sorted=[...todas].sort();
   var wrap=document.querySelector('.ent-tabs');if(!wrap)return;
-  var ativo=_nacaoAtiva;
-  wrap.innerHTML='<button class="ent-tab'+(ativo===''?' active':'')+'" data-nacao="" onclick="setNacao(this)">Todos</button>'
-    +sorted.map(function(n){return '<button class="ent-tab'+(ativo===n?' active':'')+'" data-nacao="'+n+'" onclick="setNacao(this)">'+n+'</button>';}).join('');
+  wrap.innerHTML='';
+  [''].concat(sorted).forEach(function(n){
+    var btn=document.createElement('button');
+    btn.className='ent-tab'+(n===_nacaoAtiva?' active':'');
+    btn.dataset.nacao=n;
+    btn.textContent=n||'Todos';
+    btn.onclick=function(){setNacao(this);};
+    wrap.appendChild(btn);
+  });
 }>
