@@ -7,96 +7,132 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',sans-serif;background:#0f0f0f;color:#fff;line-height:1.6;min-height:100vh}
-.header{background:linear-gradient(135deg,#050505,#111);padding:28px 20px;text-align:center;border-bottom:1px solid rgba(201,168,76,.2)}
-.header h1{font-family:'Cinzel',serif;font-size:1.3rem;color:#f0d060;margin-bottom:4px}
-.header p{font-size:12px;color:#999}
-.back{display:flex;gap:12px;justify-content:center;padding:14px 20px;border-bottom:1px solid rgba(201,168,76,.1)}
-.back a{font-size:12px;color:#c9a84c;text-decoration:none}
-.back a:hover{color:#f0d060}
-.container{max-width:580px;margin:0 auto;padding:24px 16px 60px}
-.section{margin-bottom:32px}
-.section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#c9a84c;padding-bottom:8px;border-bottom:1px solid rgba(201,168,76,.2);margin-bottom:16px}
-.faq-item{margin-bottom:12px;background:#1a1a1a;border:1px solid rgba(201,168,76,.15);border-radius:10px;overflow:hidden}
-.faq-q{padding:14px 16px;font-size:13px;font-weight:600;color:#f0d060;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;user-select:none}
-.faq-q:hover{background:rgba(201,168,76,.06)}
-.faq-q .arrow{color:#c9a84c;transition:transform .2s;flex-shrink:0;font-size:11px}
-.faq-q.open .arrow{transform:rotate(180deg)}
-.faq-a{display:none;padding:0 16px 14px;font-size:13px;color:#ccc;line-height:1.7}
-.faq-a.open{display:block}
-.faq-a p{margin-bottom:8px}
-.faq-a p:last-child{margin-bottom:0}
-.badge{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;vertical-align:middle;margin:1px}
-.ok{background:#e6f4ea;color:#1e6b3a}
-.repor{background:#fef9e7;color:#7d5c00}
-.alerta{background:#fdecea;color:#8b0000}
-.urgente{background:#f5c6cb;color:#5c0000}
-.install-links{display:flex;flex-direction:column;gap:8px;margin-top:10px}
-.install-btn{display:block;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.25);border-radius:8px;padding:10px 14px;color:#f0d060;text-decoration:none;font-size:13px;font-weight:500}
-.install-btn:hover{background:rgba(201,168,76,.2)}
+:root{--bg:#0f0f0f;--card:#1a1a1a;--ouro:#c9a84c;--ouro-lt:#f0d060;--creme:#fff;--cinza:#999;--borda:rgba(201,168,76,.22);--r:12px;--fd:'Cinzel',serif;--fb:'Inter',sans-serif}
+body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:100dvh;padding-bottom:40px}
+.topo{background:linear-gradient(135deg,#1a0e06,#0a0a0a);border-bottom:1px solid var(--borda);padding:14px 16px 10px;text-align:center}
+.topo h1{font-family:var(--fd);font-size:1.05rem;color:var(--ouro-lt);letter-spacing:.06em}
+.topo p{font-size:10px;color:var(--cinza);margin-top:3px;letter-spacing:.12em;text-transform:uppercase}
+.nav-back{display:flex;align-items:center;gap:8px;padding:8px 20px;background:#111;border-bottom:1px solid var(--borda)}
+.nav-back a{font-size:11px;color:var(--cinza);text-decoration:none}
+.nav-back a:hover{color:var(--ouro)}
+.content{max-width:720px;margin:0 auto;padding:28px 20px}
+h2{font-family:var(--fd);font-size:.9rem;color:var(--ouro-lt);margin:28px 0 14px;letter-spacing:.04em}
+h2:first-child{margin-top:0}
+.faq-item{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);margin-bottom:10px;overflow:hidden}
+.faq-q{width:100%;background:none;border:none;padding:14px 18px;text-align:left;color:var(--creme);font-family:var(--fb);font-size:14px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.faq-q:hover{color:var(--ouro-lt)}
+.faq-q .arr{font-size:12px;color:var(--cinza);transition:transform .2s;flex-shrink:0}
+.faq-item.open .arr{transform:rotate(180deg)}
+.faq-a{display:none;padding:0 18px 16px;font-size:13px;color:var(--cinza);line-height:1.8}
+.faq-item.open .faq-a{display:block}
+.faq-a code{background:rgba(201,168,76,.12);border:1px solid var(--borda);border-radius:4px;padding:1px 6px;font-size:12px;color:var(--ouro-lt)}
+.faq-a a{color:var(--ouro);text-decoration:none}
+.faq-a a:hover{text-decoration:underline}
 </style>
 </head>
 <body>
-<div class="header">
-  <h1>✦ Ile Ase Vodun Ogum Ayres ✦</h1>
-  <p>Ajuda — perguntas frequentes</p>
+<div class="topo"><h1>&#10022; Ajuda &#10022;</h1><p>Ile Ase Vodun Ogum Ayres</p></div>
+<div class="nav-back"><a href="index.html">&#8592; Voltar ao app</a></div>
+<div class="content">
+
+<h2>&#127968; Geral</h2>
+
+<div class="faq-item">
+<button class="faq-q" onclick="toggle(this)">O que é este app? <span class="arr">&#9660;</span></button>
+<div class="faq-a">Sistema de gestão do Terreiro Ile Ase Vodun Ogum Ayres. Reúne acervo, consumíveis, calendário, orixás e entidades, pontos cantados e player de áudios em um só lugar. Funciona em qualquer dispositivo — celular, tablet ou computador — sem precisar instalar nada.</div>
 </div>
-<div class="back">
-  <a href="index.html">🖥️ Versão desktop</a>
-  <a href="mobile.html">📱 Versão celular</a>
+
+<div class="faq-item">
+<button class="faq-q" onclick="toggle(this)">Preciso criar conta para usar? <span class="arr">&#9660;</span></button>
+<div class="faq-a">Não. As seções públicas (Acervo, Consumíveis, Calendário, Orixás, Pontos e Player) são acessíveis a qualquer pessoa sem login. Apenas a área administrativa (<code>Admin</code>) exige senha.</div>
 </div>
-<div class="container">
 
-  <div class="section">
-    <div class="section-title">Instalação</div>
+<div class="faq-item">
+<button class="faq-q" onclick="toggle(this)">Funciona sem internet? <span class="arr">&#9660;</span></button>
+<div class="faq-a">Parcialmente. O app tem Service Worker que guarda os arquivos em cache, então a interface abre mesmo offline. Mas os dados da planilha (acervo, consumíveis, calendário) precisam de conexão para atualizar. Os pontos cantados e entidades carregam imediatamente pois ficam embutidos no app.</div>
+</div>
 
-    <div class="faq-item">
-      <div class="faq-q" onclick="toggle(this)">Como instalo o app no celular? <span class="arrow">▼</span></div>
-      <div class="faq-a">
-        <p>O app pode ser instalado diretamente pelo navegador — sem precisar da App Store ou Play Store.</p>
-        <div class="install-links">
-          <a class="install-btn" href="mobile.html">📱 Abrir versão celular</a>
-        </div>
-        <p style="margin-top:10px"><strong>Android (Chrome):</strong> após abrir o link, um banner aparece na parte de baixo da tela com a opção de instalar. Se não aparecer: toque nos 3 pontos no canto superior → "Adicionar à tela inicial".</p>
-        <p><strong>iPhone (Safari):</strong> abra o link no Safari → toque no botão de compartilhar 📤 → "Adicionar à Tela de Início" → "Adicionar". Atenção: no iPhone funciona apenas no Safari, não no Chrome.</p>
-        <p>Após instalado, o ícone aparece na tela inicial como qualquer outro app.</p>
-      </div>
-    </div>
-  </div>
+<div class="faq-item">
+<button class="faq-q" onclick="toggle(this)">Como instalar na tela inicial? <span class="arr">&#9660;</span></button>
+<div class="faq-a">Quando aparecer o banner "Instalar na tela inicial?" no topo, clique em <strong>Instalar</strong>. No iOS (Safari), toque em Compartilhar → Adicionar à Tela de Início. No Android, o banner aparece automaticamente.</div>
+</div>
 
-  <div class="section">
-    <div class="section-title">Consumíveis</div>
+<h2>&#128100; Admin</h2>
 
-    <div class="faq-item">
-      <div class="faq-q" onclick="toggle(this)">O que significam os níveis de estoque? <span class="arrow">▼</span></div>
-      <div class="faq-a">
-        <p>Cada item tem uma quantidade mínima definida. O nível mostra o quanto temos em relação a esse mínimo:</p>
-        <p><span class="badge ok">✅ OK</span> — 75% ou mais do mínimo. Sem urgência.</p>
-        <p><span class="badge repor">⚠️ Repor</span> — entre 25% e 74%. Comprar na próxima oportunidade.</p>
-        <p><span class="badge alerta">🔴 Alerta</span> — entre 5% e 24%. Precisa repor antes da próxima gira.</p>
-        <p><span class="badge urgente">🚨 Urgente</span> — menos de 5% ou zerado. Comprar com prioridade.</p>
-      </div>
-    </div>
-  </div>
+<div class="faq-item">
+<button class="faq-q" onclick="toggle(this)">Como entrar no Admin? <span class="arr">&#9660;</span></button>
+<div class="faq-a">Clique em <strong>Admin</strong> no menu superior (desktop) ou acesse <code>admin.html</code>. O login aceita <strong>telefone ou e-mail</strong>. Se usar telefone, digite no formato <code>(11) 98123-4567</code> ou <code>11981234567</code> — o sistema converte automaticamente.</div>
+</div>
 
-  <div class="section">
-    <div class="section-title">Privacidade</div>
+<div class="faq-item">
+<button class="faq-q" onclick="toggle(this)">Esqueci minha senha. O que fazer? <span class="arr">&#9660;</span></button>
+<div class="faq-a">Entre em contato com o Pai ou Mãe de Santo. Apenas administradores podem redefinir senhas pelo painel de Usuários no Admin.</div>
+</div>
 
-    <div class="faq-item">
-      <div class="faq-q" onclick="toggle(this)">Que informações são guardadas sobre os filhos de santo? <span class="arrow">▼</span></div>
-      <div class="faq-a">
-        <p>Guardamos apenas o mínimo necessário para a gestão do terreiro: nome, data de aniversário, data de feitura, nação e obrigações pendentes.</p>
-        <p>Informações de caráter iniciático — como orixá de cabeça e adjuntó — ficam registradas apenas na planilha interna, acessível somente à liderança do terreiro. Esses dados não aparecem no app.</p>
-        <p>Não armazenamos CPF, endereço, dados de saúde nem nenhuma outra informação sensível.</p>
-      </div>
-    </div>
-  </div>
+<div class="faq-item">
+<button class="faq-q" onclick="toggle(this)">O que cada perfil pode fazer? <span class="arr">&#9660;</span></button>
+<div class="faq-a">
+  <strong>Pai/Mãe de Santo (Admin):</strong> acesso total — gerenciar usuários, consumíveis, acervo, calendário, filhos de santo, financeiro, pontos e log.<br/><br/>
+  <strong>Filho de Santo:</strong> acesso somente leitura — consultar acervo e consumíveis.
+</div>
+</div>
+
+<h2>&#9835; Pontos Cantados</h2>
+
+<div class="faq-item">
+<button class="faq-q" onclick="toggle(this)">Como ver a letra de um ponto? <span class="arr">&#9660;</span></button>
+<div class="faq-a">Na aba <strong>Pontos</strong>, clique em qualquer ponto da lista. Um modal abre com a tradição, entidade e letra completa. Se o ponto tiver gravação no YouTube, aparece o botão <strong>&#9835; Tocar no player</strong>.</div>
+</div>
+
+<div class="faq-item">
+<button class="faq-q" onclick="toggle(this)">O que é o Player de Pontos? <span class="arr">&#9660;</span></button>
+<div class="faq-a">O <a href="player.html">Player de Pontos</a> é uma página com todos os áudios do terreiro organizados por entidade (645 gravações). Você pode filtrar por entidade, buscar pelo nome do ponto e tocar direto no browser. Acesse pelo botão <strong>♪ Player completo</strong> na aba Pontos, ou pelo menu Admin no topo.</div>
+</div>
+
+<div class="faq-item">
+<button class="faq-q" onclick="toggle(this)">Como adicionar um novo ponto? <span class="arr">&#9660;</span></button>
+<div class="faq-a">No Admin → <strong>Pontos Cantados</strong> → <strong>Novo ponto</strong>. Preencha a religião, entidade, nome, letra, link do YouTube (opcional) e observações. Clique em Salvar — o ponto aparece imediatamente na lista pública.</div>
+</div>
+
+<h2>&#128230; Acervo &amp; Consumíveis</h2>
+
+<div class="faq-item">
+<button class="faq-q" onclick="toggle(this)">Como atualizar o estoque de um consumível? <span class="arr">&#9660;</span></button>
+<div class="faq-a">No Admin → <strong>Estoque</strong> → <strong>Dar saída</strong>. Selecione o item, informe a quantidade retirada e confirme. O nível (OK / Repor / Alerta / Urgente) é calculado automaticamente.</div>
+</div>
+
+<div class="faq-item">
+<button class="faq-q" onclick="toggle(this)">O que significam os níveis de estoque? <span class="arr">&#9660;</span></button>
+<div class="faq-a">
+  <strong>OK:</strong> estoque acima do mínimo.<br/>
+  <strong>Repor:</strong> estoque entre 50% e 100% do mínimo — atenção.<br/>
+  <strong>Alerta:</strong> estoque abaixo de 50% do mínimo — repor em breve.<br/>
+  <strong>Urgente / Zero:</strong> sem estoque ou abaixo do crítico — repor imediatamente.
+</div>
+</div>
+
+<h2>&#128241; Problemas técnicos</h2>
+
+<div class="faq-item">
+<button class="faq-q" onclick="toggle(this)">Os dados demoram para carregar. Por quê? <span class="arr">&#9660;</span></button>
+<div class="faq-a">O app usa o Google Apps Script como backend. Na primeira chamada do dia (ou após muito tempo sem uso), o servidor pode demorar até 30 segundos para "aquecer". Após a primeira carga, tudo fica rápido. Os pontos e entidades carregam imediatamente pois ficam no próprio app.</div>
+</div>
+
+<div class="faq-item">
+<button class="faq-q" onclick="toggle(this)">Aparece "--" nos contadores da tela inicial. É erro? <span class="arr">&#9660;</span></button>
+<div class="faq-a">Não necessariamente. O "--" aparece quando o servidor demora mais de 30 segundos para responder. Aguarde um momento e atualize a página — na segunda tentativa já estará aquecido e os números aparecem normalmente.</div>
+</div>
+
+<div class="faq-item">
+<button class="faq-q" onclick="toggle(this)">O áudio não toca no player. O que fazer? <span class="arr">&#9660;</span></button>
+<div class="faq-a">Os áudios estão hospedados no Cloudflare R2. Verifique sua conexão com a internet. Alguns formatos .wma podem não ser suportados em iOS — prefira os arquivos .mp3. Se o problema persistir, tente abrir o link do YouTube direto pelo modal do ponto.</div>
+</div>
 
 </div>
 <script>
-function toggle(el){
-  el.classList.toggle('open');
-  el.nextElementSibling.classList.toggle('open');
+function toggle(btn){
+  var item=btn.parentElement;
+  item.classList.toggle('open');
 }
 </script>
 </body>
