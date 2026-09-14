@@ -325,6 +325,8 @@ function renderPontos(){
   if(!f.length){document.getElementById('pontos-lista').innerHTML='<div class="empty">Nenhum ponto encontrado.</div>';return;}
   var grupos={},ordem=[];
   f.forEach(function(p){var k=p.religiao+'|||'+p.entidade;if(!grupos[k]){grupos[k]=[];ordem.push(k);}grupos[k].push(p);});
+  ordem.sort(function(a,b){return a.localeCompare(b,'pt');});
+  Object.keys(grupos).forEach(function(k){grupos[k].sort(function(a,b){return(a.nome||'').localeCompare(b.nome||'','pt');});});
   document.getElementById('pontos-lista').innerHTML=ordem.map(function(k){
     var pts=grupos[k],parts=k.split('|||'),r2=parts[0],e2=parts[1];
     var bc=r2==='Umbanda'?'umb':'can',bt=r2==='Umbanda'?'Umbanda':'Candombl\u00e9 / Ketu';
