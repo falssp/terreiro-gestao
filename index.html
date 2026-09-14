@@ -307,13 +307,16 @@ function renderCalendario(){
 function setNacao(btn){document.querySelectorAll('.ent-tab').forEach(function(t){t.classList.remove('active');});btn.classList.add('active');_nacaoAtiva=btn.dataset.nacao;renderEntidades();}
 function renderEntidades(){
   var busca=(document.getElementById('ent-busca').value||'').toLowerCase();
-  var f=entidades.filter(function(e){return(!busca||(e.entidade||'').toLowerCase().includes(busca)||(e.saudacao||'').toLowerCase().includes(busca))&&(!_nacaoAtiva||(e.nacao||'').includes(_nacaoAtiva));});f.sort(function(a,b){return(a.entidade||'').localeCompare(b.entidade||'','pt');});
+  var f=entidades.filter(function(e){return(!busca||(e.entidade||'').toLowerCase().includes(busca)||(e.saudacao||'').toLowerCase().includes(busca))&&(!_nacaoAtiva||(e.nacao||'').includes(_nacaoAtiva));});
+  f.sort(function(a,b){return(a.entidade||'').localeCompare(b.entidade||'','pt');});
   document.getElementById('ent-lista').innerHTML=f.length?f.map(function(e){
+    var nc=e.nacao||'';
+    var bc=nc.includes('Ketu')||nc.includes('Angola')||nc.includes('Jeje')?'can':'umb';
+    var bt=nc.includes('Ketu')?'Ketu':nc.includes('Angola')?'Angola':nc.includes('Jeje')?'Jeje':nc.includes('Todas')?'Todas':'Umbanda';
     return '<div class="ent-card" data-ent="'+e.entidade.replace(/"/g,'&quot;')+'" onclick="abrirModalEnt(this.dataset.ent)">'
-    var _nc=(e.nacao||'');var _bc=_nc.includes('Ketu')||_nc.includes('Angola')||_nc.includes('Jeje')?'can':'umb';var _bt=_nc.includes('Ketu')?'Ketu':_nc.includes('Angola')?'Angola':_nc.includes('Jeje')?'Jeje':_nc.includes('Todas')?'Todas':'Umbanda';
-    return '<div class="ent-card" data-ent="\'+e.entidade.replace(/"/g,\'&quot;\')+\'" onclick="abrirModalEnt(this.dataset.ent)">\''
-      +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><div class="ent-nome" style="margin-bottom:0">'+e.entidade+'</div><span class="ponto-badge '+_bc+'">'+_bt+'</span></div>'
-      +'<div class="ent-nacao">'+(e.diaSemana||'')+(e.saudacao?' \u00b7 <em style="color:var(--ouro-lt)">'+e.saudacao+'</em>':'')+'</div>'
+      +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><div class="ent-nome" style="margin-bottom:0">'+e.entidade+'</div><span class="ponto-badge '+bc+'">'+bt+'</span></div>'
+      +'<div class="ent-nacao">'+(e.diaSemana||'')+(e.saudacao?' · <em style="color:var(--ouro-lt)">'+e.saudacao+'</em>':'')+'</div>'
+      +'</div>';
   }).join(''):'<div class="empty">Nenhuma entidade encontrada.</div>';
 }
 function renderPontos(){
