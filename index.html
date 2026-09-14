@@ -158,7 +158,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
 <div class="section" id="sec-calendario"><div id="cal-lista"><div class="empty">Carregando...</div></div></div>
 <div class="section" id="sec-entidades">
   <div class="filter-bar"><input type="search" id="ent-busca" placeholder="&#128269; Buscar orixá ou entidade..." oninput="renderEntidades()"/></div>
-  <div class="ent-tabs"><button class="ent-tab active" data-nacao="" onclick="setNacao(this)">Todos</button><button class="ent-tab" data-nacao="Ketu" onclick="setNacao(this)">Ketu</button><button class="ent-tab" data-nacao="Umbanda" onclick="setNacao(this)">Umbanda</button></div>
+  <div class="ent-tabs"><button class="ent-tab active" data-nacao="" onclick="setNacao(this)">Todos</button><button class="ent-tab" data-nacao="Ketu" onclick="setNacao(this)">Ketu</button><button class="ent-tab" data-nacao="Angola" onclick="setNacao(this)">Angola</button><button class="ent-tab" data-nacao="Jeje" onclick="setNacao(this)">Jeje</button><button class="ent-tab" data-nacao="Umbanda" onclick="setNacao(this)">Umbanda</button></div>
   <div id="ent-lista"><div class="empty">Carregando...</div></div>
 </div>
 <div class="section" id="sec-pontos">
@@ -310,9 +310,10 @@ function renderEntidades(){
   var f=entidades.filter(function(e){return(!busca||(e.entidade||'').toLowerCase().includes(busca)||(e.saudacao||'').toLowerCase().includes(busca))&&(!_nacaoAtiva||(e.nacao||'').includes(_nacaoAtiva));});f.sort(function(a,b){return(a.entidade||'').localeCompare(b.entidade||'','pt');});
   document.getElementById('ent-lista').innerHTML=f.length?f.map(function(e){
     return '<div class="ent-card" data-ent="'+e.entidade.replace(/"/g,'&quot;')+'" onclick="abrirModalEnt(this.dataset.ent)">'
-      +'<div class="ent-nome">'+e.entidade+'</div>'
-      +'<div class="ent-nacao">'+(e.nacao||'')+(e.diaSemana?' \u00b7 '+e.diaSemana:'')+(e.saudacao?' \u00b7 <em style="color:var(--ouro-lt)">'+e.saudacao+'</em>':'')+'</div>'
-      +'</div>';
+    var _nc=(e.nacao||'');var _bc=_nc.includes('Ketu')||_nc.includes('Angola')||_nc.includes('Jeje')?'can':'umb';var _bt=_nc.includes('Ketu')?'Ketu':_nc.includes('Angola')?'Angola':_nc.includes('Jeje')?'Jeje':_nc.includes('Todas')?'Todas':'Umbanda';
+    return '<div class="ent-card" data-ent="\'+e.entidade.replace(/"/g,\'&quot;\')+\'" onclick="abrirModalEnt(this.dataset.ent)">\''
+      +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><div class="ent-nome" style="margin-bottom:0">'+e.entidade+'</div><span class="ponto-badge '+_bc+'">'+_bt+'</span></div>'
+      +'<div class="ent-nacao">'+(e.diaSemana||'')+(e.saudacao?' \u00b7 <em style="color:var(--ouro-lt)">'+e.saudacao+'</em>':'')+'</div>'
   }).join(''):'<div class="empty">Nenhuma entidade encontrada.</div>';
 }
 function renderPontos(){
