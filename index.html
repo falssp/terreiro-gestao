@@ -311,10 +311,10 @@ function renderEntidades(){
   f.sort(function(a,b){return(a.entidade||'').localeCompare(b.entidade||'','pt');});
   document.getElementById('ent-lista').innerHTML=f.length?f.map(function(e){
     var nc=e.nacao||'';
-    var bc=nc.includes('Ketu')||nc.includes('Angola')||nc.includes('Jeje')?'can':'umb';
-    var bt=nc.includes('Ketu')?'Ketu':nc.includes('Angola')?'Angola':nc.includes('Jeje')?'Jeje':nc.includes('Todas')?'Todas':'Umbanda';
+    var nacList=nc.split('/').map(function(x){return x.trim();}).filter(Boolean);
+    var badges=nacList.map(function(n){var isCan=n==='Ketu'||n==='Angola'||n==='Jeje';return '<span class="ponto-badge '+(isCan?'can':'umb')+'">'+n+'</span>';}).join(' ');
     return '<div class="ent-card" data-ent="'+e.entidade.replace(/"/g,'&quot;')+'" onclick="abrirModalEnt(this.dataset.ent)">'
-      +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><div class="ent-nome" style="margin-bottom:0">'+e.entidade+'</div><span class="ponto-badge '+bc+'">'+bt+'</span></div>'
+      +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px"><div class="ent-nome" style="margin-bottom:0">'+e.entidade+'</div>'+badges+'</div>'
       +'<div class="ent-nacao">'+(e.diaSemana||'')+(e.saudacao?' · <em style="color:var(--ouro-lt)">'+e.saudacao+'</em>':'')+'</div>'
       +'</div>';
   }).join(''):'<div class="empty">Nenhuma entidade encontrada.</div>';
