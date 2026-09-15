@@ -671,8 +671,14 @@ window.addEventListener('DOMContentLoaded', function() {
     return;
   }
   fetch(GS + '?acao=admins-vazio')
-    .then(function(r) { return r.json(); })
-    .then(function(j) {
+    .then(function(r) { return r.text(); })
+    .then(function(t) {
+      var j; try { j = JSON.parse(t); } catch(e) {
+        document.getElementById('tela-primeiro').style.display = 'none';
+        document.getElementById('tela-login').classList.add('ativa');
+        document.getElementById('l-email').focus();
+        return;
+      }
       if (j.ok && j.vazio) {
         document.getElementById('tela-primeiro').style.display = 'flex';
       } else {
@@ -684,6 +690,7 @@ window.addEventListener('DOMContentLoaded', function() {
     .catch(function() {
       document.getElementById('tela-primeiro').style.display = 'none';
       document.getElementById('tela-login').classList.add('ativa');
+      document.getElementById('l-email').focus();
     });
 });
 
