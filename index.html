@@ -446,9 +446,7 @@ window.addEventListener('DOMContentLoaded',function(){
   if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
 });
 
-</script>
-</body>
-</htmlfunction carregarEntidades(){
+function carregarEntidades(){
   var STATIC=ENTIDADES_STATIC;
   entidades=STATIC;
   _buildEntTabs();
@@ -470,4 +468,7 @@ function _buildEntTabs(){
     html+='</button>';
   });
   wrap.innerHTML=html;
-}>
+}
+</script>
+</body>
+</html>
