@@ -348,25 +348,6 @@ function renderEntidades(){
       +'</div>';
   }).join(''):'<div class="empty">Nenhuma entidade encontrada.</div>';
 }
-function renderPontos(){
-  var busca=(document.getElementById('pt-busca').value||'').toLowerCase();
-  var rel=document.getElementById('pt-rel').value;
-  var ent=document.getElementById('pt-ent').value;
-  var f=pontos.filter(function(p){return(!busca||(p.nome||'').toLowerCase().includes(busca)||(p.letra||'').toLowerCase().includes(busca)||(p.entidade||'').toLowerCase().includes(busca))&&(!rel||p.religiao===rel)&&(!ent||p.entidade===ent);});
-  document.getElementById('pt-count').textContent=f.length+' ponto(s)';
-  MP.setLista(f.filter(function(p){return !!p.youtube;}));
-  if(!f.length){document.getElementById('pontos-lista').innerHTML='<div class="empty">Nenhum ponto encontrado.</div>';return;}
-  var grupos={},ordem=[];
-  f.forEach(function(p){var k=p.religiao+'|||'+p.entidade;if(!grupos[k]){grupos[k]=[];ordem.push(k);}grupos[k].push(p);});
-  ordem.sort(function(a,b){return a.localeCompare(b,'pt');});
-  Object.keys(grupos).forEach(function(k){grupos[k].sort(function(a,b){return(a.nome||'').localeCompare(b.nome||'','pt');});});
-  document.getElementById('pontos-lista').innerHTML=ordem.map(function(k){
-    var pts=grupos[k],parts=k.split('|||'),r2=parts[0],e2=parts[1];
-    var bc=r2==='Umbanda'?'umb':'can',bt=r2==='Umbanda'?'Umbanda':'Candombl\u00e9 / Ketu';
-    return '<div class="pontos-grupo-titulo"><span class="ponto-badge '+bc+'">'+bt+'</span>'+e2+'</div>'
-      +pts.map(function(p){return '<div class="csm-card" data-pid="'+p.id+'" onclick="abrirModalPonto(this.dataset.pid)"><div class="csm-top"><div class="csm-nome">'+p.nome+'</div>'+(p.youtube?'<span style="color:var(--ouro);font-size:13px">&#9835;</span>':'')+'</div></div>';}).join('');
-  }).join('');
-}
 
 function abrirModalCsm(id){
   var i=consumiveis.find(function(x){return x.id===id;});if(!i)return;
