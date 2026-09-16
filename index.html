@@ -459,7 +459,7 @@ function installPwa(){if(!deferredPrompt)return;deferredPrompt.prompt();deferred
 
 window.addEventListener('DOMContentLoaded',function(){
   [carregarHome,carregarAcervo,carregarConsumiveis,carregarCalendario,carregarEntidades,carregarPontos].forEach(function(fn){try{var p=fn();if(p&&p.catch)p.catch(function(){});}catch(e){}});
-  if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
+  
 });
 
 function carregarEntidades(){
