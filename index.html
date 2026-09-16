@@ -224,17 +224,17 @@ async function carregarHome(){
     var r=await Promise.race([fetch(GS+'?acao=datas-mes'),new Promise(function(_,rej){setTimeout(function(){rej(new Error('t'));},30000);})]);
     var j=await r.json();if(!j.ok)return;
     var html='';
-    if(j.aniversariantes&&j.aniversariantes.length){html+='<div style="margin-bottom:10px"><strong style="color:var(--ouro);font-size:11px">&#127874; ANIVERSARIANTES</strong><br>';j.aniversariantes.forEach(function(a){html+='<div style="font-size:13px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)">'+a.nome+' &#8212; '+a.data+'</div>';});html+='</div>';}
-    if(j.festas&&j.festas.length){html+='<div><strong style="color:var(--ouro);font-size:11px">&#11088; FESTAS DO M&#202;S</strong><br>';j.festas.forEach(function(f){html+='<div style="font-size:13px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)">'+f.entidade+' &#8212; '+f.data+'</div>';});html+='</div>';}
-    document.getElementById('home-eventos-lista').innerHTML=html||'<span style="font-style:italic">Nenhum evento este m&#234;s.</span>';
-  }catch(e){document.getElementById('home-eventos-lista').innerHTML='<span style="font-style:italic">Nenhum evento este m&#234;s.</span>';}
+    if(j.aniversariantes&&j.aniversariantes.length){html+='<div style="margin-bottom:10px"><strong style="color:var(--ouro);font-size:11px">&#127874; ANIVERSARIANTES<\/strong><br>';j.aniversariantes.forEach(function(a){html+='<div style="font-size:13px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)">'+a.nome+' &#8212; '+a.data+'<\/div>';});html+='<\/div>';}
+    if(j.festas&&j.festas.length){html+='<div><strong style="color:var(--ouro);font-size:11px">&#11088; FESTAS DO M&#202;S<\/strong><br>';j.festas.forEach(function(f){html+='<div style="font-size:13px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)">'+f.entidade+' &#8212; '+f.data+'<\/div>';});html+='<\/div>';}
+    document.getElementById('home-eventos-lista').innerHTML=html||'<span style="font-style:italic">Nenhum evento este m&#234;s.<\/span>';
+  }catch(e){document.getElementById('home-eventos-lista').innerHTML='<span style="font-style:italic">Nenhum evento este m&#234;s.<\/span>';}
 }
 async function carregarAcervo(){
   try{
     var r=await Promise.race([fetch(GS+'?acao=acervo-listar'),new Promise(function(_,rej){setTimeout(function(){rej(new Error('t'));},30000);})]);
     var j=await r.json();
     if(j.ok){acervo=j.itens||[];var cats=[...new Set(acervo.map(function(i){return i.categoria||''}).filter(Boolean))].sort();var sel=document.getElementById('acervo-cat');cats.forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});renderAcervo();}
-  }catch(e){document.getElementById('acervo-lista').innerHTML='<div class="empty">N&#227;o foi poss&#237;vel carregar.</div>';}
+  }catch(e){document.getElementById('acervo-lista').innerHTML='<div class="empty">N&#227;o foi poss&#237;vel carregar.<\/div>';}
 }
 async function carregarConsumiveis(){
   try{
@@ -249,14 +249,14 @@ async function carregarConsumiveis(){
       var sel=document.getElementById('csm-cat');cats.forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
       renderConsumiveis();
     }
-  }catch(e){['cnt-ok','cnt-repor','cnt-alerta','cnt-urgente'].forEach(function(id){fillNum(id,'--');});document.getElementById('csm-lista').innerHTML='<div class="empty">N&#227;o foi poss&#237;vel carregar.</div>';}
+  }catch(e){['cnt-ok','cnt-repor','cnt-alerta','cnt-urgente'].forEach(function(id){fillNum(id,'--');});document.getElementById('csm-lista').innerHTML='<div class="empty">N&#227;o foi poss&#237;vel carregar.<\/div>';}
 }
 setTimeout(function(){['cnt-ok','cnt-repor','cnt-alerta','cnt-urgente'].forEach(function(id){var el=document.getElementById(id);if(el&&el.classList.contains('skeleton'))fillNum(id,'--');});},30000);
 async function carregarCalendario(){
   try{
     var r=await Promise.race([fetch(GS+'?acao=calendario-listar'),new Promise(function(_,rej){setTimeout(function(){rej(new Error('t'));},30000);})]);
     var j=await r.json();if(j.ok){calendario=j.itens||[];renderCalendario();}
-  }catch(e){document.getElementById('cal-lista').innerHTML='<div class="empty">N&#227;o foi poss&#237;vel carregar.</div>';}
+  }catch(e){document.getElementById('cal-lista').innerHTML='<div class="empty">N&#227;o foi poss&#237;vel carregar.<\/div>';}
 }
 function carregarEntidades(){
   entidades=ENTIDADES_STATIC;renderEntidades();
@@ -283,8 +283,8 @@ function renderAcervo(){
   var f=acervo.filter(function(i){return(!busca||(i.nome||'').toLowerCase().includes(busca))&&(!cat||i.categoria===cat);});f.sort(function(a,b){return(a.nome||'').localeCompare(b.nome||'','pt');});
   document.getElementById('acervo-count').textContent=f.length+' item(s)';
   document.getElementById('acervo-lista').innerHTML=f.length?f.map(function(i){
-    return '<div class="item-card" data-id="'+i.id+'" onclick="abrirModalAcervo(this.dataset.id)"><div><div class="item-nome">'+i.nome+'</div><div class="item-cat">'+(i.categoria||'')+(i.subcategoria?' \u00b7 '+i.subcategoria:'')+'</div></div><div style="font-size:11px;color:var(--cinza)">'+i.quantidade+'</div></div>';
-  }).join(''):'<div class="empty">Nenhum item encontrado.</div>';
+    return '<div class="item-card" data-id="'+i.id+'" onclick="abrirModalAcervo(this.dataset.id)"><div><div class="item-nome">'+i.nome+'<\/div><div class="item-cat">'+(i.categoria||'')+(i.subcategoria?' \u00b7 '+i.subcategoria:'')+'<\/div><\/div><div style="font-size:11px;color:var(--cinza)">'+i.quantidade+'<\/div><\/div>';
+  }).join(''):'<div class="empty">Nenhum item encontrado.<\/div>';
 }
 function renderConsumiveis(){
   var busca=(document.getElementById('csm-busca').value||'').toLowerCase();
@@ -297,20 +297,20 @@ function renderConsumiveis(){
     var bc=sl==='ok'?'#4d4':'rgba(200,170,30,.8)';if(sl==='alerta')bc='#f88';if(sl==='urgente')bc='#f44';
     var nlabel=(i.nivel||'').replace(/[\u2705\u26a0\ufe0f\ud83d\udea8\ud83d\udd34\ud83d\udea8]/g,'').replace('Urgente / Zero','Urgente').trim();
     return '<div class="csm-card" data-id="'+i.id+'" onclick="abrirModalCsm(this.dataset.id)">'
-      +'<div class="csm-top"><div><div class="csm-nome">'+i.nome+'</div><div class="csm-cat">'+i.categoria+'</div></div><span class="nbadge nb-'+sl+'">'+nlabel+'</span></div>'
-      +'<div class="csm-bar-wrap"><div class="csm-bar" style="width:'+Math.min(pct,100)+'%;background:'+bc+'"></div></div>'
-      +'<div class="csm-info"><span>'+(i.atual||0)+' / '+(i.minimo||0)+' '+(i.unidade||'')+'</span><span>'+Math.round(pct)+'%</span></div>'
-      +'</div>';
-  }).join(''):'<div class="empty">Nenhum item encontrado.</div>';
+      +'<div class="csm-top"><div><div class="csm-nome">'+i.nome+'<\/div><div class="csm-cat">'+i.categoria+'<\/div><\/div><span class="nbadge nb-'+sl+'">'+nlabel+'<\/span><\/div>'
+      +'<div class="csm-bar-wrap"><div class="csm-bar" style="width:'+Math.min(pct,100)+'%;background:'+bc+'"><\/div><\/div>'
+      +'<div class="csm-info"><span>'+(i.atual||0)+' / '+(i.minimo||0)+' '+(i.unidade||'')+'<\/span><span>'+Math.round(pct)+'%<\/span><\/div>'
+      +'<\/div>';
+  }).join(''):'<div class="empty">Nenhum item encontrado.<\/div>';
 }
 function renderCalendario(){
-  if(!calendario.length){document.getElementById('cal-lista').innerHTML='<div class="empty">Nenhum evento cadastrado.</div>';return;}
+  if(!calendario.length){document.getElementById('cal-lista').innerHTML='<div class="empty">Nenhum evento cadastrado.<\/div>';return;}
   document.getElementById('cal-lista').innerHTML=calendario.map(function(e){
     return '<div style="background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:14px;margin-bottom:8px">'
-      +'<div style="font-size:13px;font-weight:600;color:var(--ouro-lt)">'+e.titulo+'</div>'
-      +'<div style="font-size:11px;color:var(--cinza);margin-top:4px">'+e.data+(e.tipo?' \u00b7 '+e.tipo:'')+'</div>'
-      +(e.descricao?'<div style="font-size:12px;color:#ccc;margin-top:6px">'+e.descricao+'</div>':'')
-      +'</div>';
+      +'<div style="font-size:13px;font-weight:600;color:var(--ouro-lt)">'+e.titulo+'<\/div>'
+      +'<div style="font-size:11px;color:var(--cinza);margin-top:4px">'+e.data+(e.tipo?' \u00b7 '+e.tipo:'')+'<\/div>'
+      +(e.descricao?'<div style="font-size:12px;color:#ccc;margin-top:6px">'+e.descricao+'<\/div>':'')
+      +'<\/div>';
   }).join('');
 }
 function setNacao(btn){document.querySelectorAll('.ent-tab').forEach(function(t){t.classList.remove('active');});btn.classList.add('active');_nacaoAtiva=btn.dataset.nacao;renderEntidades();}
@@ -321,38 +321,38 @@ function renderEntidades(){
   document.getElementById('ent-lista').innerHTML=f.length?f.map(function(e){
     var nc=e.nacao||'';
     var nacList=nc.split('/').map(function(x){return x.trim();}).filter(Boolean);
-    var badges=nacList.map(function(n){var isCan=n==='Ketu'||n==='Angola'||n==='Jeje';return '<span class="ponto-badge '+(isCan?'can':'umb')+'">'+n+'</span>';}).join(' ');
+    var badges=nacList.map(function(n){var isCan=n==='Ketu'||n==='Angola'||n==='Jeje';return '<span class="ponto-badge '+(isCan?'can':'umb')+'">'+n+'<\/span>';}).join(' ');
     return '<div class="ent-card" data-ent="'+e.entidade.replace(/"/g,'&quot;')+'" onclick="abrirModalEnt(this.dataset.ent)">'
-      +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px"><div class="ent-nome" style="margin-bottom:0">'+e.entidade+'</div>'+badges+'</div>'
-      +'<div class="ent-nacao">'+(e.diaSemana||'')+(e.saudacao?' · <em style="color:var(--ouro-lt)">'+e.saudacao+'</em>':'')+'</div>'
-      +'</div>';
-  }).join(''):'<div class="empty">Nenhuma entidade encontrada.</div>';
+      +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px"><div class="ent-nome" style="margin-bottom:0">'+e.entidade+'<\/div>'+badges+'<\/div>'
+      +'<div class="ent-nacao">'+(e.diaSemana||'')+(e.saudacao?' · <em style="color:var(--ouro-lt)">'+e.saudacao+'<\/em>':'')+'<\/div>'
+      +'<\/div>';
+  }).join(''):'<div class="empty">Nenhuma entidade encontrada.<\/div>';
 }
 
 function abrirModalCsm(id){
   var i=consumiveis.find(function(x){return x.id===id;});if(!i)return;
   document.getElementById('modal-nome').textContent=i.nome||'--';
-  var c='<div class="modal-row"><span class="modal-rot">Categoria</span><span>'+(i.categoria||'--')+'</span></div>';
-  c+='<div class="modal-row"><span class="modal-rot">N\u00edvel</span><span>'+(i.nivel||'--')+'</span></div>';
-  c+='<div class="modal-row"><span class="modal-rot">Estoque</span><span>'+(i.atual||0)+' / '+(i.minimo||0)+' '+(i.unidade||'')+'</span></div>';
-  if(i.fornecedor)c+='<div class="modal-row"><span class="modal-rot">Fornecedor</span><span>'+i.fornecedor+'</span></div>';
-  if(i.precoUnit)c+='<div class="modal-row"><span class="modal-rot">Pre\u00e7o unit.</span><span>R$ '+i.precoUnit+'</span></div>';
-  if(i.atualizado){var _d=new Date(i.atualizado);var _ds=isNaN(_d)?i.atualizado:_d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});c+='<div class="modal-row"><span class="modal-rot">Atualizado em</span><span>'+_ds+'</span></div>';}
-  if(i.link)c+='<div style="margin-top:12px"><a href="'+i.link+'" target="_blank" style="font-size:12px;color:var(--ouro);text-decoration:none;border:1px solid var(--borda);border-radius:6px;padding:5px 12px;display:inline-block">&#128722; Link de compra</a></div>';
+  var c='<div class="modal-row"><span class="modal-rot">Categoria<\/span><span>'+(i.categoria||'--')+'<\/span><\/div>';
+  c+='<div class="modal-row"><span class="modal-rot">N\u00edvel<\/span><span>'+(i.nivel||'--')+'<\/span><\/div>';
+  c+='<div class="modal-row"><span class="modal-rot">Estoque<\/span><span>'+(i.atual||0)+' / '+(i.minimo||0)+' '+(i.unidade||'')+'<\/span><\/div>';
+  if(i.fornecedor)c+='<div class="modal-row"><span class="modal-rot">Fornecedor<\/span><span>'+i.fornecedor+'<\/span><\/div>';
+  if(i.precoUnit)c+='<div class="modal-row"><span class="modal-rot">Pre\u00e7o unit.<\/span><span>R$ '+i.precoUnit+'<\/span><\/div>';
+  if(i.atualizado){var _d=new Date(i.atualizado);var _ds=isNaN(_d)?i.atualizado:_d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});c+='<div class="modal-row"><span class="modal-rot">Atualizado em<\/span><span>'+_ds+'<\/span><\/div>';}
+  if(i.link)c+='<div style="margin-top:12px"><a href="'+i.link+'" target="_blank" style="font-size:12px;color:var(--ouro);text-decoration:none;border:1px solid var(--borda);border-radius:6px;padding:5px 12px;display:inline-block">&#128722; Link de compra<\/a><\/div>';
   document.getElementById('modal-corpo').innerHTML=c;
   document.getElementById('modal-bg').classList.add('aberto');
 }
 function abrirModalAcervo(id){
   var i=acervo.find(function(x){return x.id===id;});if(!i)return;
   document.getElementById('modal-nome').textContent=i.nome||'--';
-  var c='<div class="modal-row"><span class="modal-rot">Categoria</span><span>'+(i.categoria||'--')+'</span></div>';
-  if(i.subcategoria)c+='<div class="modal-row"><span class="modal-rot">Subcategoria</span><span>'+i.subcategoria+'</span></div>';
-  if(i.orixa)c+='<div class="modal-row"><span class="modal-rot">Orix\u00e1</span><span>'+i.orixa+'</span></div>';
-  if(i.entidade)c+='<div class="modal-row"><span class="modal-rot">Entidade / Linha</span><span>'+i.entidade+'</span></div>';
-  c+='<div class="modal-row"><span class="modal-rot">Status</span><span>'+(i.status||'--')+'</span></div>';
-  if(i.local)c+='<div class="modal-row"><span class="modal-rot">Localiza\u00e7\u00e3o</span><span>'+i.local+'</span></div>';
-  if(i.quantidade)c+='<div class="modal-row"><span class="modal-rot">Quantidade</span><span>'+i.quantidade+'</span></div>';
-  if(i.observacoes)c+='<div style="font-size:12px;color:var(--cinza);margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05)">'+i.observacoes+'</div>';
+  var c='<div class="modal-row"><span class="modal-rot">Categoria<\/span><span>'+(i.categoria||'--')+'<\/span><\/div>';
+  if(i.subcategoria)c+='<div class="modal-row"><span class="modal-rot">Subcategoria<\/span><span>'+i.subcategoria+'<\/span><\/div>';
+  if(i.orixa)c+='<div class="modal-row"><span class="modal-rot">Orix\u00e1<\/span><span>'+i.orixa+'<\/span><\/div>';
+  if(i.entidade)c+='<div class="modal-row"><span class="modal-rot">Entidade / Linha<\/span><span>'+i.entidade+'<\/span><\/div>';
+  c+='<div class="modal-row"><span class="modal-rot">Status<\/span><span>'+(i.status||'--')+'<\/span><\/div>';
+  if(i.local)c+='<div class="modal-row"><span class="modal-rot">Localiza\u00e7\u00e3o<\/span><span>'+i.local+'<\/span><\/div>';
+  if(i.quantidade)c+='<div class="modal-row"><span class="modal-rot">Quantidade<\/span><span>'+i.quantidade+'<\/span><\/div>';
+  if(i.observacoes)c+='<div style="font-size:12px;color:var(--cinza);margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05)">'+i.observacoes+'<\/div>';
   document.getElementById('modal-corpo').innerHTML=c;
   document.getElementById('modal-bg').classList.add('aberto');
 }
@@ -360,27 +360,27 @@ function abrirModalEnt(nome){
   var e=entidades.find(function(x){return x.entidade===nome;});if(!e)return;
   document.getElementById('modal-nome').textContent=e.entidade;
   var c='';
-  if(e.nacao)c+='<div class="modal-row"><span class="modal-rot">Na\u00e7\u00e3o</span><span>'+e.nacao+'</span></div>';
-  if(e.dataFesta)c+='<div class="modal-row"><span class="modal-rot">Data da Festa</span><span>'+e.dataFesta+'</span></div>';
-  if(e.diaSemana)c+='<div class="modal-row"><span class="modal-rot">Dia da Semana</span><span>'+e.diaSemana+'</span></div>';
-  if(e.cores)c+='<div class="modal-row"><span class="modal-rot">Cores</span><span>'+e.cores+'</span></div>';
-  if(e.oferendas)c+='<div class="modal-row"><span class="modal-rot">Oferendas</span><span>'+e.oferendas+'</span></div>';
-  if(e.bebidas)c+='<div class="modal-row"><span class="modal-rot">Bebidas / Alimentos</span><span>'+e.bebidas+'</span></div>';
-  if(e.itensAcervo)c+='<div class="modal-row"><span class="modal-rot">Itens do Acervo</span><span>'+e.itensAcervo+'</span></div>';
-  if(e.saudacao)c+='<div class="modal-row"><span class="modal-rot">Sauda\u00e7\u00e3o</span><span style="color:var(--ouro-lt);font-weight:600">'+e.saudacao+'</span></div>';
-  if(e.observacoes)c+='<div style="font-size:12px;color:var(--cinza);margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05)">'+e.observacoes+'</div>';
+  if(e.nacao)c+='<div class="modal-row"><span class="modal-rot">Na\u00e7\u00e3o<\/span><span>'+e.nacao+'<\/span><\/div>';
+  if(e.dataFesta)c+='<div class="modal-row"><span class="modal-rot">Data da Festa<\/span><span>'+e.dataFesta+'<\/span><\/div>';
+  if(e.diaSemana)c+='<div class="modal-row"><span class="modal-rot">Dia da Semana<\/span><span>'+e.diaSemana+'<\/span><\/div>';
+  if(e.cores)c+='<div class="modal-row"><span class="modal-rot">Cores<\/span><span>'+e.cores+'<\/span><\/div>';
+  if(e.oferendas)c+='<div class="modal-row"><span class="modal-rot">Oferendas<\/span><span>'+e.oferendas+'<\/span><\/div>';
+  if(e.bebidas)c+='<div class="modal-row"><span class="modal-rot">Bebidas / Alimentos<\/span><span>'+e.bebidas+'<\/span><\/div>';
+  if(e.itensAcervo)c+='<div class="modal-row"><span class="modal-rot">Itens do Acervo<\/span><span>'+e.itensAcervo+'<\/span><\/div>';
+  if(e.saudacao)c+='<div class="modal-row"><span class="modal-rot">Sauda\u00e7\u00e3o<\/span><span style="color:var(--ouro-lt);font-weight:600">'+e.saudacao+'<\/span><\/div>';
+  if(e.observacoes)c+='<div style="font-size:12px;color:var(--cinza);margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05)">'+e.observacoes+'<\/div>';
   document.getElementById('modal-corpo').innerHTML=c;
   document.getElementById('modal-bg').classList.add('aberto');
 }
 function abrirModalPonto(id){
   var p=pontos.find(function(x){return x.id===id;});if(!p)return;
   document.getElementById('modal-nome').textContent=p.nome||'--';
-  var c='<div class="modal-row"><span class="modal-rot">Tradi\u00e7\u00e3o</span><span>'+p.religiao+'</span></div>';
-  c+='<div class="modal-row"><span class="modal-rot">Entidade / Orix\u00e1</span><span>'+p.entidade+'</span></div>';
-  if(p.letra){var lf=p.letra.replace(/\n/g,'<br>').replace(/BIS/g,'<em style="color:var(--ouro);font-style:normal;font-size:10px;font-weight:600">BIS</em>');c+='<div style="margin:12px 0 4px;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ouro)">Letra</div><div style="font-size:14px;line-height:1.9;color:#ddd;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:14px 16px;margin-bottom:12px">'+lf+'</div>';}
-  if(p.youtube){c+='<div style="display:flex;gap:8px;align-items:center;margin-bottom:4px"><button data-pid="'+id+'" onclick="MP.tocar(this.dataset.pid);fecharModal()" style="background:rgba(201,168,76,.15);border:1px solid var(--borda);border-radius:6px;padding:6px 14px;color:var(--ouro-lt);font-size:12px;cursor:pointer;font-family:var(--fb)">&#9835; Tocar no player</button><a href="'+p.youtube+'" target="_blank" style="font-size:11px;color:var(--cinza);text-decoration:none;border:1px solid var(--borda);border-radius:6px;padding:6px 10px">&#9654; YouTube</a></div>';}
-  if(p.obs)c+='<div style="font-size:11px;color:var(--cinza);margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05)">'+p.obs+'</div>';
-  c+='<div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07)"><a href="player.html?ent='+encodeURIComponent(p.entidade||'')+'" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--ouro-lt);background:rgba(201,168,76,.12);border:1px solid var(--borda);border-radius:8px;padding:8px 14px;text-decoration:none">&#9835; Pontos cantados desta entidade</a></div>';
+  var c='<div class="modal-row"><span class="modal-rot">Tradi\u00e7\u00e3o<\/span><span>'+p.religiao+'<\/span><\/div>';
+  c+='<div class="modal-row"><span class="modal-rot">Entidade / Orix\u00e1<\/span><span>'+p.entidade+'<\/span><\/div>';
+  if(p.letra){var lf=p.letra.replace(/\n/g,'<br>').replace(/BIS/g,'<em style="color:var(--ouro);font-style:normal;font-size:10px;font-weight:600">BIS<\/em>');c+='<div style="margin:12px 0 4px;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ouro)">Letra<\/div><div style="font-size:14px;line-height:1.9;color:#ddd;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:14px 16px;margin-bottom:12px">'+lf+'<\/div>';}
+  if(p.youtube){c+='<div style="display:flex;gap:8px;align-items:center;margin-bottom:4px"><button data-pid="'+id+'" onclick="MP.tocar(this.dataset.pid);fecharModal()" style="background:rgba(201,168,76,.15);border:1px solid var(--borda);border-radius:6px;padding:6px 14px;color:var(--ouro-lt);font-size:12px;cursor:pointer;font-family:var(--fb)">&#9835; Tocar no player<\/button><a href="'+p.youtube+'" target="_blank" style="font-size:11px;color:var(--cinza);text-decoration:none;border:1px solid var(--borda);border-radius:6px;padding:6px 10px">&#9654; YouTube<\/a><\/div>';}
+  if(p.obs)c+='<div style="font-size:11px;color:var(--cinza);margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05)">'+p.obs+'<\/div>';
+  c+='<div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07)"><a href="player.html?ent='+encodeURIComponent(p.entidade||'')+'" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--ouro-lt);background:rgba(201,168,76,.12);border:1px solid var(--borda);border-radius:8px;padding:8px 14px;text-decoration:none">&#9835; Pontos cantados desta entidade<\/a><\/div>';
   document.getElementById('modal-corpo').innerHTML=c;
   document.getElementById('modal-bg').classList.add('aberto');
 }
@@ -397,7 +397,7 @@ var MP={
     document.getElementById('mp-nome').textContent=p.nome;
     document.getElementById('mp-ent').textContent=p.entidade;
     document.getElementById('mini-player').classList.add('ativo');
-    var wrap=document.getElementById('yt-hidden');wrap.innerHTML='<div id="yt-iframe"></div>';
+    var wrap=document.getElementById('yt-hidden');wrap.innerHTML='<div id="yt-iframe"><\/div>';
     if(window.YT&&window.YT.Player){MP._criar(ytm[1]);}
     else{var t=document.createElement('script');t.src='https://www.youtube.com/iframe_api';document.head.appendChild(t);window._ytVid=ytm[1];}
   },
@@ -449,13 +449,13 @@ function _buildEntTabs(){
   var sorted=[...nacoes].sort();
   var wrap=document.querySelector('.ent-tabs');if(!wrap)return;
   var html='';
-  html+='<button class="ent-tab'+(_nacaoAtiva===''?' active':'')+'" data-nacao="" onclick="setNacao(this)">Todos</button>';
+  html+='<button class="ent-tab'+(_nacaoAtiva===''?' active':'')+'" data-nacao="" onclick="setNacao(this)">Todos<\/button>';
   sorted.forEach(function(n){
     html+='<button class="ent-tab'+(_nacaoAtiva===n?' active':'')+'" data-nacao="';
     html+=n;
     html+='" onclick="setNacao(this)">';
     html+=n;
-    html+='</button>';
+    html+='<\/button>';
   });
   wrap.innerHTML=html;
 }
@@ -472,14 +472,14 @@ function renderPontos(){
   keys.forEach(function(k){
     var items=(CATALOG_PONTOS[k]||[]).filter(function(p){return !q||(p.nome||'').toLowerCase().includes(q);});
     if(!items.length)return;total+=items.length;
-    html+='<div class="grupo-wrap"><div class="grupo-titulo">'+k+'</div>';
+    html+='<div class="grupo-wrap"><div class="grupo-titulo">'+k+'<\/div>';
     items.forEach(function(p,i){
       var eid='ac'+i+k.replace(/[^a-z0-9]/gi,'');
-      html+='<div class="audio-card" id="'+eid+'" onclick="plTocar('+JSON.stringify(p.url)+','+JSON.stringify(p.nome)+','+JSON.stringify(k)+')"><div class="ac-num">'+(i+1)+'</div><div class="ac-play"><span>&#9654;</span></div><div class="ac-nome">'+p.nome+'</div></div>';
+      html+='<div class="audio-card" id="'+eid+'" onclick="plTocar('+JSON.stringify(p.url)+','+JSON.stringify(p.nome)+','+JSON.stringify(k)+')"><div class="ac-num">'+(i+1)+'<\/div><div class="ac-play"><span>&#9654;<\/span><\/div><div class="ac-nome">'+p.nome+'<\/div><\/div>';
     });
-    html+='</div>';
+    html+='<\/div>';
   });
-  if(!html)html='<div class="empty" style="grid-column:1/-1"><p>&#127925; Nenhum ponto encontrado.</p></div>';
+  if(!html)html='<div class="empty" style="grid-column:1/-1"><p>&#127925; Nenhum ponto encontrado.<\/p><\/div>';
   wrap.innerHTML=html;
   document.getElementById('pt-count').textContent=total+' ponto'+(total!==1?'s':'');
   _plLista=getListaPontos();
