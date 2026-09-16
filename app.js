@@ -273,7 +273,7 @@ function renderPontos(){
     html+='<div class="grupo-wrap"><div class="grupo-titulo">'+k+'<\/div>';
     items.forEach(function(p,i){
       var eid='ac'+i+k.replace(/[^a-z0-9]/gi,'');
-      html+='<div class="audio-card" id="'+eid+'" onclick="plTocar('+JSON.stringify(p.url)+','+JSON.stringify(p.nome)+','+JSON.stringify(k)+')"><div class="ac-num">'+(i+1)+'<\/div><div class="ac-play"><span>&#9654;<\/span><\/div><div class="ac-nome">'+p.nome+'<\/div><\/div>';
+      html+='<div class="audio-card" id="'+eid+'" data-url="'+encodeURIComponent(p.url)+'" data-nome="'+p.nome.replace(/"/g,'&quot;')+'" data-ent="'+k.replace(/"/g,'&quot;')+'" onclick="_acClick(this)"><div class="ac-num">'+(i+1)+'<\/div><div class="ac-play"><span>&#9654;<\/span><\/div><div class="ac-nome">'+p.nome+'<\/div><\/div>';
     });
     html+='<\/div>';
   });
@@ -282,6 +282,7 @@ function renderPontos(){
   document.getElementById('pt-count').textContent=total+' ponto'+(total!==1?'s':'');
   _plLista=getListaPontos();
 }
+function _acClick(el){plTocar(decodeURIComponent(el.dataset.url),el.dataset.nome,el.dataset.ent);}
 function plTocar(url,nome,ent){
   var audio=document.getElementById('pl-audio');
   _plLista=getListaPontos();_plIdx=_plLista.findIndex(function(p){return p.url===url;});
