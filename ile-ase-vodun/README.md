@@ -38,4 +38,4 @@ Terreiro de Umbanda — São Paulo, SP
 
 ## Dev key (acesso admin sem login)
 
-`?dev=ile_ase_dev_2024_falsp`
+https://falssp.github.io/terreiro-gestao/ile-ase-vodun/admin.html?dev=ile_ase_dev_2024_falsp
