@@ -1,0 +1,220 @@
+<!DOCTYPE html><!-- v2 -->
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Ile Ase Vodun Ogum Ayres</title>
+<link rel="manifest" href="manifest.json"/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0f0f0f;--card:#1a1a1a;--ouro:#c9a84c;--ouro-lt:#f0d060;--creme:#fff;--cinza:#999;--borda:rgba(201,168,76,.22);--r:12px;--fd:'Cinzel',serif;--fb:'Inter',sans-serif;--nav-h:56px}
+html{font-size:16px}
+body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:100dvh}
+.topo{background:linear-gradient(135deg,#1a0e06,#0a0a0a);border-bottom:1px solid var(--borda);padding:14px 16px 10px;text-align:center}
+.topo h1{font-family:var(--fd);font-size:1.05rem;color:var(--ouro-lt);letter-spacing:.06em}
+.topo p{font-size:10px;color:var(--cinza);margin-top:3px;letter-spacing:.12em;text-transform:uppercase}
+.desktop-nav{display:flex;background:#111;border-bottom:1px solid var(--borda);overflow-x:auto;scrollbar-width:none}
+.desktop-nav::-webkit-scrollbar{display:none}
+.tab{background:none;border:none;border-bottom:2px solid transparent;padding:12px 18px;color:var(--cinza);font-family:var(--fb);font-size:13px;cursor:pointer;transition:color .2s,border-color .2s;white-space:nowrap}
+.tab:hover{color:var(--ouro-lt)}
+.tab.active{color:var(--ouro-lt);border-bottom-color:var(--ouro)}
+.nav-links{display:flex;justify-content:flex-end;gap:16px;padding:5px 20px;background:#111;border-bottom:1px solid var(--borda)}
+.nav-links a{font-size:11px;color:var(--cinza);text-decoration:none}
+.nav-links a:hover{color:var(--ouro)}
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:var(--nav-h);background:#111;border-top:1px solid var(--borda);z-index:90;flex-direction:row}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:none;border:none;color:var(--cinza);font-family:var(--fb);font-size:9px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color .15s}
+.nav-btn.active{color:var(--ouro-lt)}
+.nav-btn .ic{font-size:18px;line-height:1}
+#pwa-banner{display:none;align-items:center;justify-content:space-between;padding:8px 16px;background:#111;border-bottom:1px solid var(--borda);font-size:12px;color:var(--cinza)}
+#pwa-banner.show{display:flex}
+.btn-pwa{padding:4px 12px;border-radius:6px;font-size:11px;font-family:var(--fb);cursor:pointer;border:1px solid var(--borda)}
+.btn-pwa.sim{background:var(--ouro);color:#0f0f0f;border-color:var(--ouro)}
+.btn-pwa.nao{background:transparent;color:var(--cinza)}
+.section{display:none;padding:28px 36px}
+.section.active{display:block}
+@media(max-width:767px){.section{padding:14px;padding-bottom:calc(var(--nav-h) + 14px)}.desktop-nav,.nav-links{display:none}.bottom-nav{display:flex}}
+.niveis-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+@media(max-width:767px){.niveis-grid{grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}}
+.nivel-card{border-radius:var(--r);padding:18px 14px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px}
+.nivel-card .num{font-size:2rem;font-weight:700;min-height:2.5rem;display:flex;align-items:center;justify-content:center}
+.nivel-card .rot{font-size:10px;text-transform:uppercase;letter-spacing:.1em;opacity:.8}
+.nivel-card.ok{background:rgba(40,120,40,.25);border:1px solid rgba(40,180,40,.3)}
+.nivel-card.repor{background:rgba(120,100,20,.25);border:1px solid rgba(200,170,30,.3)}
+.nivel-card.alerta{background:rgba(150,50,50,.25);border:1px solid rgba(220,80,80,.3)}
+.nivel-card.urgente{background:rgba(100,10,10,.35);border:1px solid rgba(200,20,20,.4)}
+.skeleton{background:linear-gradient(90deg,rgba(201,168,76,.08) 25%,rgba(201,168,76,.18) 50%,rgba(201,168,76,.08) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skel-num{width:50px;height:36px;border-radius:6px}
+.home-card{background:var(--card);border:1px solid var(--borda);border-radius:10px;padding:18px 20px;margin-bottom:20px}
+.home-card-titulo{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--ouro);margin-bottom:12px;font-weight:600;padding-bottom:8px;border-bottom:1px solid var(--borda)}
+.ornamento{text-align:center;color:var(--ouro);letter-spacing:.4em;font-size:12px;margin:18px 0 20px}
+.filter-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.filter-bar input,.filter-bar select{background:var(--card);border:1px solid var(--borda);border-radius:8px;padding:8px 12px;color:var(--creme);font-size:13px;font-family:var(--fb);outline:none;flex:1;min-width:120px}
+.filter-bar input:focus,.filter-bar select:focus{border-color:var(--ouro)}
+.filter-bar select option{background:#1a1a1a}
+.lbl-count{font-size:12px;color:var(--cinza);margin-bottom:12px}
+.csm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+@media(max-width:767px){.csm-grid{grid-template-columns:1fr}}
+.csm-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:14px 16px;cursor:pointer;transition:border-color .15s;-webkit-tap-highlight-color:transparent}
+.csm-card:hover{border-color:var(--ouro)}
+.csm-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.csm-nome{font-size:14px;font-weight:600;flex:1}
+.csm-cat{font-size:11px;color:var(--cinza);margin-top:2px}
+.csm-bar-wrap{height:5px;background:rgba(255,255,255,.08);border-radius:3px;margin-bottom:6px}
+.csm-bar{height:100%;border-radius:3px}
+.csm-info{display:flex;justify-content:space-between;font-size:10px;color:var(--cinza)}
+.nbadge{font-size:10px;padding:2px 8px;border-radius:99px;white-space:nowrap;flex-shrink:0}
+.nb-ok{background:rgba(40,120,40,.25);color:#6d6;border:1px solid rgba(40,180,40,.3)}
+.nb-repor{background:rgba(120,100,20,.25);color:#cc6;border:1px solid rgba(200,170,30,.3)}
+.nb-alerta{background:rgba(150,50,50,.25);color:#f88;border:1px solid rgba(220,80,80,.3)}
+.nb-urgente{background:rgba(100,10,10,.35);color:#f44;border:1px solid rgba(200,20,20,.4)}
+.pontos-grupo-titulo{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--ouro);font-weight:600;margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.pontos-grupo-titulo::after{content:'';flex:1;height:1px;background:var(--borda)}
+.ponto-badge{font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:99px;flex-shrink:0}
+.ponto-badge.umb{background:rgba(100,160,100,.18);color:#90d090;border:1px solid rgba(100,160,100,.3)}
+.ponto-badge.can{background:rgba(160,100,30,.2);color:#e0b060;border:1px solid rgba(160,100,30,.3)}
+.ent-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:14px 16px;cursor:pointer;transition:border-color .15s;margin-bottom:8px}
+.ent-card:hover{border-color:var(--ouro)}
+.ent-nome{font-size:15px;font-weight:600;color:var(--ouro-lt);margin-bottom:4px}
+.ent-nacao{font-size:11px;color:var(--cinza)}
+.ent-tabs{display:flex;gap:0;margin-bottom:16px}
+.ent-tab{flex:1;padding:8px;text-align:center;font-size:12px;background:var(--card);border:1px solid var(--borda);cursor:pointer;color:var(--cinza);font-family:var(--fb)}
+.ent-tab:first-child{border-radius:8px 0 0 8px}
+.ent-tab:last-child{border-radius:0 8px 8px 0}
+.ent-tab.active{background:rgba(201,168,76,.15);color:var(--ouro-lt);border-color:var(--ouro)}
+.item-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:12px 14px;margin-bottom:6px;cursor:pointer;transition:border-color .15s;display:flex;align-items:center;justify-content:space-between}
+.item-card:hover{border-color:var(--ouro)}
+.item-nome{font-size:13px;font-weight:500}
+.item-cat{font-size:10px;color:var(--cinza);margin-top:2px}
+
+
+#modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
+#modal-bg.aberto{display:flex}
+.modal{background:#1a1a1a;border:1px solid var(--borda);border-radius:var(--r);padding:28px 24px;width:100%;max-width:560px;max-height:85dvh;overflow-y:auto}
+.modal-nome{font-family:var(--fd);font-size:1.15rem;color:var(--ouro-lt);margin-bottom:16px}
+.modal-row{display:flex;justify-content:space-between;font-size:14px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.modal-rot{color:var(--cinza);font-size:13px}
+.modal-x{float:right;background:none;border:none;color:var(--cinza);font-size:1.2rem;cursor:pointer;margin-left:12px}
+.empty{text-align:center;padding:60px 20px;color:var(--cinza);font-style:italic;font-size:13px}
+.toast{position:fixed;bottom:calc(var(--nav-h) + 10px);left:50%;transform:translateX(-50%) translateY(20px);background:#111;border:1px solid var(--ouro);border-radius:99px;color:var(--ouro-lt);padding:8px 20px;font-size:12px;opacity:0;transition:all .3s;z-index:300;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* PLAYER DE PONTOS */
+.grupos-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 24px;align-items:start}
+@media(max-width:900px){.grupos-grid{grid-template-columns:1fr}}
+.grupo-wrap{break-inside:avoid;margin-bottom:8px}
+.grupo-titulo{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--ouro);font-weight:600;margin:18px 0 8px;display:flex;align-items:center;gap:8px}
+.grupo-titulo::after{content:'';flex:1;height:1px;background:var(--borda)}
+.audio-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:11px 14px;margin-bottom:6px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:border-color .15s;min-height:48px}
+.audio-card:hover{border-color:rgba(201,168,76,.45)}
+.audio-card.playing{border-color:var(--ouro);background:rgba(201,168,76,.06)}
+.ac-num{font-size:10px;color:var(--cinza);width:28px;text-align:right;flex-shrink:0}
+.ac-play{width:28px;height:28px;border-radius:50%;background:rgba(201,168,76,.12);border:1px solid var(--borda);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.audio-card.playing .ac-play{background:rgba(201,168,76,.3);border-color:var(--ouro)}
+.ac-play span{font-size:11px;color:var(--ouro-lt)}
+.ac-nome{flex:1;font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.audio-card.playing .ac-nome{color:var(--ouro-lt)}
+#mini-player{position:fixed;bottom:0;left:0;right:0;background:#111;border-top:1px solid var(--borda);z-index:200;display:none}
+#mini-player.ativo{display:block}
+.pl-barra{height:3px;background:rgba(201,168,76,.15);cursor:pointer}
+.pl-prog{height:100%;background:var(--ouro);width:0%}
+.pl-corpo{display:flex;align-items:center;gap:10px;padding:10px 20px}
+.pl-info{flex:1;min-width:0}
+.pl-nome{font-size:12px;font-weight:600;color:var(--ouro-lt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-ent{font-size:10px;color:var(--cinza)}
+.pl-ctrls{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.pl-btn{background:none;border:none;color:var(--cinza);cursor:pointer;padding:7px;font-size:18px;line-height:1;border-radius:6px;transition:color .15s}
+.pl-btn:hover{color:var(--ouro-lt)}
+.pl-btn.main{font-size:22px;color:var(--ouro-lt)}
+.pl-tempo{font-size:10px;color:var(--cinza);flex-shrink:0;min-width:70px;text-align:center}
+.pt-sel{background:rgba(0,0,0,.35);border:1px solid var(--borda);border-radius:8px;padding:8px 12px;color:var(--creme);font-size:12px;font-family:var(--fb);outline:none;flex:1;min-width:160px}
+.pt-sel:focus{border-color:var(--ouro)}
+.pt-sel option{background:#1a1a1a}
+</style>
+</head>
+<body>
+<div id="pwa-banner"><span>&#128241; Instalar na tela inicial?</span><div style="display:flex;gap:8px"><button class="btn-pwa nao" onclick="document.getElementById('pwa-banner').classList.remove('show')">Não</button><button class="btn-pwa sim" onclick="installPwa()">Instalar</button></div></div>
+<div class="topo"><h1>&#10022; Ile Ase Vodun Ogum Ayres &#10022;</h1><p>Terreiro de Umbanda</p></div>
+<nav class="desktop-nav">
+  <button class="tab active" onclick="irPara('home',this)">&#127968; Início</button>
+  <button class="tab" onclick="irPara('acervo',this)">&#128230; Acervo</button>
+  <button class="tab" onclick="irPara('consumiveis',this)">&#128305; Consumíveis</button>
+  <button class="tab" onclick="irPara('calendario',this)">&#128197; Calendário</button>
+  <button class="tab" onclick="irPara('entidades',this)">&#10024; Orixás &amp; Entidades</button>
+  <button class="tab" onclick="irPara('pontos',this)">&#9835; Pontos</button>
+</nav>
+<div class="nav-links"><a href="admin.html">&#128100; Admin</a><a href="faq.html">&#10067; Ajuda</a></div>
+<div class="section active" id="sec-home">
+  <div class="ornamento">&#10022; &#10022; &#10022;</div>
+  <div class="home-card" style="margin-bottom:24px;background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(100,50,200,.08));border-color:rgba(201,168,76,.3)">
+    <div class="home-card-titulo">&#127775; Consultas Espirituais</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px">
+      <div style="font-size:13px"><div style="color:var(--ouro-lt);font-weight:600;margin-bottom:6px">&#127775; Jogo de Búzios</div><div style="color:var(--cinza);line-height:1.7">Leitura oracular africana com os búzios sagrados. Consulte os orixás e receba orientações para sua vida.</div></div>
+      <div style="font-size:13px"><div style="color:var(--ouro-lt);font-weight:600;margin-bottom:6px">&#127183; Tarot</div><div style="color:var(--cinza);line-height:1.7">Leitura de tarot para orientação espiritual, esclarecimento de situações e apoio nas decisões da vida.</div></div>
+    </div>
+    <div style="text-align:center;margin-top:14px;font-size:12px;color:var(--cinza)">Para agendamento: <a href="https://wa.me/5511989202958" style="color:var(--ouro);text-decoration:none;font-weight:600">WhatsApp (11) 98920-2958</a></div>
+  </div>
+  <div class="niveis-grid">
+    <div class="nivel-card ok" onclick="irPara('consumiveis')"><div class="num skeleton skel-num" id="cnt-ok"></div><div class="rot">OK</div></div>
+    <div class="nivel-card repor" onclick="irPara('consumiveis')"><div class="num skeleton skel-num" id="cnt-repor"></div><div class="rot">Repor</div></div>
+    <div class="nivel-card alerta" onclick="irPara('consumiveis')"><div class="num skeleton skel-num" id="cnt-alerta"></div><div class="rot">Alerta</div></div>
+    <div class="nivel-card urgente" onclick="irPara('consumiveis')"><div class="num skeleton skel-num" id="cnt-urgente"></div><div class="rot">Urgente</div></div>
+  </div>
+  <div class="home-card"><div class="home-card-titulo">&#128197; Próximos eventos</div><div id="home-eventos-lista" style="font-size:13px;color:var(--cinza);font-style:italic">Carregando...</div></div>
+</div>
+<div class="section" id="sec-acervo">
+  <div class="filter-bar"><input type="search" id="acervo-busca" placeholder="&#128269; Buscar acervo..." oninput="renderAcervo()"/><select id="acervo-cat" onchange="renderAcervo()"><option value="">Todas as Categorias</option></select></div>
+  <div class="lbl-count" id="acervo-count"></div><div id="acervo-lista"><div class="empty">Carregando...</div></div>
+</div>
+<div class="section" id="sec-consumiveis">
+  <div class="filter-bar">
+    <input type="search" id="csm-busca" placeholder="&#128269; Buscar consumível..." oninput="renderConsumiveis()"/>
+    <select id="csm-cat" onchange="renderConsumiveis()"><option value="">Todas as Categorias</option></select>
+    <select id="csm-nivel" onchange="renderConsumiveis()"><option value="">Todos os Níveis</option><option value="ok">OK</option><option value="repor">Repor</option><option value="alerta">Alerta</option><option value="urgente">Urgente</option></select>
+  </div>
+  <div class="lbl-count" id="csm-count"></div><div class="csm-grid" id="csm-lista"><div class="empty">Carregando...</div></div>
+</div>
+<div class="section" id="sec-calendario"><div id="cal-lista"><div class="empty">Carregando...</div></div></div>
+<div class="section" id="sec-entidades">
+  <div class="filter-bar"><input type="search" id="ent-busca" placeholder="&#128269; Buscar orixá ou entidade..." oninput="renderEntidades()"/></div>
+  <div class="ent-tabs"><button class="ent-tab active" data-nacao="" onclick="setNacao(this)">Todos</button><button class="ent-tab" data-nacao="Angola" onclick="setNacao(this)">Angola</button><button class="ent-tab" data-nacao="Jeje" onclick="setNacao(this)">Jeje</button><button class="ent-tab" data-nacao="Ketu" onclick="setNacao(this)">Ketu</button><button class="ent-tab" data-nacao="Umbanda" onclick="setNacao(this)">Umbanda</button></div>
+  <div id="ent-lista"><div class="empty">Carregando...</div></div>
+</div>
+<div class="section" id="sec-pontos">
+<div class="filter-bar" style="margin-bottom:12px">
+  <select class="pt-sel" id="pt-ent" onchange="renderPontos()"><option value="">Todas as entidades</option></select>
+  <input class="pt-sel" id="pt-busca" type="search" placeholder="&#128269; Buscar ponto..." oninput="renderPontos()"/>
+</div>
+<div class="results-count" id="pt-count"></div>
+<div id="pt-content" class="grupos-grid"></div>
+</div>
+
+<nav class="bottom-nav">
+  <button class="nav-btn active" onclick="irPara('home',this)"><span class="ic">&#127968;</span>Início</button>
+  <button class="nav-btn" onclick="irPara('consumiveis',this)"><span class="ic">&#128305;</span>Consumíveis</button>
+  <button class="nav-btn" onclick="irPara('pontos',this)"><span class="ic">&#9835;</span>Pontos</button>
+  <button class="nav-btn" onclick="irPara('acervo',this)"><span class="ic">&#128230;</span>Acervo</button>
+  <button class="nav-btn" onclick="irPara('entidades',this)"><span class="ic">&#10024;</span>Orixás</button>
+</nav>
+<div id="modal-bg" onclick="if(event.target===this)fecharModal()"><div class="modal"><button class="modal-x" onclick="fecharModal()">&#10005;</button><div class="modal-nome" id="modal-nome"></div><div id="modal-corpo"></div></div></div>
+<div id="yt-hidden"></div>
+<div class="toast" id="toast"></div>
+<script src="app.js" defer></script>
+
+<div id="mini-player">
+  <div class="pl-barra" id="pl-barra" onclick="seekPl(event)"><div class="pl-prog" id="pl-prog"></div></div>
+  <div class="pl-corpo">
+    <div class="pl-info"><div class="pl-nome" id="pl-nome">--</div><div class="pl-ent" id="pl-ent"></div></div>
+    <div class="pl-tempo" id="pl-tempo">0:00 / 0:00</div>
+    <div class="pl-ctrls">
+      <button class="pl-btn" onclick="plAnterior()">&#9198;</button>
+      <button class="pl-btn main" id="pl-play" onclick="plToggle()">&#9654;</button>
+      <button class="pl-btn" onclick="plProximo()">&#9197;</button>
+      <button class="pl-btn" onclick="plFechar()" style="font-size:14px">&#10005;</button>
+    </div>
+  </div>
+</div>
+<audio id="pl-audio" preload="none"></audio>
+</body>
+</html>
