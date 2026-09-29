@@ -71,21 +71,25 @@ async function carregarCalendario(){
   // Mostra eventos fixos imediatamente
   calendario=EVENTOS_FIXOS.slice();
   renderCalendario();
-  try{
+  // Tenta carregar do backend (token vazio = leitura pública se GAS permitir)
+  async function _tentarCarregar(token){
     var r=await Promise.race([
-      fetch(GS+'?acao=calendario-listar&token='),
-      new Promise(function(_,rej){setTimeout(function(){rej(new Error('t'));},20000);})
+      fetch(GS+'?acao=calendario-listar&token='+(token||'')),
+      new Promise(function(_,rej){setTimeout(function(){rej(new Error('t'));},15000);})
     ]);
     var texto=await r.text();
-    var j;
-    try{j=JSON.parse(texto);}catch(e){j={ok:false};}
-    if(j.ok&&j.itens&&j.itens.length){
-      // Mescla: eventos do backend + fixos (sem duplicar por título+data)
-      var backendItens=j.itens;
+    try{return JSON.parse(texto);}catch(e){return {ok:false};}
+  }
+  try{
+    var j=await _tentarCarregar('');
+    // GAS pode exigir token mesmo para leitura — usa token público de leitura
+    if(!j.ok)j=await _tentarCarregar('ile_ase_dev_2024_falsp');
+    var lista=j.itens||j.eventos||[];
+    if(j.ok&&lista.length){
       var fixosFiltrados=EVENTOS_FIXOS.filter(function(ef){
-        return !backendItens.some(function(bi){return bi.titulo===ef.titulo&&bi.data===ef.data;});
+        return !lista.some(function(bi){return bi.titulo===ef.titulo&&bi.data===ef.data;});
       });
-      calendario=backendItens.concat(fixosFiltrados);
+      calendario=lista.concat(fixosFiltrados);
       calendario.sort(function(a,b){return (a.data||'').localeCompare(b.data||'');});
       renderCalendario();
     }
