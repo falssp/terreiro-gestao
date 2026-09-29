@@ -19,7 +19,7 @@ function nslug(n){if(!n)return'';var s=n.toLowerCase();if(s.includes('ok'))retur
 
 async function carregarHome(){
   try{
-    var r=await Promise.race([fetch(GS+'?acao=datas-mes'),new Promise(function(_,rej){setTimeout(function(){rej(new Error('t'));},30000);})]);
+    var r=await Promise.race([fetch(GS+'?acao=datas-mes&token=ile_ase_dev_2024_falsp'),new Promise(function(_,rej){setTimeout(function(){rej(new Error('t'));},30000);})]);
     var j=await r.json();if(!j.ok)return;
     var html='';
     if(j.aniversariantes&&j.aniversariantes.length){html+='<div style="margin-bottom:10px"><strong style="color:var(--ouro);font-size:11px">&#127874; ANIVERSARIANTES<\/strong><br>';j.aniversariantes.forEach(function(a){html+='<div style="font-size:13px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)">'+a.nome+' &#8212; '+a.data+'<\/div>';});html+='<\/div>';}
@@ -29,14 +29,14 @@ async function carregarHome(){
 }
 async function carregarAcervo(){
   try{
-    var r=await Promise.race([fetch(GS+'?acao=acervo-listar'),new Promise(function(_,rej){setTimeout(function(){rej(new Error('t'));},30000);})]);
+    var r=await Promise.race([fetch(GS+'?acao=acervo-listar&token=ile_ase_dev_2024_falsp'),new Promise(function(_,rej){setTimeout(function(){rej(new Error('t'));},30000);})]);
     var j=await r.json();
     if(j.ok){acervo=j.itens||[];var cats=[...new Set(acervo.map(function(i){return i.categoria||''}).filter(Boolean))].sort();var sel=document.getElementById('acervo-cat');cats.forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});renderAcervo();}
   }catch(e){document.getElementById('acervo-lista').innerHTML='<div class="empty">N&#227;o foi poss&#237;vel carregar.<\/div>';}
 }
 async function carregarConsumiveis(){
   try{
-    var r=await Promise.race([fetch(GS+'?acao=consumiveis-listar'),new Promise(function(_,rej){setTimeout(function(){rej(new Error('t'));},30000);})]);
+    var r=await Promise.race([fetch(GS+'?acao=consumiveis-listar&token=ile_ase_dev_2024_falsp'),new Promise(function(_,rej){setTimeout(function(){rej(new Error('t'));},30000);})]);
     var j=await r.json();
     if(j.ok){
       consumiveis=j.itens||[];
@@ -97,7 +97,7 @@ async function carregarCalendario(){
 }
 function carregarEntidades(){
   entidades=ENTIDADES_STATIC;renderEntidades();
-  try{fetch(GS+'?acao=entidades-listar').then(function(r){return r.json();}).then(function(j){if(j.ok&&j.itens&&j.itens.length){entidades=j.itens;renderEntidades();}}).catch(function(){});}catch(e){}
+  try{fetch(GS+'?acao=entidades-listar&token=ile_ase_dev_2024_falsp').then(function(r){return r.json();}).then(function(j){if(j.ok&&j.itens&&j.itens.length){entidades=j.itens;renderEntidades();}}).catch(function(){});}catch(e){}
 }
 function carregarPontos(){
   if(CATALOG_PONTOS){renderPontos();return;}
@@ -289,7 +289,7 @@ function carregarEntidades(){
   entidades=STATIC;
   _buildEntTabs();
   renderEntidades();
-  try{fetch(GS+'?acao=entidades-listar').then(function(r){return r.json();}).then(function(j){if(j.ok&&j.itens&&j.itens.length){entidades=j.itens;_buildEntTabs();renderEntidades();}}).catch(function(){});}catch(e){}
+  try{fetch(GS+'?acao=entidades-listar&token=ile_ase_dev_2024_falsp').then(function(r){return r.json();}).then(function(j){if(j.ok&&j.itens&&j.itens.length){entidades=j.itens;_buildEntTabs();renderEntidades();}}).catch(function(){});}catch(e){}
 }
 function _buildEntTabs(){
   var nacoes=new Set();
