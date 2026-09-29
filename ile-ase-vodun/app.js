@@ -50,11 +50,46 @@ async function carregarConsumiveis(){
   }catch(e){['cnt-ok','cnt-repor','cnt-alerta','cnt-urgente'].forEach(function(id){fillNum(id,'--');});document.getElementById('csm-lista').innerHTML='<div class="empty">N&#227;o foi poss&#237;vel carregar.<\/div>';}
 }
 setTimeout(function(){['cnt-ok','cnt-repor','cnt-alerta','cnt-urgente'].forEach(function(id){var el=document.getElementById(id);if(el&&el.classList.contains('skeleton'))fillNum(id,'--');});},30000);
+var EVENTOS_FIXOS=(function(){
+  var ano=new Date().getFullYear();
+  var prox=new Date().getFullYear()+1;
+  // Gera datas para eventos recorrentes (mensais/anuais)
+  function dataStr(m,d,a){a=a||ano;return (a)+'-'+(m<10?'0':'')+m+'-'+(d<10?'0':'')+d;}
+  return [
+    {titulo:'Festa de Iemanjá',data:dataStr(2,2),tipo:'Festa',descricao:'Oferendas ao mar, 2 de fevereiro',fixo:true},
+    {titulo:'Festa de Nanã',data:dataStr(7,26),tipo:'Festa',descricao:'Dia 26 de julho',fixo:true},
+    {titulo:'Festa de Ogum / São Jorge',data:dataStr(4,23),tipo:'Festa',descricao:'Dia 23 de abril',fixo:true},
+    {titulo:'Festa de Oxum / Nossa Senhora Aparecida',data:dataStr(10,12),tipo:'Festa',descricao:'Dia 12 de outubro',fixo:true},
+    {titulo:'Dia dos Pretos-Velhos',data:dataStr(5,13),tipo:'Festa',descricao:'13 de maio — Abolição da Escravatura',fixo:true},
+    {titulo:'Dia de Cosme e Damião',data:dataStr(9,27),tipo:'Festa',descricao:'27 de setembro',fixo:true},
+    {titulo:'Xangô e Iansã / Santa Bárbara',data:dataStr(12,4),tipo:'Festa',descricao:'4 de dezembro',fixo:true},
+    {titulo:'Festa de Oxalá / Senhor do Bonfim',data:dataStr(1,20),tipo:'Festa',descricao:'3ª quinta-feira de janeiro',fixo:true},
+    {titulo:'Festa de Oxalá / Senhor do Bonfim',data:dataStr(1,20,prox),tipo:'Festa',descricao:'3ª quinta-feira de janeiro',fixo:true},
+  ];
+})();
 async function carregarCalendario(){
+  // Mostra eventos fixos imediatamente
+  calendario=EVENTOS_FIXOS.slice();
+  renderCalendario();
   try{
-    var r=await Promise.race([fetch(GS+'?acao=calendario-listar'),new Promise(function(_,rej){setTimeout(function(){rej(new Error('t'));},30000);})]);
-    var j=await r.json();if(j.ok){calendario=j.itens||[];renderCalendario();}
-  }catch(e){document.getElementById('cal-lista').innerHTML='<div class="empty">N&#227;o foi poss&#237;vel carregar.<\/div>';}
+    var r=await Promise.race([
+      fetch(GS+'?acao=calendario-listar&token='),
+      new Promise(function(_,rej){setTimeout(function(){rej(new Error('t'));},20000);})
+    ]);
+    var texto=await r.text();
+    var j;
+    try{j=JSON.parse(texto);}catch(e){j={ok:false};}
+    if(j.ok&&j.itens&&j.itens.length){
+      // Mescla: eventos do backend + fixos (sem duplicar por título+data)
+      var backendItens=j.itens;
+      var fixosFiltrados=EVENTOS_FIXOS.filter(function(ef){
+        return !backendItens.some(function(bi){return bi.titulo===ef.titulo&&bi.data===ef.data;});
+      });
+      calendario=backendItens.concat(fixosFiltrados);
+      calendario.sort(function(a,b){return (a.data||'').localeCompare(b.data||'');});
+      renderCalendario();
+    }
+  }catch(e){/* mantém eventos fixos */}
 }
 function carregarEntidades(){
   entidades=ENTIDADES_STATIC;renderEntidades();
@@ -101,12 +136,23 @@ function renderConsumiveis(){
       +'<\/div>';
   }).join(''):'<div class="empty">Nenhum item encontrado.<\/div>';
 }
+function _fmtData(str){
+  if(!str)return '';
+  var p=str.split('-');if(p.length<3)return str;
+  var meses=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  var m=parseInt(p[1],10)-1;
+  return parseInt(p[2],10)+' '+( meses[m]||p[1])+' '+p[0];
+}
 function renderCalendario(){
+  var hoje=new Date().toISOString().slice(0,10);
   if(!calendario.length){document.getElementById('cal-lista').innerHTML='<div class="empty">Nenhum evento cadastrado.<\/div>';return;}
-  document.getElementById('cal-lista').innerHTML=calendario.map(function(e){
-    return '<div style="background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:14px;margin-bottom:8px">'
-      +'<div style="font-size:13px;font-weight:600;color:var(--ouro-lt)">'+e.titulo+'<\/div>'
-      +'<div style="font-size:11px;color:var(--cinza);margin-top:4px">'+e.data+(e.tipo?' \u00b7 '+e.tipo:'')+'<\/div>'
+  var sorted=calendario.slice().sort(function(a,b){return (a.data||'').localeCompare(b.data||'');});
+  document.getElementById('cal-lista').innerHTML=sorted.map(function(e){
+    var passado=e.data&&e.data<hoje;
+    var badge=e.fixo?'<span style="font-size:9px;background:rgba(201,168,76,.15);color:var(--ouro);border:1px solid var(--borda);border-radius:4px;padding:2px 6px;margin-left:6px">Recorrente<\/span>':'';
+    return '<div style="background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:14px;margin-bottom:8px;opacity:'+(passado?.55:1)+'">'
+      +'<div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px"><span style="font-size:13px;font-weight:600;color:var(--ouro-lt)">'+e.titulo+'<\/span>'+badge+'<\/div>'
+      +'<div style="font-size:11px;color:var(--cinza);margin-top:4px">'+_fmtData(e.data)+(e.tipo?' \u00b7 '+e.tipo:'')+'<\/div>'
       +(e.descricao?'<div style="font-size:12px;color:#ccc;margin-top:6px">'+e.descricao+'<\/div>':'')
       +'<\/div>';
   }).join('');

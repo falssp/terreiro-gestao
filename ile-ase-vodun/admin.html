@@ -235,6 +235,14 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
           <option value="Reuni&atilde;o">Reuni&atilde;o</option>
           <option value="Outro">Outro</option>
         </select>
+        <label class="field-lbl">Recorr&ecirc;ncia</label>
+        <select class="field-inp" id="cal-recorrencia" style="-webkit-appearance:none">
+          <option value="">Sem recorr&ecirc;ncia (evento &uacute;nico)</option>
+          <option value="semanal">Semanal</option>
+          <option value="quinzenal">Quinzenal</option>
+          <option value="mensal">Mensal (mesmo dia)</option>
+          <option value="anual">Anual (mesma data)</option>
+        </select>
         <label class="field-lbl">Descri&ccedil;&atilde;o</label>
         <input class="field-inp" type="text" id="cal-desc" placeholder="Detalhes do evento" autocomplete="off"/>
         <div id="cal-err" style="font-size:12px;color:#f08080;margin-bottom:8px;min-height:16px"></div>
@@ -1085,7 +1093,8 @@ function listarCalendario() {
     .then(function(j) {
       if (!j.ok) { toast(j.erro || 'Erro.', false); return; }
       var el = document.getElementById('cal-lista');
-      if (!j.eventos || !j.eventos.length) {
+      var evts = j.eventos || j.itens || [];
+      if (!evts.length) {
         el.innerHTML = '';
         var msg = document.createElement('div');
         msg.style.cssText = 'font-size:12px;color:var(--cinza);padding:10px';
@@ -1095,13 +1104,13 @@ function listarCalendario() {
         return;
       }
       el.innerHTML = '';
-      j.eventos.forEach(function(e) {
+      evts.forEach(function(e) {
         var card = document.createElement('div');
         card.className = 'cal-card-adm';
         card.innerHTML = '';
         var data = document.createElement('div');
         data.className = 'cal-data-adm';
-        data.textContent = e.data + ' - ' + e.tipo;
+        data.textContent = e.data + (e.tipo ? ' · ' + e.tipo : '') + (e.recorrencia ? ' · ' + e.recorrencia : '');
         var titulo = document.createElement('div');
         titulo.className = 'cal-titulo-adm';
         titulo.textContent = e.titulo || '--';
@@ -1128,6 +1137,7 @@ function salvarCalendario() {
   err.textContent = 'Salvando...';
   _post({acao: 'calendario-inserir', titulo: titulo, data: data,
     tipo: document.getElementById('cal-tipo').value,
+    recorrencia: document.getElementById('cal-recorrencia').value,
     descricao: document.getElementById('cal-desc').value})
     .then(function(j) {
       if (j.ok) {
@@ -1135,6 +1145,7 @@ function salvarCalendario() {
         toggleForm('form-cal');
         err.textContent = '';
         ['cal-titulo','cal-data','cal-desc'].forEach(function(id) { document.getElementById(id).value = ''; });
+        document.getElementById('cal-recorrencia').value = '';
         listarCalendario();
       } else { err.textContent = j.erro || 'Erro.'; }
     }).catch(function() { err.textContent = 'Erro de conexao.'; });
