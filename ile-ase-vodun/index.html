@@ -11,8 +11,7 @@
 :root{--bg:#0f0f0f;--card:#1a1a1a;--ouro:#c9a84c;--ouro-lt:#f0d060;--creme:#fff;--cinza:#999;--borda:rgba(201,168,76,.22);--r:12px;--fd:'Cinzel',serif;--fb:'Inter',sans-serif;--nav-h:56px}
 html{font-size:16px}
 body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:100dvh}
-.topo{background:linear-gradient(135deg,#1a0e06,#0a0a0a);border-bottom:1px solid var(--borda);padding:10px 16px 8px;display:flex;align-items:center;justify-content:center;position:relative}
-.topo-center{text-align:center}
+.topo{background:linear-gradient(135deg,#1a0e06,#0a0a0a);border-bottom:1px solid var(--borda);padding:14px 16px 10px;text-align:center}
 .topo h1{font-family:var(--fd);font-size:1.05rem;color:var(--ouro-lt);letter-spacing:.06em}
 .topo p{font-size:10px;color:var(--cinza);margin-top:3px;letter-spacing:.12em;text-transform:uppercase}
 .desktop-nav{display:flex;background:#111;border-bottom:1px solid var(--borda);overflow-x:auto;scrollbar-width:none}
@@ -178,7 +177,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
 #lightbox-counter{position:absolute;bottom:16px;color:var(--cinza);font-size:11px;letter-spacing:.08em}
 
 /* ACESSO */
-.acesso-chip{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.04);border:1px solid var(--borda);border-radius:99px;padding:4px 12px;font-size:10px;color:var(--cinza);cursor:pointer;display:flex;align-items:center;gap:5px;transition:border-color .2s,color .2s;white-space:nowrap}
+.acesso-chip{background:rgba(255,255,255,.04);border:1px solid var(--borda);border-radius:99px;padding:3px 10px;font-size:11px;color:var(--cinza);cursor:pointer;display:flex;align-items:center;gap:5px;transition:border-color .2s,color .2s;white-space:nowrap;line-height:1.4}
 .acesso-chip:hover{border-color:var(--ouro);color:var(--ouro-lt)}
 .acesso-chip.membro{border-color:rgba(100,200,100,.4);color:#8d8}
 .acesso-chip.admin{border-color:rgba(201,168,76,.5);color:var(--ouro-lt)}
@@ -201,10 +200,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
 </head>
 <body>
 <div id="pwa-banner"><span>&#128241; Instalar na tela inicial?</span><div style="display:flex;gap:8px"><button class="btn-pwa nao" onclick="document.getElementById('pwa-banner').classList.remove('show')">Não</button><button class="btn-pwa sim" onclick="installPwa()">Instalar</button></div></div>
-<div class="topo">
-  <div class="topo-center"><h1>&#10022; Ile Ase Vodun Ogum Ayres &#10022;</h1><p>Terreiro de Umbanda</p></div>
-  <button class="acesso-chip" id="acesso-chip" onclick="abrirAcesso()"><span id="acesso-chip-icone">&#128274;</span><span id="acesso-chip-label">Membro</span></button>
-</div>
+<div class="topo"><h1>&#10022; Ile Ase Vodun Ogum Ayres &#10022;</h1><p>Terreiro de Umbanda</p></div>
 <nav class="desktop-nav">
   <button class="tab active" onclick="irPara('home',this)">&#127968; Início</button>
   <button class="tab tab-membro" onclick="irPara('acervo',this)">&#128230; Acervo</button>
@@ -214,7 +210,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
   <button class="tab" onclick="irPara('pontos',this)">&#9835; Pontos</button>
   <button class="tab" onclick="irPara('galeria',this)">&#128247; Galeria</button>
 </nav>
-<div class="nav-links"><a href="admin.html">&#128100; Admin</a><a href="faq.html">&#10067; Ajuda</a></div>
+<div class="nav-links"><button class="acesso-chip" id="acesso-chip" onclick="abrirAcesso()"><span id="acesso-chip-icone">&#128274;</span><span id="acesso-chip-label">Membro</span></button><a href="admin.html">&#128100; Admin</a><a href="faq.html">&#10067; Ajuda</a></div>
 <div class="section active" id="sec-home">
   <div class="ornamento">&#10022; &#10022; &#10022;</div>
   <div class="home-card" style="margin-bottom:24px;background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(100,50,200,.08));border-color:rgba(201,168,76,.3)">
