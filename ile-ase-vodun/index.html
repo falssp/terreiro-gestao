@@ -178,10 +178,10 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
 #lightbox-counter{position:absolute;bottom:16px;color:var(--cinza);font-size:11px;letter-spacing:.08em}
 
 /* ACESSO */
-.acesso-chip{background:rgba(255,255,255,.04);border:1px solid var(--borda);border-radius:99px;padding:3px 10px;font-size:11px;color:var(--cinza);cursor:pointer;display:flex;align-items:center;gap:5px;transition:border-color .2s,color .2s;white-space:nowrap;line-height:1.4}
-.acesso-chip:hover{border-color:var(--ouro);color:var(--ouro-lt)}
-.acesso-chip.membro{border-color:rgba(100,200,100,.4);color:#8d8}
-.acesso-chip.admin{border-color:rgba(201,168,76,.5);color:var(--ouro-lt)}
+.acesso-chip{background:transparent;border:none;border-radius:99px;padding:3px 10px;font-size:11px;color:var(--cinza);cursor:pointer;display:flex;align-items:center;gap:5px;transition:color .2s;white-space:nowrap;line-height:1.4}
+.acesso-chip:hover{color:var(--ouro-lt)}
+.acesso-chip.membro{color:#8d8}
+.acesso-chip.admin{color:var(--ouro-lt)}
 .tab-membro{display:none}
 #modal-acesso{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:400;display:none;align-items:center;justify-content:center;padding:24px}
 #modal-acesso.aberto{display:flex}
