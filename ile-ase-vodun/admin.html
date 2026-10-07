@@ -939,27 +939,33 @@ window.addEventListener('DOMContentLoaded', function() {
     mostrarAdmin();
     return;
   }
+
+  // Mostra login imediatamente — não espera o fetch para renderizar
+  function _mostrarLogin() {
+    document.getElementById('tela-primeiro').style.display = 'none';
+    if (!document.getElementById('tela-login').classList.contains('ativa')) {
+      document.getElementById('tela-login').classList.add('ativa');
+      try { document.getElementById('l-email').focus(); } catch(e) {}
+    }
+  }
+
+  // Timeout de segurança: se o fetch demorar mais de 4s, mostra login
+  var _initTimer = setTimeout(_mostrarLogin, 4000);
+
   fetch(GS + '?acao=admins-vazio')
     .then(function(r) { return r.text(); })
     .then(function(t) {
-      var j; try { j = JSON.parse(t); } catch(e) {
-        document.getElementById('tela-primeiro').style.display = 'none';
-        document.getElementById('tela-login').classList.add('ativa');
-        document.getElementById('l-email').focus();
-        return;
-      }
+      clearTimeout(_initTimer);
+      var j; try { j = JSON.parse(t); } catch(e) { _mostrarLogin(); return; }
       if (j.ok && j.vazio) {
         document.getElementById('tela-primeiro').style.display = 'flex';
       } else {
-        document.getElementById('tela-primeiro').style.display = 'none';
-        document.getElementById('tela-login').classList.add('ativa');
-        document.getElementById('l-email').focus();
+        _mostrarLogin();
       }
     })
     .catch(function() {
-      document.getElementById('tela-primeiro').style.display = 'none';
-      document.getElementById('tela-login').classList.add('ativa');
-      document.getElementById('l-email').focus();
+      clearTimeout(_initTimer);
+      _mostrarLogin();
     });
 });
 

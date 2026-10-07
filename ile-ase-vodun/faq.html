@@ -11,12 +11,13 @@
 body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:100dvh;padding-bottom:80px}
 
 /* TOPO */
-.topo{background:linear-gradient(135deg,rgba(26,14,6,.95),rgba(10,10,10,.98));border-bottom:1px solid var(--borda);padding:14px 20px 10px;text-align:center;position:sticky;top:0;z-index:100}
+.topo{background:linear-gradient(135deg,rgba(26,14,6,.95),rgba(10,10,10,.98));border-bottom:1px solid var(--borda);text-align:center;position:sticky;top:0;z-index:100}
+.topo-titulo{padding:14px 20px 10px}
 .topo h1{font-family:var(--fd);font-size:1.1rem;color:var(--ouro-lt);letter-spacing:.06em}
 .topo p{font-size:10px;color:var(--cinza);letter-spacing:.12em;text-transform:uppercase;margin-top:2px}
-.nav-links{display:flex;gap:16px;justify-content:center;margin-top:10px;flex-wrap:wrap}
-.nav-links a{color:var(--cinza);text-decoration:none;font-size:12px;font-weight:500;padding:4px 10px;border-radius:6px;border:1px solid transparent;transition:all .2s}
-.nav-links a:hover{color:var(--ouro-lt);border-color:var(--borda)}
+.nav-links{display:flex;justify-content:flex-end;gap:16px;padding:5px 20px;background:#111;border-top:1px solid var(--borda)}
+.nav-links a{font-size:11px;color:var(--cinza);text-decoration:none}
+.nav-links a:hover{color:var(--ouro)}
 
 /* CONTEÚDO */
 .wrap{max-width:700px;margin:0 auto;padding:24px 16px}
@@ -46,11 +47,14 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
 <body>
 
 <div class="topo">
-  <h1>&#10022; Ile Ase Vodun Ogum Ayres &#10022;</h1>
-  <p>Terreiro de Umbanda</p>
+  <div class="topo-titulo">
+    <h1>&#10022; Ile Ase Vodun Ogum Ayres &#10022;</h1>
+    <p>Terreiro de Umbanda</p>
+  </div>
   <div class="nav-links">
     <a href="index.html">&#127968; Início</a>
     <a href="admin.html">&#128100; Admin</a>
+    <a href="faq.html" style="color:var(--ouro)">&#10067; Ajuda</a>
   </div>
 </div>
 
