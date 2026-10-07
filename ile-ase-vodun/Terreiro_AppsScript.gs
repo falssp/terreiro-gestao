@@ -23,6 +23,7 @@ const ABA = {
   CONSUMIVEIS:'Consumíveis',
   ENTIDADES:  'Entidades e Orixás',
   CALENDARIO: 'Calendário',
+  GALERIA:    'Galeria',
   FILHOS:     'Filhos de Santo',
   FINANCEIRO: 'Financeiro',
   LOG:        'Log',
@@ -570,6 +571,7 @@ function doGet(e) {
     if (acao==='consumiveis-listar') return _saida(_listarConsumiveis());
     if (acao==='entidades-listar')   return _saida(_listarEntidades());
     if (acao==='calendario-listar')  return _saida(_listarCalendario());
+    if (acao==='galeria-listar')     return _saida(_listarGaleria());
     if (acao==='datas-mes')          return _saida(_datasDoMes());
     if (acao==='ml-buscar')          return _saida(_buscarML(p.q));
     if (acao==='lista-listar')         return _saida(_listarLista());
@@ -633,7 +635,38 @@ function _listarCalendario() {
   var aba=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ABA.CALENDARIO);
   if(!aba)return{ok:false,erro:'Aba não encontrada.'};
   var rows=aba.getDataRange().getValues().slice(1);
-  return{ok:true,eventos:rows.filter(function(l){return l[0]!=='';}).map(function(l){return{id:l[0],data:_fmt(l[1]),titulo:l[2],tipo:l[3],descricao:l[4],responsavel:l[5],observacoes:l[6],cadastradoEm:l[7]};})};
+  return{ok:true,eventos:rows.filter(function(l){return l[0]!=='';}).map(function(l){
+    return{
+      id:l[0],
+      data:_fmt(l[1]),
+      titulo:l[2],
+      tipo:l[3],
+      descricao:l[4],
+      responsavel:l[5],
+      observacoes:l[6],
+      cadastradoEm:l[7],
+      visibilidade:l[8]||'aberto'   // coluna I: "aberto" | "fechado" | "filhos"
+    };
+  })};
+}
+
+function _listarGaleria() {
+  var cached=_cacheGet('galeria');if(cached)return cached;
+  var aba=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ABA.GALERIA);
+  if(!aba)return{ok:false,erro:'Aba não encontrada.'};
+  var rows=aba.getDataRange().getValues().slice(1);
+  var result={ok:true,fotos:rows.filter(function(l){return l[0]!==''&&l[2]!=='';}).map(function(l){
+    return{
+      id:l[0],
+      titulo:l[1],
+      url:l[2],
+      data:l[3]?_fmt(l[3]):'',
+      categoria:l[4]||'',
+      legenda:l[5]||'',
+      ordem:Number(l[6])||999
+    };
+  }).sort(function(a,b){return a.ordem-b.ordem||a.titulo.localeCompare(b.titulo,'pt');})};
+  _cacheSet('galeria',result);return result;
 }
 
 function _listarFilhos(idFiltro, sessao) {
