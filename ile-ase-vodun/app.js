@@ -565,6 +565,33 @@ irPara=function(sec,btn){
   _irParaOrig(sec,btn);
 };
 
+// ── PROTEÇÃO CONTRA CÓPIA / PRINT / DOWNLOAD ─────────────────────────────
+(function(){
+  // Bloqueia clique direito
+  document.addEventListener('contextmenu',function(e){e.preventDefault();});
+  // Bloqueia atalhos de teclado
+  document.addEventListener('keydown',function(e){
+    var k=e.key.toLowerCase();
+    // Ctrl/Cmd + P (print), S (salvar), U (ver fonte), Shift+I (devtools)
+    if((e.ctrlKey||e.metaKey)&&(k==='p'||k==='s'||k==='u')){e.preventDefault();return false;}
+    // Ctrl+Shift+I / Ctrl+Shift+J / F12 (devtools)
+    if((e.ctrlKey||e.metaKey)&&e.shiftKey&&(k==='i'||k==='j'||k==='c')){e.preventDefault();return false;}
+    if(e.key==='F12'){e.preventDefault();return false;}
+    // PrintScreen — não bloqueia (SO-level), mas podemos detectar e escurecer
+    if(e.key==='PrintScreen'){
+      document.body.style.opacity='0';
+      setTimeout(function(){document.body.style.opacity='1';},300);
+    }
+  });
+  // Bloqueia drag de imagens
+  document.addEventListener('dragstart',function(e){if(e.target.tagName==='IMG')e.preventDefault();});
+  // CSS global anti-seleção e anti-print via JS (complementa o @media print no HTML)
+  var st=document.createElement('style');
+  st.textContent='*{-webkit-user-select:none!important;user-select:none!important}'
+    +'@media print{body{display:none!important}}';
+  document.head.appendChild(st);
+})();
+
 window.addEventListener('DOMContentLoaded',function(){
   // Enter no campo de código
   var inp=document.getElementById('acesso-input');

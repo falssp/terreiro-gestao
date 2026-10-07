@@ -526,6 +526,23 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
 <div id="toast"></div>
 
 <script>
+// ── PROTEÇÃO CONTRA CÓPIA / PRINT / DOWNLOAD ─────────────────────────────
+(function(){
+  document.addEventListener('contextmenu',function(e){e.preventDefault();});
+  document.addEventListener('keydown',function(e){
+    var k=e.key.toLowerCase();
+    if((e.ctrlKey||e.metaKey)&&(k==='p'||k==='s'||k==='u')){e.preventDefault();return false;}
+    if((e.ctrlKey||e.metaKey)&&e.shiftKey&&(k==='i'||k==='j'||k==='c')){e.preventDefault();return false;}
+    if(e.key==='F12'){e.preventDefault();return false;}
+    if(e.key==='PrintScreen'){document.body.style.opacity='0';setTimeout(function(){document.body.style.opacity='1';},300);}
+  });
+  document.addEventListener('dragstart',function(e){if(e.target.tagName==='IMG')e.preventDefault();});
+  var st=document.createElement('style');
+  st.textContent='*{-webkit-user-select:none!important;user-select:none!important}'
+    +'@media print{body{display:none!important}}';
+  document.head.appendChild(st);
+})();
+
 var GS = 'https://terreiro-proxy.falssp.workers.dev';
 var DEV_KEY = 'ile_ase_dev_2024_falsp';
 
