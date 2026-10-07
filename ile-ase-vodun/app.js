@@ -17,16 +17,6 @@ function fillNum(id,v){var el=document.getElementById(id);if(!el)return;el.class
 function fecharModal(){document.getElementById('modal-bg').classList.remove('aberto');}
 function nslug(n){if(!n)return'';var s=n.toLowerCase();if(s.includes('ok'))return'ok';if(s.includes('repor'))return'repor';if(s.includes('alerta'))return'alerta';if(s.includes('urgente'))return'urgente';return'';}
 
-async function carregarHome(){
-  try{
-    var r=await Promise.race([fetch(GS+'?acao=datas-mes&token=ile_ase_dev_2024_falsp'),new Promise(function(_,rej){setTimeout(function(){rej(new Error('t'));},30000);})]);
-    var j=await r.json();if(!j.ok)return;
-    var html='';
-    if(j.aniversariantes&&j.aniversariantes.length){html+='<div style="margin-bottom:10px"><strong style="color:var(--ouro);font-size:11px">&#127874; ANIVERSARIANTES<\/strong><br>';j.aniversariantes.forEach(function(a){html+='<div style="font-size:13px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)">'+a.nome+' &#8212; '+a.data+'<\/div>';});html+='<\/div>';}
-    if(j.festas&&j.festas.length){html+='<div><strong style="color:var(--ouro);font-size:11px">&#11088; FESTAS DO M&#202;S<\/strong><br>';j.festas.forEach(function(f){html+='<div style="font-size:13px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)">'+f.entidade+' &#8212; '+f.data+'<\/div>';});html+='<\/div>';}
-    document.getElementById('home-eventos-lista').innerHTML=html||'<span style="font-style:italic">Nenhum evento este m&#234;s.<\/span>';
-  }catch(e){document.getElementById('home-eventos-lista').innerHTML='<span style="font-style:italic">Nenhum evento este m&#234;s.<\/span>';}
-}
 async function carregarAcervo(){
   try{
     var r=await Promise.race([fetch(GS+'?acao=acervo-listar&token=ile_ase_dev_2024_falsp'),new Promise(function(_,rej){setTimeout(function(){rej(new Error('t'));},30000);})]);
@@ -597,7 +587,7 @@ window.addEventListener('DOMContentLoaded',function(){
   var inp=document.getElementById('acesso-input');
   if(inp)inp.addEventListener('keydown',function(e){if(e.key==='Enter')confirmarAcesso();});
   // Carregar seções
-  [carregarHome,carregarCalendario,carregarEntidades,carregarPontos,carregarGaleria].forEach(function(fn){try{var p=fn();if(p&&p.catch)p.catch(function(){});}catch(e){}});
+  [carregarCalendario,carregarEntidades,carregarPontos,carregarGaleria].forEach(function(fn){try{var p=fn();if(p&&p.catch)p.catch(function(){});}catch(e){}});
   var nivel=localStorage.getItem('_nivelAcesso')||'publico';
   if(nivel==='membro'||nivel==='admin'){
     try{carregarAcervo();}catch(e){}
