@@ -131,6 +131,72 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
 .pt-sel{background:rgba(0,0,0,.35);border:1px solid var(--borda);border-radius:8px;padding:8px 12px;color:var(--creme);font-size:12px;font-family:var(--fb);outline:none;flex:1;min-width:160px}
 .pt-sel:focus{border-color:var(--ouro)}
 .pt-sel option{background:#1a1a1a}
+
+/* CALENDÁRIO VISUAL */
+.cal-semanas{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-dia-hdr{text-align:center;font-size:10px;color:var(--cinza);padding:4px 0;letter-spacing:.05em;text-transform:uppercase}
+.cal-dia{min-height:48px;border-radius:8px;padding:6px 4px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;transition:background .15s;-webkit-tap-highlight-color:transparent}
+.cal-dia:hover{background:rgba(201,168,76,.08)}
+.cal-dia.outro-mes .cal-num{opacity:.25}
+.cal-dia.hoje .cal-num{background:var(--ouro);color:#0f0f0f;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.cal-dia.selecionado{background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3)}
+.cal-num{font-size:13px;font-weight:500;line-height:1}
+.cal-dot{width:5px;height:5px;border-radius:50%;background:var(--ouro);flex-shrink:0}
+.cal-dot.festa{background:#c084fc}
+.cal-evts-dia{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:14px 16px}
+.cal-evts-titulo{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--ouro);margin-bottom:10px;font-weight:600}
+.cal-evt-item{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px}
+.cal-evt-item:last-child{border-bottom:none}
+.cal-evt-nome{font-weight:600;color:var(--ouro-lt)}
+.cal-evt-desc{font-size:11px;color:var(--cinza);margin-top:2px}
+.cal-badge{font-size:9px;padding:1px 6px;border-radius:99px;margin-left:6px;vertical-align:middle}
+.cal-badge.festa{background:rgba(192,132,252,.18);color:#c084fc;border:1px solid rgba(192,132,252,.3)}
+.cal-badge.rec{background:rgba(201,168,76,.15);color:var(--ouro);border:1px solid var(--borda)}
+
+/* GALERIA */
+.gal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+@media(max-width:767px){.gal-grid{grid-template-columns:repeat(3,1fr);gap:4px}}
+.gal-thumb{aspect-ratio:1;border-radius:8px;overflow:hidden;cursor:pointer;background:var(--card);border:1px solid var(--borda);transition:border-color .15s,transform .15s;-webkit-tap-highlight-color:transparent}
+.gal-thumb:hover{border-color:var(--ouro);transform:scale(1.02)}
+.gal-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.gal-thumb .gal-thumb-label{display:none;position:absolute;bottom:0;left:0;right:0;padding:4px 6px;background:rgba(0,0,0,.6);font-size:10px;color:var(--creme);text-overflow:ellipsis;white-space:nowrap;overflow:hidden}
+.gal-thumb{position:relative}
+.gal-thumb:hover .gal-thumb-label{display:block}
+
+/* LIGHTBOX */
+#lightbox{position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:500;display:none;flex-direction:column;align-items:center;justify-content:center}
+#lightbox.aberto{display:flex}
+#lightbox-img{max-width:min(92vw,900px);max-height:78vh;border-radius:8px;object-fit:contain;user-select:none}
+#lightbox-legenda{color:var(--cinza);font-size:13px;margin-top:10px;max-width:min(92vw,900px);text-align:center}
+#lightbox-data{color:rgba(201,168,76,.6);font-size:11px;margin-top:4px}
+#lightbox-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--cinza);font-size:24px;cursor:pointer;line-height:1;z-index:1}
+#lightbox-prev,#lightbox-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.06);border:none;color:var(--cinza);font-size:28px;cursor:pointer;padding:12px 10px;border-radius:8px;transition:background .15s,color .15s;-webkit-tap-highlight-color:transparent}
+#lightbox-prev:hover,#lightbox-next:hover{background:rgba(201,168,76,.15);color:var(--ouro-lt)}
+#lightbox-prev{left:12px}
+#lightbox-next{right:12px}
+#lightbox-counter{position:absolute;bottom:16px;color:var(--cinza);font-size:11px;letter-spacing:.08em}
+
+/* ACESSO */
+.acesso-chip{position:fixed;top:58px;right:10px;z-index:80;background:#111;border:1px solid var(--borda);border-radius:99px;padding:4px 12px;font-size:10px;color:var(--cinza);cursor:pointer;display:flex;align-items:center;gap:5px;transition:border-color .2s}
+.acesso-chip:hover{border-color:var(--ouro);color:var(--ouro-lt)}
+.acesso-chip.membro{border-color:rgba(100,200,100,.4);color:#8d8}
+.acesso-chip.admin{border-color:rgba(201,168,76,.5);color:var(--ouro-lt)}
+.tab-membro{display:none}
+@media(max-width:767px){.acesso-chip{top:auto;bottom:calc(var(--nav-h) + 54px);right:8px}}
+#modal-acesso{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:400;display:none;align-items:center;justify-content:center;padding:24px}
+#modal-acesso.aberto{display:flex}
+.acesso-box{background:#1a1a1a;border:1px solid var(--borda);border-radius:var(--r);padding:28px 24px;width:100%;max-width:360px}
+.acesso-box h2{font-family:var(--fd);color:var(--ouro-lt);font-size:1rem;margin-bottom:6px}
+.acesso-box p{font-size:12px;color:var(--cinza);margin-bottom:18px;line-height:1.6}
+.acesso-input{width:100%;background:rgba(0,0,0,.4);border:1px solid var(--borda);border-radius:8px;padding:10px 14px;color:var(--creme);font-size:14px;font-family:var(--fb);outline:none;margin-bottom:12px;letter-spacing:.1em}
+.acesso-input:focus{border-color:var(--ouro)}
+.acesso-btns{display:flex;gap:8px}
+.btn-acesso{flex:1;padding:10px;border-radius:8px;font-size:13px;font-family:var(--fb);cursor:pointer;border:1px solid var(--borda);transition:all .2s}
+.btn-acesso.confirmar{background:var(--ouro);color:#0f0f0f;border-color:var(--ouro);font-weight:600}
+.btn-acesso.confirmar:hover{background:var(--ouro-lt)}
+.btn-acesso.sair{background:rgba(200,50,50,.1);color:#f88;border-color:rgba(200,50,50,.3)}
+.btn-acesso.cancelar{background:transparent;color:var(--cinza)}
+.acesso-erro{font-size:12px;color:#f88;margin-top:8px;min-height:16px}
 </style>
 </head>
 <body>
@@ -138,11 +204,12 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
 <div class="topo"><h1>&#10022; Ile Ase Vodun Ogum Ayres &#10022;</h1><p>Terreiro de Umbanda</p></div>
 <nav class="desktop-nav">
   <button class="tab active" onclick="irPara('home',this)">&#127968; Início</button>
-  <button class="tab" onclick="irPara('acervo',this)">&#128230; Acervo</button>
-  <button class="tab" onclick="irPara('consumiveis',this)">&#128305; Consumíveis</button>
+  <button class="tab tab-membro" onclick="irPara('acervo',this)">&#128230; Acervo</button>
+  <button class="tab tab-membro" onclick="irPara('consumiveis',this)">&#128305; Consumíveis</button>
   <button class="tab" onclick="irPara('calendario',this)">&#128197; Calendário</button>
   <button class="tab" onclick="irPara('entidades',this)">&#10024; Orixás &amp; Entidades</button>
   <button class="tab" onclick="irPara('pontos',this)">&#9835; Pontos</button>
+  <button class="tab" onclick="irPara('galeria',this)">&#128247; Galeria</button>
 </nav>
 <div class="nav-links"><a href="admin.html">&#128100; Admin</a><a href="faq.html">&#10067; Ajuda</a></div>
 <div class="section active" id="sec-home">
@@ -175,7 +242,19 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
   </div>
   <div class="lbl-count" id="csm-count"></div><div class="csm-grid" id="csm-lista"><div class="empty">Carregando...</div></div>
 </div>
-<div class="section" id="sec-calendario"><div id="cal-lista"><div class="empty">Carregando...</div></div></div>
+<div class="section" id="sec-calendario">
+  <div id="cal-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+    <button id="cal-prev" onclick="calMudarMes(-1)" style="background:none;border:1px solid var(--borda);border-radius:8px;color:var(--cinza);font-size:18px;cursor:pointer;padding:4px 12px;line-height:1">&#8249;</button>
+    <div id="cal-titulo" style="font-family:var(--fd);color:var(--ouro-lt);font-size:1rem;letter-spacing:.04em"></div>
+    <button id="cal-next" onclick="calMudarMes(1)" style="background:none;border:1px solid var(--borda);border-radius:8px;color:var(--cinza);font-size:18px;cursor:pointer;padding:4px 12px;line-height:1">&#8250;</button>
+  </div>
+  <div id="cal-grade"></div>
+  <div id="cal-eventos-dia" style="margin-top:16px"></div>
+</div>
+<div class="section" id="sec-galeria">
+  <div class="ornamento">&#10022; &#10022; &#10022;</div>
+  <div id="gal-grid" class="gal-grid"><div class="empty">Carregando...</div></div>
+</div>
 <div class="section" id="sec-entidades">
   <div class="filter-bar"><input type="search" id="ent-busca" placeholder="&#128269; Buscar orixá ou entidade..." oninput="renderEntidades()"/></div>
   <div class="ent-tabs"><button class="ent-tab active" data-nacao="" onclick="setNacao(this)">Todos</button><button class="ent-tab" data-nacao="Angola" onclick="setNacao(this)">Angola</button><button class="ent-tab" data-nacao="Jeje" onclick="setNacao(this)">Jeje</button><button class="ent-tab" data-nacao="Ketu" onclick="setNacao(this)">Ketu</button><button class="ent-tab" data-nacao="Umbanda" onclick="setNacao(this)">Umbanda</button></div>
@@ -194,10 +273,40 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
   <button class="nav-btn active" onclick="irPara('home',this)"><span class="ic">&#127968;</span>Início</button>
   <button class="nav-btn" onclick="irPara('pontos',this)"><span class="ic">&#9835;</span>Pontos</button>
   <button class="nav-btn" onclick="irPara('calendario',this)"><span class="ic">&#128197;</span>Agenda</button>
-  <button class="nav-btn" onclick="irPara('acervo',this)"><span class="ic">&#128230;</span>Acervo</button>
+  <button class="nav-btn" onclick="irPara('galeria',this)"><span class="ic">&#128247;</span>Galeria</button>
   <button class="nav-btn" onclick="irPara('entidades',this)"><span class="ic">&#10024;</span>Orixás</button>
 </nav>
 <div id="modal-bg" onclick="if(event.target===this)fecharModal()"><div class="modal"><button class="modal-x" onclick="fecharModal()">&#10005;</button><div class="modal-nome" id="modal-nome"></div><div id="modal-corpo"></div></div></div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="if(event.target===this||event.target===document.getElementById('lightbox-img')){}">
+  <button id="lightbox-close" onclick="lbFechar()">&#10005;</button>
+  <button id="lightbox-prev" onclick="lbNav(-1)">&#8249;</button>
+  <img id="lightbox-img" src="" alt=""/>
+  <div id="lightbox-legenda"></div>
+  <div id="lightbox-data"></div>
+  <div id="lightbox-counter"></div>
+  <button id="lightbox-next" onclick="lbNav(1)">&#8250;</button>
+</div>
+
+<!-- MODAL ACESSO -->
+<div id="modal-acesso" onclick="if(event.target===this)fecharAcesso()">
+  <div class="acesso-box">
+    <h2>&#128274; Área de Membros</h2>
+    <p>Digite o código fornecido pelo terreiro para acessar o Acervo e Consumíveis.</p>
+    <input class="acesso-input" id="acesso-input" type="password" placeholder="Código de acesso" maxlength="40" onkeydown="if(event.key==='Enter')confirmarAcesso()"/>
+    <div class="acesso-btns">
+      <button class="btn-acesso cancelar" onclick="fecharAcesso()">Cancelar</button>
+      <button class="btn-acesso sair" id="btn-sair-membro" onclick="sairMembro()" style="display:none">Sair</button>
+      <button class="btn-acesso confirmar" onclick="confirmarAcesso()">Entrar</button>
+    </div>
+    <div class="acesso-erro" id="acesso-erro"></div>
+  </div>
+</div>
+
+<!-- CHIP DE ACESSO -->
+<button class="acesso-chip" id="acesso-chip" onclick="abrirAcesso()"><span id="acesso-chip-icone">&#128274;</span><span id="acesso-chip-label">Membro</span></button>
+
 <div id="yt-hidden"></div>
 <div class="toast" id="toast"></div>
 <script src="app.js" defer></script>

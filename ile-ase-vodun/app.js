@@ -147,19 +147,66 @@ function _fmtData(str){
   var m=parseInt(p[1],10)-1;
   return parseInt(p[2],10)+' '+( meses[m]||p[1])+' '+p[0];
 }
+
+/* CALEND\u00c1RIO VISUAL */
+var _calAno=new Date().getFullYear(),_calMes=new Date().getMonth(),_calDiaSel=null;
+function calMudarMes(d){_calMes+=d;if(_calMes>11){_calMes=0;_calAno++;}if(_calMes<0){_calMes=11;_calAno--;}renderCalendario();}
 function renderCalendario(){
-  var hoje=new Date().toISOString().slice(0,10);
-  if(!calendario.length){document.getElementById('cal-lista').innerHTML='<div class="empty">Nenhum evento cadastrado.<\/div>';return;}
-  var sorted=calendario.slice().sort(function(a,b){return (a.data||'').localeCompare(b.data||'');});
-  document.getElementById('cal-lista').innerHTML=sorted.map(function(e){
-    var passado=e.data&&e.data<hoje;
-    var badge=e.fixo?'<span style="font-size:9px;background:rgba(201,168,76,.15);color:var(--ouro);border:1px solid var(--borda);border-radius:4px;padding:2px 6px;margin-left:6px">Recorrente<\/span>':'';
-    return '<div style="background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:14px;margin-bottom:8px;opacity:'+(passado?.55:1)+'">'
-      +'<div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px"><span style="font-size:13px;font-weight:600;color:var(--ouro-lt)">'+e.titulo+'<\/span>'+badge+'<\/div>'
-      +'<div style="font-size:11px;color:var(--cinza);margin-top:4px">'+_fmtData(e.data)+(e.tipo?' \u00b7 '+e.tipo:'')+'<\/div>'
-      +(e.descricao?'<div style="font-size:12px;color:#ccc;margin-top:6px">'+e.descricao+'<\/div>':'')
-      +'<\/div>';
-  }).join('');
+  var hoje=new Date();var hd=hoje.getFullYear()+'-'+(hoje.getMonth()<9?'0':'')+(hoje.getMonth()+1)+'-'+(hoje.getDate()<10?'0':'')+hoje.getDate();
+  var meses=['Janeiro','Fevereiro','Mar\u00e7o','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  var semHdr=document.getElementById('cal-titulo');if(!semHdr)return;
+  semHdr.textContent=meses[_calMes]+' '+_calAno;
+  var primeiroDia=new Date(_calAno,_calMes,1).getDay();
+  var ultimoDia=new Date(_calAno,_calMes+1,0).getDate();
+  var evtsMes={};
+  calendario.forEach(function(ev){
+    var d=ev.data||'';
+    if(!d)return;
+    var parts=d.split('-');
+    var dm=parseInt(parts[1],10)-1,da=parseInt(parts[0],10),dd=parseInt(parts[2],10);
+    if(da===_calAno&&dm===_calMes){evtsMes[dd]=evtsMes[dd]||[];evtsMes[dd].push(ev);}
+  });
+  var dias=['Dom','Seg','Ter','Qua','Qui','Sex','S\u00e1b'];
+  var html='<div class="cal-semanas">';
+  dias.forEach(function(d){html+='<div class="cal-dia-hdr">'+d+'<\/div>';});
+  for(var i=0;i<primeiroDia;i++)html+='<div class="cal-dia outro-mes"><div class="cal-num">&nbsp;<\/div><\/div>';
+  for(var d=1;d<=ultimoDia;d++){
+    var ds=_calAno+'-'+(_calMes+1<10?'0':'')+(_calMes+1)+'-'+(d<10?'0':'')+d;
+    var isHoje=ds===hd,isSel=ds===_calDiaSel,evts=evtsMes[d]||[];
+    var cls='cal-dia'+(isHoje?' hoje':'')+(isSel?' selecionado':'');
+    html+='<div class="'+cls+'" data-dt="'+ds+'" onclick="calVerDia(this)">';
+    html+='<div class="cal-num">'+(isHoje?'<div class="cal-num">'+d+'<\/div>':d)+'<\/div>';
+    if(evts.length){evts.slice(0,2).forEach(function(ev){html+='<div class="cal-dot'+(ev.fixo?' festa':'')+'"><\/div>';});}
+    html+='<\/div>';
+  }
+  html+='<\/div>';
+  document.getElementById('cal-grade').innerHTML=html;
+  if(_calDiaSel)calMostrarEvtsDia(_calDiaSel);else document.getElementById('cal-eventos-dia').innerHTML='';
+}
+function calVerDia(el){
+  var dt=el.dataset.dt;
+  document.querySelectorAll('.cal-dia').forEach(function(d){d.classList.remove('selecionado');});
+  if(_calDiaSel===dt){_calDiaSel=null;document.getElementById('cal-eventos-dia').innerHTML='';return;}
+  el.classList.add('selecionado');_calDiaSel=dt;calMostrarEvtsDia(dt);
+}
+function calMostrarEvtsDia(dt){
+  var evts=calendario.filter(function(ev){return ev.data===dt;});
+  var wrap=document.getElementById('cal-eventos-dia');if(!wrap)return;
+  if(!evts.length){wrap.innerHTML='';return;}
+  var meses=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  var p=dt.split('-');var label=parseInt(p[2],10)+' de '+meses[parseInt(p[1],10)-1];
+  var html='<div class="cal-evts-dia"><div class="cal-evts-titulo">'+label+'<\/div>';
+  evts.forEach(function(ev){
+    html+='<div class="cal-evt-item"><div class="cal-evt-nome">'+ev.titulo;
+    if(ev.fixo)html+='<span class="cal-badge festa">Recorrente<\/span>';
+    else if(ev.recorrencia)html+='<span class="cal-badge rec">'+ev.recorrencia+'<\/span>';
+    html+='<\/div>';
+    if(ev.descricao)html+='<div class="cal-evt-desc">'+ev.descricao+'<\/div>';
+    html+='<\/div>';
+  });
+  html+='<\/div>';
+  wrap.innerHTML=html;
+  wrap.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 function setNacao(btn){document.querySelectorAll('.ent-tab').forEach(function(t){t.classList.remove('active');});btn.classList.add('active');_nacaoAtiva=btn.dataset.nacao;renderEntidades();}
 function renderEntidades(){
@@ -279,9 +326,155 @@ var deferredPrompt=null;
 window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;document.getElementById('pwa-banner').classList.add('show');});
 function installPwa(){if(!deferredPrompt)return;deferredPrompt.prompt();deferredPrompt.userChoice.then(function(){deferredPrompt=null;document.getElementById('pwa-banner').classList.remove('show');});}
 
+/* GALERIA DE FOTOS */
+var _galFotos=[],_lbIdx=-1;
+async function carregarGaleria(){
+  var grid=document.getElementById('gal-grid');if(!grid)return;
+  grid.innerHTML='<div class="empty">Carregando...</div>';
+  try{
+    var r=await Promise.race([
+      fetch(GS+'?acao=galeria-listar&token=ile_ase_dev_2024_falsp'),
+      new Promise(function(_,rej){setTimeout(function(){rej(new Error('t'));},15000);})
+    ]);
+    var j=await r.json();
+    if(j.ok&&j.fotos&&j.fotos.length){_galFotos=j.fotos;renderGaleria();return;}
+  }catch(e){}
+  // fallback: sem fotos do backend
+  _galFotos=[];
+  grid.innerHTML='<div class="empty" style="padding:40px 0">&#128247; Nenhuma foto cadastrada ainda.<br><span style="font-size:12px;color:var(--cinza)">O administrador pode adicionar fotos pelo painel.</span></div>';
+}
+function renderGaleria(){
+  var grid=document.getElementById('gal-grid');if(!grid)return;
+  if(!_galFotos.length){grid.innerHTML='<div class="empty" style="padding:40px 0">&#128247; Nenhuma foto cadastrada ainda.</div>';return;}
+  grid.innerHTML=_galFotos.map(function(f,i){
+    var src=f.url||f.src||'';
+    var label=f.titulo||f.legenda||f.nome||'';
+    return '<div class="gal-thumb" onclick="lbAbrir('+i+')" title="'+label+'">'
+      +'<img src="'+src+'" alt="'+label+'" loading="lazy">'
+      +(label?'<div class="gal-thumb-label">'+label+'</div>':'')
+      +'</div>';
+  }).join('');
+}
+function lbAbrir(idx){
+  _lbIdx=idx;
+  var f=_galFotos[idx];if(!f)return;
+  document.getElementById('lightbox-img').src=f.url||f.src||'';
+  document.getElementById('lightbox-legenda').textContent=f.titulo||f.legenda||f.nome||'';
+  document.getElementById('lightbox-data').textContent=f.data?'📅 '+f.data:'';
+  document.getElementById('lightbox-counter').textContent=(idx+1)+' / '+_galFotos.length;
+  document.getElementById('lightbox').classList.add('aberto');
+  document.body.style.overflow='hidden';
+}
+function lbFechar(){
+  document.getElementById('lightbox').classList.remove('aberto');
+  document.getElementById('lightbox-img').src='';
+  document.body.style.overflow='';
+  _lbIdx=-1;
+}
+function lbNav(d){
+  if(!_galFotos.length)return;
+  _lbIdx=(_lbIdx+d+_galFotos.length)%_galFotos.length;
+  lbAbrir(_lbIdx);
+}
+document.addEventListener('keydown',function(e){
+  var lb=document.getElementById('lightbox');
+  if(!lb||!lb.classList.contains('aberto'))return;
+  if(e.key==='Escape')lbFechar();
+  else if(e.key==='ArrowLeft')lbNav(-1);
+  else if(e.key==='ArrowRight')lbNav(1);
+});
+
+/* CAMADAS DE ACESSO */
+// Códigos: defina estes no GAS ou atualize aqui para produção
+var _CODIGO_MEMBRO='ilease2024';
+var _CODIGO_ADMIN='ilaadm2024';
+
+function _aplicarAcesso(){
+  var nivel=localStorage.getItem('_nivelAcesso')||'publico';
+  // Atualiza chip
+  var chip=document.getElementById('acesso-chip');
+  var chipIcone=document.getElementById('acesso-chip-icone');
+  var chipLabel=document.getElementById('acesso-chip-label');
+  if(chip&&chipIcone&&chipLabel){
+    if(nivel==='admin'){chip.classList.remove('publico','membro');chip.classList.add('admin');chipIcone.textContent='👑';chipLabel.textContent='Admin';}
+    else if(nivel==='membro'){chip.classList.remove('publico','admin');chip.classList.add('membro');chipIcone.textContent='🔓';chipLabel.textContent='Membro';}
+    else{chip.classList.remove('membro','admin');chip.classList.add('publico');chipIcone.textContent='🔒';chipLabel.textContent='Membro';}
+  }
+  // Mostra/oculta abas de membro no desktop nav
+  document.querySelectorAll('.tab-membro').forEach(function(t){
+    t.style.display=(nivel==='membro'||nivel==='admin')?'':'none';
+  });
+  // Mostra botão de sair se for membro/admin
+  var btnSair=document.getElementById('btn-sair-membro');
+  if(btnSair)btnSair.style.display=(nivel==='membro'||nivel==='admin')?'inline-block':'none';
+}
+function abrirAcesso(){
+  var modal=document.getElementById('modal-acesso');if(!modal)return;
+  document.getElementById('acesso-input').value='';
+  document.getElementById('acesso-erro').textContent='';
+  var nivel=localStorage.getItem('_nivelAcesso')||'publico';
+  var btnSair=document.getElementById('btn-sair-membro');
+  if(btnSair)btnSair.style.display=(nivel==='membro'||nivel==='admin')?'inline-block':'none';
+  modal.classList.add('aberto');
+  setTimeout(function(){document.getElementById('acesso-input').focus();},100);
+}
+function fecharAcesso(){
+  var modal=document.getElementById('modal-acesso');if(modal)modal.classList.remove('aberto');
+}
+function confirmarAcesso(){
+  var codigo=(document.getElementById('acesso-input').value||'').trim();
+  var erro=document.getElementById('acesso-erro');
+  if(!codigo){erro.textContent='Digite o código de acesso.';return;}
+  if(codigo===_CODIGO_ADMIN){
+    localStorage.setItem('_nivelAcesso','admin');
+    fecharAcesso();_aplicarAcesso();
+    // Carrega dados de membro se ainda não carregou
+    if(!acervo.length)carregarAcervo();
+    if(!consumiveis.length)carregarConsumiveis();
+    return;
+  }
+  if(codigo===_CODIGO_MEMBRO){
+    localStorage.setItem('_nivelAcesso','membro');
+    fecharAcesso();_aplicarAcesso();
+    if(!acervo.length)carregarAcervo();
+    if(!consumiveis.length)carregarConsumiveis();
+    return;
+  }
+  erro.textContent='Código incorreto. Tente novamente.';
+  document.getElementById('acesso-input').value='';
+  document.getElementById('acesso-input').focus();
+}
+function sairMembro(){
+  localStorage.removeItem('_nivelAcesso');
+  fecharAcesso();_aplicarAcesso();
+  // Volta para home se estiver em seção restrita
+  var secAtiva=document.querySelector('.section.active');
+  if(secAtiva&&(secAtiva.id==='sec-acervo'||secAtiva.id==='sec-consumiveis')){
+    irPara('home',null);
+  }
+}
+// Protege seções de membro em irPara
+var _irParaOrig=irPara;
+irPara=function(sec,btn){
+  if(sec==='acervo'||sec==='consumiveis'){
+    var nivel=localStorage.getItem('_nivelAcesso')||'publico';
+    if(nivel!=='membro'&&nivel!=='admin'){abrirAcesso();return;}
+  }
+  _irParaOrig(sec,btn);
+};
+
 window.addEventListener('DOMContentLoaded',function(){
-  [carregarHome,carregarAcervo,carregarConsumiveis,carregarCalendario,carregarEntidades,carregarPontos].forEach(function(fn){try{var p=fn();if(p&&p.catch)p.catch(function(){});}catch(e){}});
-  
+  // Enter no campo de código
+  var inp=document.getElementById('acesso-input');
+  if(inp)inp.addEventListener('keydown',function(e){if(e.key==='Enter')confirmarAcesso();});
+  // Carregar seções
+  [carregarHome,carregarCalendario,carregarEntidades,carregarPontos,carregarGaleria].forEach(function(fn){try{var p=fn();if(p&&p.catch)p.catch(function(){});}catch(e){}});
+  var nivel=localStorage.getItem('_nivelAcesso')||'publico';
+  if(nivel==='membro'||nivel==='admin'){
+    try{carregarAcervo();}catch(e){}
+    try{carregarConsumiveis();}catch(e){}
+  }
+  _aplicarAcesso();
 });
 
 function carregarEntidades(){
