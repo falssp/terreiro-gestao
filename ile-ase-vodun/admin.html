@@ -427,6 +427,54 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
       </button>
       <div id="log-lista"></div>
 
+    <!-- Galeria -->
+    <div id="sec-galeria" style="display:none">
+      <div class="sec-titulo">&#128247; Galeria de Fotos</div>
+      <div class="btn-grid" style="margin-bottom:12px">
+        <button class="btn-adm" onclick="carregarAlbunsAdmin()"><span class="ic">&#128444;</span><span class="lb">Ver &aacute;lbuns</span><span class="dc">Lista de &aacute;lbuns no reposit&oacute;rio R2</span></button>
+        <button class="btn-adm" onclick="toggleForm('form-galeria-upload')"><span class="ic">+</span><span class="lb">Enviar fotos</span><span class="dc">Upload para novo ou existente &aacute;lbum</span></button>
+      </div>
+      <!-- Listagem de álbuns -->
+      <div id="galeria-albuns-lista" style="margin-bottom:12px"></div>
+
+      <!-- Form upload -->
+      <div class="inner-form" id="form-galeria-upload">
+        <div class="sec-titulo" style="margin-top:0;font-size:13px">&#128247; Upload de Fotos</div>
+        <label class="field-lbl">&#193;lbum *</label>
+        <div style="display:flex;gap:8px;margin-bottom:10px">
+          <select class="field-inp" id="gal-album-sel" style="-webkit-appearance:none;flex:1" onchange="galAlbumSelChange()">
+            <option value="__novo__">+ Criar novo &aacute;lbum...</option>
+          </select>
+        </div>
+        <div id="gal-novo-album-wrap" style="display:none">
+          <label class="field-lbl">Nome do novo &aacute;lbum</label>
+          <input class="field-inp" type="text" id="gal-novo-album" placeholder="Ex: Festa Ogum 2025" autocomplete="off"/>
+        </div>
+        <label class="field-lbl">T&iacute;tulo / Legenda (opcional)</label>
+        <input class="field-inp" type="text" id="gal-titulo" placeholder="Ex: Gira de Linha" autocomplete="off"/>
+        <label class="field-lbl">Data (opcional)</label>
+        <input class="field-inp" type="date" id="gal-data" style="color-scheme:dark"/>
+        <label class="field-lbl">Fotos *</label>
+        <input class="field-inp" type="file" id="gal-fotos" multiple accept="image/*" style="padding:8px"/>
+        <div id="gal-preview" style="display:flex;flex-wrap:wrap;gap:6px;margin:8px 0"></div>
+        <div id="gal-progresso" style="display:none;margin:8px 0">
+          <div style="font-size:12px;color:var(--cinza);margin-bottom:4px" id="gal-prog-txt">Enviando...</div>
+          <div style="background:rgba(255,255,255,.1);border-radius:4px;height:6px;overflow:hidden">
+            <div id="gal-prog-bar" style="height:100%;background:var(--ouro);width:0%;transition:width .3s"></div>
+          </div>
+        </div>
+        <div id="gal-upload-err" style="font-size:12px;color:#f08080;margin-bottom:8px;min-height:16px"></div>
+        <div class="btn-row">
+          <button class="btn-sm" onclick="toggleForm('form-galeria-upload')">Cancelar</button>
+          <button class="btn-sm primary" id="btn-gal-upload" onclick="uploadFotos()">Enviar fotos</button>
+        </div>
+        <div class="resultado" id="gal-resultado" style="margin-top:8px"></div>
+      </div>
+
+      <!-- Fotos do álbum selecionado -->
+      <div id="gal-fotos-album" style="margin-top:12px"></div>
+    </div>
+
     <!-- Pontos Cantados -->
     <div id="sec-pontos" style="display:none">
       <div class="sec-titulo">&#9835; Pontos Cantados</div>
@@ -551,6 +599,201 @@ function mostrar(elId, txt) {
   el.scrollIntoView({behavior: 'smooth', block: 'nearest'});
 }
 
+
+// GALERIA ADMIN
+var _galAlbuns = [];
+
+function carregarAlbunsAdmin() {
+  var el = document.getElementById('galeria-albuns-lista');
+  if (!el) return;
+  el.innerHTML = '<div style="color:var(--cinza);font-size:12px;padding:6px 0">Carregando &aacute;lbuns...</div>';
+  fetch(GS + '?acao=galeria-albuns')
+    .then(function(r) { return r.json(); })
+    .then(function(j) {
+      if (!j.ok) { el.innerHTML = '<div style="color:red;font-size:12px">Erro: ' + (j.erro||'desconhecido') + '</div>'; return; }
+      _galAlbuns = j.albuns || [];
+      // Preencher select
+      var sel = document.getElementById('gal-album-sel');
+      var cur = sel.value;
+      while (sel.options.length > 1) sel.remove(1);
+      _galAlbuns.forEach(function(a) {
+        var opt = document.createElement('option');
+        opt.value = a;
+        opt.textContent = a.replace(/-/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
+        sel.appendChild(opt);
+      });
+      if (!_galAlbuns.length) {
+        el.innerHTML = '<div style="font-size:12px;color:var(--cinza);padding:4px 0">Nenhum &aacute;lbum ainda. Envie fotos para criar o primeiro.</div>';
+        return;
+      }
+      var html = '<div style="font-size:11px;color:var(--cinza);margin-bottom:6px">' + _galAlbuns.length + ' &aacute;lbum(ns) no reposit&oacute;rio</div>';
+      html += '<div style="display:flex;flex-wrap:wrap;gap:8px">';
+      _galAlbuns.forEach(function(a) {
+        var nome = a.replace(/-/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
+        html += '<div style="background:var(--card);border:1px solid var(--borda);border-radius:8px;padding:8px 14px;cursor:pointer;display:flex;align-items:center;gap:8px" onclick="listarFotosAlbum(\''+a+'\')">'
+          + '<span style="color:var(--ouro);font-size:16px">&#128444;</span>'
+          + '<span style="font-size:12px;color:var(--creme)">' + nome + '</span>'
+          + '</div>';
+      });
+      html += '</div>';
+      el.innerHTML = html;
+    })
+    .catch(function(e) {
+      el.innerHTML = '<div style="color:red;font-size:12px">Erro: ' + e.message + '</div>';
+    });
+}
+
+function galAlbumSelChange() {
+  var v = document.getElementById('gal-album-sel').value;
+  document.getElementById('gal-novo-album-wrap').style.display = (v === '__novo__') ? 'block' : 'none';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var inp = document.getElementById('gal-fotos');
+  if (inp) inp.addEventListener('change', function() {
+    var prev = document.getElementById('gal-preview');
+    prev.innerHTML = '';
+    Array.from(inp.files).forEach(function(f) {
+      var url = URL.createObjectURL(f);
+      prev.innerHTML += '<img src="'+url+'" style="width:56px;height:56px;object-fit:cover;border-radius:5px;border:1px solid var(--borda)"/>';
+    });
+  });
+});
+
+function uploadFotos() {
+  var albumSel = document.getElementById('gal-album-sel').value;
+  var albumNovo = document.getElementById('gal-novo-album').value.trim();
+  var album = (albumSel === '__novo__') ? albumNovo : albumSel;
+  var titulo = document.getElementById('gal-titulo').value.trim();
+  var data = document.getElementById('gal-data').value;
+  var filesEl = document.getElementById('gal-fotos');
+  var errEl = document.getElementById('gal-upload-err');
+  errEl.textContent = '';
+
+  if (!album) { errEl.textContent = 'Informe o nome do &aacute;lbum.'; return; }
+  if (!filesEl.files || !filesEl.files.length) { errEl.textContent = 'Selecione pelo menos uma foto.'; return; }
+
+  var adminToken = (TOKEN && TOKEN.startsWith('dev_')) ? DEV_KEY : TOKEN;
+
+  var fd = new FormData();
+  fd.append('album', album);
+  fd.append('titulo', titulo);
+  fd.append('data', data);
+  fd.append('ordem', '999');
+  Array.from(filesEl.files).forEach(function(f) { fd.append('fotos', f); });
+
+  var btn = document.getElementById('btn-gal-upload');
+  btn.disabled = true; btn.textContent = 'Enviando...';
+  var prog = document.getElementById('gal-progresso');
+  var progBar = document.getElementById('gal-prog-bar');
+  var progTxt = document.getElementById('gal-prog-txt');
+  prog.style.display = 'block';
+  progBar.style.width = '10%';
+  progTxt.textContent = 'Enviando ' + filesEl.files.length + ' foto(s)...';
+
+  // XHR para progresso real
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', GS + '?acao=galeria-upload');
+  xhr.setRequestHeader('X-Admin-Token', adminToken);
+  xhr.upload.onprogress = function(e) {
+    if (e.lengthComputable) {
+      var pct = Math.round(e.loaded / e.total * 90);
+      progBar.style.width = pct + '%';
+    }
+  };
+  xhr.onload = function() {
+    btn.disabled = false; btn.textContent = 'Enviar fotos';
+    progBar.style.width = '100%';
+    var j; try { j = JSON.parse(xhr.responseText); } catch(e) { j = { ok: false, erro: 'Resposta inv&aacute;lida' }; }
+    if (j.ok) {
+      progTxt.textContent = '✅ ' + j.enviados + ' foto(s) enviada(s)!';
+      mostrar('gal-resultado', '✅ ' + j.enviados + ' foto(s) adicionada(s) ao &aacute;lbum "' + album + '".');
+      filesEl.value = '';
+      document.getElementById('gal-preview').innerHTML = '';
+      document.getElementById('gal-titulo').value = '';
+      document.getElementById('gal-data').value = '';
+      setTimeout(function() { prog.style.display = 'none'; progBar.style.width = '0%'; }, 2000);
+      carregarAlbunsAdmin();
+    } else {
+      prog.style.display = 'none'; progBar.style.width = '0%';
+      errEl.textContent = '❌ ' + (j.erro||'Erro no upload');
+    }
+  };
+  xhr.onerror = function() {
+    btn.disabled = false; btn.textContent = 'Enviar fotos';
+    prog.style.display = 'none';
+    errEl.textContent = '❌ Erro de conex&atilde;o.';
+  };
+  xhr.send(fd);
+}
+
+function listarFotosAlbum(albumSlug) {
+  var el = document.getElementById('gal-fotos-album');
+  el.innerHTML = '<div style="color:var(--cinza);font-size:12px;padding:6px 0">Carregando fotos...</div>';
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  fetch(GS + '?acao=galeria-listar&token=' + (TOKEN||''))
+    .then(function(r) { return r.json(); })
+    .then(function(j) {
+      if (!j.ok) { el.innerHTML = '<div style="color:red;font-size:12px">Erro: ' + (j.erro||'desconhecido') + '</div>'; return; }
+      var fotos = (j.fotos || []).filter(function(f) { return (f.albumSlug||f.album) === albumSlug; });
+      var nomeAlbum = albumSlug.replace(/-/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
+      if (!fotos.length) {
+        el.innerHTML = '<div style="font-size:12px;color:var(--cinza);padding:8px 0">Nenhuma foto registrada para "'+nomeAlbum+'".<br><small>Obs: fotos recém enviadas podem demorar para aparecer aqui.</small></div>';
+        return;
+      }
+      var html = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">'
+        + '<button onclick="document.getElementById(\'gal-fotos-album\').innerHTML=\'\'" style="background:rgba(255,255,255,.08);border:1px solid var(--borda);border-radius:6px;padding:3px 10px;color:var(--cinza);font-size:11px;cursor:pointer">← Voltar</button>'
+        + '<span style="font-size:13px;color:var(--ouro)">' + nomeAlbum + '</span>'
+        + '<span style="font-size:11px;color:var(--cinza)">(' + fotos.length + ' fotos)</span></div>';
+      html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px">';
+      fotos.forEach(function(f) {
+        html += '<div style="position:relative;border-radius:8px;overflow:hidden;border:1px solid var(--borda)">'
+          + '<img src="'+f.url+'" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;display:block"/>'
+          + '<div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.7);padding:4px 6px;font-size:10px;color:var(--creme);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'
+          + (f.titulo||'—') + '</div>'
+          + '<button onclick="deletarFoto(\''+f.id+'\',\''+f.url+'\')" style="position:absolute;top:4px;right:4px;background:rgba(180,40,40,.85);border:none;border-radius:4px;color:#fff;font-size:11px;padding:2px 6px;cursor:pointer" title="Deletar">✕</button>'
+          + '</div>';
+      });
+      html += '</div>';
+      el.innerHTML = html;
+    })
+    .catch(function(e) {
+      el.innerHTML = '<div style="color:red;font-size:12px">Erro: ' + e.message + '</div>';
+    });
+}
+
+function deletarFoto(id, url) {
+  if (!confirm('Deletar esta foto? Isso remove do R2 e da planilha.')) return;
+  // Derivar r2Key a partir da URL pública
+  var base = 'https://pub-201d65298a0941d4939bf1e902d17c18.r2.dev/';
+  var r2Key = url.startsWith(base) ? decodeURIComponent(url.slice(base.length)) : null;
+  if (!r2Key || !r2Key.startsWith('Galeria/')) {
+    toast('URL inválida, não foi possível deletar do R2.', false);
+    return;
+  }
+  var adminToken = (TOKEN && TOKEN.startsWith('dev_')) ? DEV_KEY : TOKEN;
+  // Deletar do R2 via worker
+  fetch(GS + '?acao=galeria-deletar', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
+    body: JSON.stringify({ r2Key: r2Key })
+  }).then(function(r) { return r.json(); }).then(function(j) {
+    if (!j.ok) { toast('Erro ao deletar do R2: ' + (j.erro||''), false); return; }
+    // Deletar da planilha via GAS
+    if (id && id !== '--') {
+      _post({ acao: 'galeria-deletar', id: id }).catch(function(){});
+    }
+    toast('Foto removida.');
+    // Recarregar listagem atual
+    var el = document.getElementById('gal-fotos-album');
+    if (el.innerHTML) {
+      var slug = el.querySelector('span.color-ouro');
+      // Recarregar de forma simples — ocultar e indicar
+      el.innerHTML = '<div style="color:var(--cinza);font-size:12px">Foto removida. Clique novamente no &aacute;lbum para atualizar.</div>';
+    }
+    carregarAlbunsAdmin();
+  }).catch(function(e) { toast('Erro: ' + e.message, false); });
+}
 
 // PONTOS ADMIN
 function listarPontosAdmin() {
@@ -831,6 +1074,8 @@ function mostrarAdmin() {
   if (tem('log')) document.getElementById('sec-log').style.display = 'block';
   if (tem('entidades_view') || tem('entidades_edit')) document.getElementById('sec-pontos').style.display = 'block';
   if (tem('acervo_view') || tem('acervo_edit')) { var sa=document.getElementById('sec-acervo'); if(sa)sa.style.display='block'; }
+  document.getElementById('sec-galeria').style.display = 'block';
+  carregarAlbunsAdmin();
 }
 
 function _get(acao, extra) {

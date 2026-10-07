@@ -365,42 +365,104 @@ var deferredPrompt=null;
 window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;document.getElementById('pwa-banner').classList.add('show');});
 function installPwa(){if(!deferredPrompt)return;deferredPrompt.prompt();deferredPrompt.userChoice.then(function(){deferredPrompt=null;document.getElementById('pwa-banner').classList.remove('show');});}
 
-/* GALERIA DE FOTOS */
-var _galFotos=[],_lbIdx=-1;
+/* GALERIA DE FOTOS — por álbuns */
+var _galFotos=[],_galAlbuns=[],_galAlbumAtivo=null,_lbIdx=-1,_lbFotos=[];
 async function carregarGaleria(){
   var grid=document.getElementById('gal-grid');if(!grid)return;
   grid.innerHTML='<div class="empty">Carregando...</div>';
   try{
+    // Buscar fotos da planilha (tem album/albumSlug)
     var r=await Promise.race([
       fetch(GS+'?acao=galeria-listar&token=ile_ase_dev_2024_falsp'),
       new Promise(function(_,rej){setTimeout(function(){rej(new Error('t'));},15000);})
     ]);
     var j=await r.json();
-    if(j.ok&&j.fotos&&j.fotos.length){_galFotos=j.fotos;renderGaleria();return;}
+    if(j.ok&&j.fotos&&j.fotos.length){
+      _galFotos=j.fotos;
+      _galAlbuns=_extrairAlbuns(_galFotos);
+      renderGaleriaAlbuns();
+      return;
+    }
   }catch(e){}
-  // fallback: sem fotos do backend
-  _galFotos=[];
+  // Fallback: tentar listar álbuns diretamente do R2
+  try{
+    var r2=await fetch(GS+'?acao=galeria-albuns');
+    var j2=await r2.json();
+    if(j2.ok&&j2.albuns&&j2.albuns.length){
+      _galAlbuns=j2.albuns.map(function(s){return{slug:s,nome:_slugToNome(s),count:0};});
+      renderGaleriaAlbuns();
+      return;
+    }
+  }catch(e){}
+  _galFotos=[];_galAlbuns=[];
   grid.innerHTML='<div class="empty" style="padding:40px 0">&#128247; Nenhuma foto cadastrada ainda.<br><span style="font-size:12px;color:var(--cinza)">O administrador pode adicionar fotos pelo painel.</span></div>';
 }
-function renderGaleria(){
+function _extrairAlbuns(fotos){
+  var mapa={};
+  fotos.forEach(function(f){
+    var slug=f.albumSlug||f.album||'geral';
+    var nome=f.album||_slugToNome(slug);
+    if(!mapa[slug])mapa[slug]={slug:slug,nome:nome,count:0,thumb:f.url||f.src||''};
+    mapa[slug].count++;
+  });
+  return Object.values(mapa).sort(function(a,b){return a.nome.localeCompare(b.nome);});
+}
+function _slugToNome(s){
+  return (s||'Geral').replace(/-/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
+}
+function renderGaleriaAlbuns(){
   var grid=document.getElementById('gal-grid');if(!grid)return;
-  if(!_galFotos.length){grid.innerHTML='<div class="empty" style="padding:40px 0">&#128247; Nenhuma foto cadastrada ainda.</div>';return;}
-  grid.innerHTML=_galFotos.map(function(f,i){
+  _galAlbumAtivo=null;
+  if(!_galAlbuns.length){
+    grid.innerHTML='<div class="empty" style="padding:40px 0">&#128247; Nenhuma foto cadastrada ainda.</div>';
+    return;
+  }
+  var html='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;padding:4px 0">';
+  _galAlbuns.forEach(function(a){
+    html+='<div class="gal-album-card" onclick="abrirAlbum(\''+a.slug+'\')" style="cursor:pointer;border-radius:10px;overflow:hidden;border:1px solid var(--borda);background:var(--card)">'
+      +'<div style="aspect-ratio:4/3;background:#111;overflow:hidden">'
+      +(a.thumb?'<img src="'+a.thumb+'" alt="'+a.nome+'" loading="lazy" style="width:100%;height:100%;object-fit:cover">':'<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:32px">&#128444;</div>')
+      +'</div>'
+      +'<div style="padding:8px 10px">'
+      +'<div style="font-size:13px;font-weight:500;color:var(--creme)">'+a.nome+'</div>'
+      +(a.count?'<div style="font-size:11px;color:var(--cinza)">'+a.count+' foto'+(a.count!==1?'s':'')+'</div>':'')
+      +'</div></div>';
+  });
+  html+='</div>';
+  grid.innerHTML=html;
+}
+function abrirAlbum(slug){
+  _galAlbumAtivo=slug;
+  var fotos=_galFotos.filter(function(f){return (f.albumSlug||f.album||'geral')===slug;});
+  var nomeAlbum=_slugToNome(slug);
+  var grid=document.getElementById('gal-grid');if(!grid)return;
+  var html='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">'
+    +'<button onclick="renderGaleriaAlbuns()" style="background:rgba(255,255,255,.08);border:1px solid var(--borda);border-radius:7px;padding:5px 13px;color:var(--cinza);font-size:12px;cursor:pointer">&#8592; Álbuns</button>'
+    +'<span style="color:var(--ouro);font-size:15px;font-weight:500">'+nomeAlbum+'</span>'
+    +(fotos.length?'<span style="font-size:11px;color:var(--cinza)">('+fotos.length+' foto'+(fotos.length!==1?'s':'')+')</span>':'')
+    +'</div>';
+  if(!fotos.length){html+='<div class="empty">Nenhuma foto neste álbum.</div>';grid.innerHTML=html;return;}
+  _lbFotos=fotos;
+  html+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px">';
+  fotos.forEach(function(f,i){
     var src=f.url||f.src||'';
     var label=f.titulo||f.legenda||f.nome||'';
-    return '<div class="gal-thumb" onclick="lbAbrir('+i+')" title="'+label+'">'
+    html+='<div class="gal-thumb" onclick="lbAbrir('+i+')" title="'+label+'">'
       +'<img src="'+src+'" alt="'+label+'" loading="lazy">'
       +(label?'<div class="gal-thumb-label">'+label+'</div>':'')
       +'</div>';
-  }).join('');
+  });
+  html+='</div>';
+  grid.innerHTML=html;
 }
 function lbAbrir(idx){
+  var fotos=_lbFotos.length?_lbFotos:_galFotos;
   _lbIdx=idx;
-  var f=_galFotos[idx];if(!f)return;
+  var f=fotos[idx];if(!f)return;
   document.getElementById('lightbox-img').src=f.url||f.src||'';
   document.getElementById('lightbox-legenda').textContent=f.titulo||f.legenda||f.nome||'';
   document.getElementById('lightbox-data').textContent=f.data?'📅 '+f.data:'';
-  document.getElementById('lightbox-counter').textContent=(idx+1)+' / '+_galFotos.length;
+  document.getElementById('lightbox-counter').textContent=(idx+1)+' / '+fotos.length;
   document.getElementById('lightbox').classList.add('aberto');
   document.body.style.overflow='hidden';
 }
@@ -411,8 +473,9 @@ function lbFechar(){
   _lbIdx=-1;
 }
 function lbNav(d){
-  if(!_galFotos.length)return;
-  _lbIdx=(_lbIdx+d+_galFotos.length)%_galFotos.length;
+  var fotos=_lbFotos.length?_lbFotos:_galFotos;
+  if(!fotos.length)return;
+  _lbIdx=(_lbIdx+d+fotos.length)%fotos.length;
   lbAbrir(_lbIdx);
 }
 document.addEventListener('keydown',function(e){

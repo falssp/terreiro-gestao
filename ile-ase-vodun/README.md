@@ -28,6 +28,8 @@ Terreiro de Umbanda — São Paulo, SP
 | `Terreiro_AppsScript.gs` | Código do Google Apps Script |
 | `manifest.json` | PWA manifest |
 | `sw.js` | Service worker |
+| `worker.js` | Cloudflare Worker — proxy GAS + upload R2 galeria |
+| `wrangler.toml` | Config de deploy do Worker (Cloudflare) |
 
 ## Pastas de mídia no R2
 
@@ -35,6 +37,7 @@ Terreiro de Umbanda — São Paulo, SP
 |-------|----------|
 | `Pontos Cantados/` | Pontos organizados por entidade |
 | `Pontos de Fundamento/` | Pontos de fundamento do terreiro |
+| `Galeria/` | Fotos organizadas por álbum — `Galeria/<slug-album>/<arquivo>` |
 
 ## Dev key (acesso admin sem login)
 
@@ -68,10 +71,41 @@ Todos passam `?token=ile_ase_dev_2024_falsp` no frontend.
 | `consumiveis-listar` | `{ok, itens[]}` |
 | `entidades-listar` | `{ok, itens[]}` |
 | `calendario-listar` | `{ok, eventos[]}` — inclui campo `visibilidade` |
-| `galeria-listar` | `{ok, fotos[]}` |
+| `galeria-listar` | `{ok, fotos[]}` — cada foto inclui `album` e `albumSlug` |
+| `galeria-inserir` | POST — `{titulo, url, data, categoria, album, albumSlug, legenda, ordem}` |
+| `galeria-deletar` | POST — `{id}` — remove linha da planilha |
 | `datas-mes` | `{ok, aniversariantes[], festas[]}` |
 | `pontos-listar` | `{ok, itens[]}` |
 | `lista-listar` | `{ok, itens[]}` |
+
+## Endpoints do Worker (R2 direto)
+
+| Endpoint | Método | Auth | Descrição |
+|----------|--------|------|-----------|
+| `?acao=galeria-albuns` | GET | — | Lista álbuns (`Galeria/` prefix + delimiter no R2) |
+| `?acao=galeria-upload` | POST (multipart) | `X-Admin-Token` | Upload de fotos para R2 + registra na planilha |
+| `?acao=galeria-deletar` | POST (JSON) | `X-Admin-Token` | Deleta objeto R2 por `r2Key` |
+
+### Upload de fotos (`galeria-upload`)
+
+```
+POST https://terreiro-proxy.falssp.workers.dev?acao=galeria-upload
+Header: X-Admin-Token: <admin_token>
+Body: multipart/form-data
+  album   = "Festa Ogum 2025"   # nome legível (Worker gera o slug)
+  titulo  = "Depois da gira"    # opcional
+  data    = "2025-04-23"        # opcional
+  ordem   = "1"                 # opcional
+  fotos   = [File, File, ...]   # campo repetido, múltiplos arquivos
+```
+
+Retorna `{ok, enviados, fotos: [{nome, url, album}]}`.
+
+### Token admin
+
+Definido no Cloudflare Dashboard: Workers → terreiro-proxy → Settings → Variables → `ADMIN_TOKEN`.
+**Nunca colocar no `wrangler.toml` nem no frontend.**
+No modo dev: usa `DEV_KEY = 'ile_ase_dev_2024_falsp'` (token de desenvolvimento).
 
 ---
 
@@ -91,19 +125,24 @@ Todos passam `?token=ile_ase_dev_2024_falsp` no frontend.
 | H | Cadastrado em | |
 | **I** | **Visibilidade** | `aberto` (padrão) ou `fechado` / `filhos` — eventos fechados só aparecem para membros |
 
-### Galeria (aba `Galeria`) — **nova**
+### Galeria (aba `Galeria`)
 
 | Col | Campo | Notas |
 |-----|-------|-------|
 | A | ID | ex: `GAL-001` |
 | B | Título | legenda da foto |
-| C | URL | link direto da imagem (R2, Drive, etc.) |
+| C | URL | link direto da imagem (R2) |
 | D | Data | `YYYY-MM-DD` (opcional) |
-| E | Categoria | ex: Gira, Festa, Natureza |
+| E | Álbum | nome legível do álbum (ex: `Festa Ogum 2025`) |
 | F | Legenda extra | texto livre (opcional) |
 | G | Ordem | número para controlar a sequência (menor = primeiro) |
+| H | Album Slug | slug do álbum (ex: `festa-ogum-2025`) — gerado automaticamente pelo Worker |
 
-As fotos aparecem em grid na aba **Galeria** do app com lightbox (← → Esc).
+As fotos aparecem organizadas por **álbum** na aba Galeria do app:
+- Tela inicial: cards de álbuns com thumbnail e contagem de fotos
+- Tela do álbum: grid de fotos com lightbox (← → Esc)
+
+A aba é criada automaticamente ao rodar `setup()` no GAS.
 
 ---
 

@@ -96,7 +96,8 @@ function setup() {
     {nome: ABA.ACERVO,      criar: _criarAcervo,      cols: 12},
     {nome: ABA.CONSUMIVEIS, criar: _criarConsumiveis, cols: 14},
     {nome: ABA.ENTIDADES,   criar: _criarEntidades,   cols: 10},
-    {nome: ABA.CALENDARIO,  criar: _criarCalendario,  cols: 8},
+    {nome: ABA.CALENDARIO,  criar: _criarCalendario,  cols: 9},
+    {nome: ABA.GALERIA,     criar: _criarGaleria,     cols: 8},
     {nome: ABA.FILHOS,      criar: _criarFilhos,      cols: 14},
     {nome: ABA.FINANCEIRO,  criar: _criarFinanceiro,  cols: 9},
     {nome: ABA.LOG,         criar: _criarLog,         cols: 9},
@@ -293,10 +294,25 @@ function _criarEntidades(ss) {
 
 function _criarCalendario(ss) {
   var aba = ss.insertSheet(ABA.CALENDARIO);
-  var cols = ['ID','Data','Título','Tipo','Descrição','Responsável','Observações','Cadastrado em'];
+  var cols = ['ID','Data','Título','Tipo','Descrição','Responsável','Observações','Cadastrado em','Visibilidade'];
   _cab(aba, cols, '#1a1a2a', '#d0c8f0');
   aba.getRange('B2:B500').setNumberFormat('dd/MM/yyyy');
   _val(aba,'D2:D500',LISTA.TIPO_CALENDARIO);
+  _val(aba,'I2:I500',['aberto','fechado','filhos']);
+  _cor(aba,'I2:I500',[
+    {v:'aberto', bg:'#e6f4ea', f:'#1e6b3a'},
+    {v:'fechado', bg:'#fdecea', f:'#8b0000'},
+    {v:'filhos', bg:'#e8f0fe', f:'#1a56a0'}
+  ]);
+  _fechar(aba, cols.length, 501);
+}
+
+function _criarGaleria(ss) {
+  var aba = ss.insertSheet(ABA.GALERIA);
+  var cols = ['ID','Título','URL','Data','Álbum','Legenda','Ordem','Album Slug'];
+  _cab(aba, cols, '#1a1a2a', '#f0e8c0');
+  aba.getRange('D2:D500').setNumberFormat('dd/MM/yyyy');
+  aba.getRange('G2:G500').setNumberFormat('0');
   _fechar(aba, cols.length, 501);
 }
 
@@ -551,6 +567,8 @@ function doPost(e) {
     if (d.acao==='ponto-inserir')       return _saida(_inserirPonto(d,sessao));
     if (d.acao==='ponto-editar')        return _saida(_editarPonto(d,sessao));
     if (d.acao==='lista-deletar')      return _saida(_deletarLista(d,sessao));
+    if (d.acao==='galeria-inserir')    return _saida(_inserirGaleria(d,sessao));
+    if (d.acao==='galeria-deletar')    return _saida(_deletarGaleria(d,sessao));
     if (d.acao==='admin-criar')        return _saida(_criarAdmin(d,sessao));
     if (d.acao==='admin-desbloquear')  return _saida(_desbloquearAdmin(d.email,sessao));
     return _saida({ok:false,erro:'Ação desconhecida: '+d.acao});
@@ -661,12 +679,24 @@ function _listarGaleria() {
       titulo:l[1],
       url:l[2],
       data:l[3]?_fmt(l[3]):'',
-      categoria:l[4]||'',
+      album:l[4]||'Geral',      // coluna E: nome legível do álbum
       legenda:l[5]||'',
-      ordem:Number(l[6])||999
+      ordem:Number(l[6])||999,
+      albumSlug:l[7]||''        // coluna H: slug do álbum (pasta R2)
     };
   }).sort(function(a,b){return a.ordem-b.ordem||a.titulo.localeCompare(b.titulo,'pt');})};
   _cacheSet('galeria',result);return result;
+}
+
+function _inserirGaleria(d,s) {
+  _cacheDel();
+  var aba=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ABA.GALERIA);
+  if(!aba)return{ok:false,erro:'Aba não encontrada.'};
+  var id=_uuid('GAL');
+  var ordem=Number(d.ordem)||999;
+  aba.appendRow([id,d.titulo||'',d.url||'',d.data||'',d.album||'Geral',d.legenda||'',ordem,d.albumSlug||d.album||'']);
+  _log((s&&s.nome)||'Worker',((s&&s.email)||'worker'),'INSERIR',ABA.GALERIA,id,'-','-',d.titulo||d.url);
+  return{ok:true,id};
 }
 
 function _listarFilhos(idFiltro, sessao) {
@@ -817,9 +847,25 @@ function _inserirCalendario(d,s) {
   var aba=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ABA.CALENDARIO);
   if(!aba)return{ok:false,erro:'Aba não encontrada.'};
   var id=_uuid('CAL');
-  aba.appendRow([id,d.data||'',d.titulo||'',d.tipo||'Outro',d.descricao||'',d.responsavel||s.nome,d.observacoes||'',_hoje()]);
+  var vis=d.visibilidade||'aberto';
+  aba.appendRow([id,d.data||'',d.titulo||'',d.tipo||'Outro',d.descricao||'',d.responsavel||s.nome,d.observacoes||'',_hoje(),vis]);
   _log(s.nome,s.email,'INSERIR',ABA.CALENDARIO,id,'-','-',d.titulo);
   return{ok:true,id};
+}
+
+function _deletarGaleria(d,s) {
+  _cacheDel();
+  var aba=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ABA.GALERIA);
+  if(!aba)return{ok:false,erro:'Aba não encontrada.'};
+  var rows=aba.getDataRange().getValues();
+  for(var i=1;i<rows.length;i++){
+    if(rows[i][0]===d.id){
+      aba.deleteRow(i+1);
+      _log((s&&s.nome)||'Worker',(s&&s.email)||'worker','DELETAR',ABA.GALERIA,d.id,'-','-',rows[i][1]);
+      return{ok:true};
+    }
+  }
+  return{ok:false,erro:'Foto não encontrada.'};
 }
 
 function _listarPontos() {
@@ -997,7 +1043,7 @@ function instalarTriggerWarmup() {
 // == CACHE (5 min) =========================================
 function _cacheGet(k){try{var v=CacheService.getScriptCache().get(k);return v?JSON.parse(v):null;}catch(e){return null;}}
 function _cacheSet(k,v){try{CacheService.getScriptCache().put(k,JSON.stringify(v),300);}catch(e){}}
-function _cacheDel(){try{CacheService.getScriptCache().removeAll(['consumiveis','acervo','entidades','calendario','pontos','datas']);}catch(e){}}
+function _cacheDel(){try{CacheService.getScriptCache().removeAll(['consumiveis','acervo','entidades','calendario','galeria','pontos','datas']);}catch(e){}}
 
 function _saida(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);

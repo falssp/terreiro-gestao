@@ -1,0 +1,13 @@
+name = "terreiro-proxy"
+main = "worker.js"
+compatibility_date = "2024-11-01"
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "terreiro-pontos"
+
+# Variável de ambiente — defina o valor real no dashboard do Cloudflare:
+# Workers > terreiro-proxy > Settings > Variables > ADMIN_TOKEN = ile_ase_dev_2024_falsp
+# (ou um token mais seguro para produção)
+[vars]
+# ADMIN_TOKEN = "ile_ase_dev_2024_falsp"   # <-- definir no dashboard, não aqui
