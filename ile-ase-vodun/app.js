@@ -67,11 +67,20 @@ var EVENTOS_FIXOS=(function(){
     {titulo:'Festa de Oxalá / Senhor do Bonfim',data:dataStr(1,20,prox),tipo:'Festa',descricao:'3ª quinta-feira de janeiro',fixo:true},
   ];
 })();
-async function carregarCalendario(){
-  // Mostra eventos fixos imediatamente
-  calendario=EVENTOS_FIXOS.slice();
+function _calAbrirProximo(){
+  var prox=_calProximoEvento();
+  if(!prox||!prox.data)return;
+  var p=prox.data.split('-');
+  _calAno=parseInt(p[0]);_calMes=parseInt(p[1])-1;_calDiaSel=prox.data;
   renderCalendario();
-  // Tenta carregar do backend (token vazio = leitura pública se GAS permitir)
+  // Aguarda o DOM renderizar e abre o painel
+  setTimeout(function(){calMostrarEvtsDia(prox.data);},50);
+}
+async function carregarCalendario(){
+  // Mostra eventos fixos imediatamente e abre próximo
+  calendario=EVENTOS_FIXOS.slice();
+  _calAbrirProximo();
+  // Tenta carregar do backend
   async function _tentarCarregar(token){
     var r=await Promise.race([
       fetch(GS+'?acao=calendario-listar&token='+(token||'')),
@@ -82,7 +91,6 @@ async function carregarCalendario(){
   }
   try{
     var j=await _tentarCarregar('');
-    // GAS pode exigir token mesmo para leitura — usa token público de leitura
     if(!j.ok)j=await _tentarCarregar('ile_ase_dev_2024_falsp');
     var lista=j.itens||j.eventos||[];
     if(j.ok&&lista.length){
@@ -91,7 +99,8 @@ async function carregarCalendario(){
       });
       calendario=lista.concat(fixosFiltrados);
       calendario.sort(function(a,b){return (a.data||'').localeCompare(b.data||'');});
-      renderCalendario();
+      // Só re-abre automático se o usuário ainda não interagiu
+      if(!_calDiaSel)_calAbrirProximo();else renderCalendario();
     }
   }catch(e){/* mantém eventos fixos */}
 }
@@ -151,7 +160,30 @@ function _fmtData(str){
 /* CALEND\u00c1RIO VISUAL */
 var _calAno=new Date().getFullYear(),_calMes=new Date().getMonth(),_calDiaSel=null;
 function calMudarMes(d){_calMes+=d;if(_calMes>11){_calMes=0;_calAno++;}if(_calMes<0){_calMes=11;_calAno--;}renderCalendario();}
-function renderCalendario(){
+function _calEventosVisiveis(){
+  var nivel=localStorage.getItem('_nivelAcesso')||'publico';
+  var isMembro=(nivel==='membro'||nivel==='admin');
+  return calendario.filter(function(ev){
+    // eventos fixos/recorrentes sempre vis\u00edveis
+    if(ev.fixo)return true;
+    // se fechado, s\u00f3 membros
+    var vis=(ev.visibilidade||ev.acesso||'').toLowerCase();
+    if(vis==='fechado'||vis==='membros'||vis==='filhos')return isMembro;
+    return true; // aberto ou sem campo = vis\u00edvel para todos
+  });
+}
+function _calProximoEvento(){
+  var hoje=new Date();hoje.setHours(0,0,0,0);
+  var evts=_calEventosVisiveis();
+  var futuros=evts.filter(function(ev){
+    if(!ev.data)return false;
+    var d=new Date(ev.data+'T00:00:00');
+    return d>=hoje;
+  });
+  futuros.sort(function(a,b){return (a.data||'').localeCompare(b.data||'');});
+  return futuros.length?futuros[0]:null;
+}
+function renderCalendario(autoSel){
   var hoje=new Date();var hd=hoje.getFullYear()+'-'+(hoje.getMonth()<9?'0':'')+(hoje.getMonth()+1)+'-'+(hoje.getDate()<10?'0':'')+hoje.getDate();
   var meses=['Janeiro','Fevereiro','Mar\u00e7o','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   var semHdr=document.getElementById('cal-titulo');if(!semHdr)return;
@@ -159,7 +191,7 @@ function renderCalendario(){
   var primeiroDia=new Date(_calAno,_calMes,1).getDay();
   var ultimoDia=new Date(_calAno,_calMes+1,0).getDate();
   var evtsMes={};
-  calendario.forEach(function(ev){
+  _calEventosVisiveis().forEach(function(ev){
     var d=ev.data||'';
     if(!d)return;
     var parts=d.split('-');
@@ -173,10 +205,17 @@ function renderCalendario(){
   for(var d=1;d<=ultimoDia;d++){
     var ds=_calAno+'-'+(_calMes+1<10?'0':'')+(_calMes+1)+'-'+(d<10?'0':'')+d;
     var isHoje=ds===hd,isSel=ds===_calDiaSel,evts=evtsMes[d]||[];
+    var temFechado=evts.some(function(e){var v=(e.visibilidade||e.acesso||'').toLowerCase();return v==='fechado'||v==='membros'||v==='filhos';});
     var cls='cal-dia'+(isHoje?' hoje':'')+(isSel?' selecionado':'');
     html+='<div class="'+cls+'" data-dt="'+ds+'" onclick="calVerDia(this)">';
-    html+='<div class="cal-num">'+(isHoje?'<div class="cal-num">'+d+'<\/div>':d)+'<\/div>';
-    if(evts.length){evts.slice(0,2).forEach(function(ev){html+='<div class="cal-dot'+(ev.fixo?' festa':'')+'"><\/div>';});}
+    html+='<div class="cal-num">'+d+'<\/div>';
+    if(evts.length){
+      evts.slice(0,2).forEach(function(ev){
+        var v=(ev.visibilidade||ev.acesso||'').toLowerCase();
+        var isFechado=(v==='fechado'||v==='membros'||v==='filhos');
+        html+='<div class="cal-dot'+(ev.fixo?' festa':isFechado?' fechado':'')+'"><\/div>';
+      });
+    }
     html+='<\/div>';
   }
   html+='<\/div>';
@@ -386,8 +425,8 @@ document.addEventListener('keydown',function(e){
 
 /* CAMADAS DE ACESSO */
 // Códigos: defina estes no GAS ou atualize aqui para produção
-var _CODIGO_MEMBRO='ilease2024';
-var _CODIGO_ADMIN='ilaadm2024';
+var _CODIGO_MEMBRO='ile2025';
+var _CODIGO_ADMIN='ogumayre$';
 
 function _aplicarAcesso(){
   var nivel=localStorage.getItem('_nivelAcesso')||'publico';
@@ -397,8 +436,8 @@ function _aplicarAcesso(){
   var chipLabel=document.getElementById('acesso-chip-label');
   if(chip&&chipIcone&&chipLabel){
     if(nivel==='admin'){chip.classList.remove('publico','membro');chip.classList.add('admin');chipIcone.textContent='👑';chipLabel.textContent='Admin';}
-    else if(nivel==='membro'){chip.classList.remove('publico','admin');chip.classList.add('membro');chipIcone.textContent='🔓';chipLabel.textContent='Membro';}
-    else{chip.classList.remove('membro','admin');chip.classList.add('publico');chipIcone.textContent='🔒';chipLabel.textContent='Membro';}
+    else if(nivel==='membro'){chip.classList.remove('publico','admin');chip.classList.add('membro');chipIcone.textContent='🔓';chipLabel.textContent='Filhos';}
+    else{chip.classList.remove('membro','admin');chip.classList.add('publico');chipIcone.textContent='🔒';chipLabel.textContent='Filhos';}
   }
   // Mostra/oculta abas de membro no desktop nav
   document.querySelectorAll('.tab-membro').forEach(function(t){

@@ -143,6 +143,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
 .cal-num{font-size:13px;font-weight:500;line-height:1}
 .cal-dot{width:5px;height:5px;border-radius:50%;background:var(--ouro);flex-shrink:0}
 .cal-dot.festa{background:#c084fc}
+.cal-dot.fechado{background:#60a5fa}
 .cal-evts-dia{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:14px 16px}
 .cal-evts-titulo{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--ouro);margin-bottom:10px;font-weight:600}
 .cal-evt-item{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px}
@@ -291,7 +292,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
 <!-- MODAL ACESSO -->
 <div id="modal-acesso" onclick="if(event.target===this)fecharAcesso()">
   <div class="acesso-box">
-    <h2>&#128274; Área de Membros</h2>
+    <h2>&#128274; Área dos Filhos</h2>
     <p>Digite o código fornecido pelo terreiro para acessar o Acervo e Consumíveis.</p>
     <input class="acesso-input" id="acesso-input" type="password" placeholder="Código de acesso" maxlength="40" onkeydown="if(event.key==='Enter')confirmarAcesso()"/>
     <div class="acesso-btns">
