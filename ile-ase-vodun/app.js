@@ -91,6 +91,7 @@ async function carregarCalendario(){
       calendario.sort(function(a,b){return (a.data||'').localeCompare(b.data||'');});
       // Só re-abre automático se o usuário ainda não interagiu
       if(!_calDiaSel)_calAbrirProximo();else renderCalendario();
+      _renderProximoEvento();
     }
   }catch(e){/* mantém eventos fixos */}
 }
@@ -516,6 +517,21 @@ function fecharAcesso(){
 function abrirAjuda(){
   var m=document.getElementById('modal-ajuda');if(m){m.classList.add('aberto');m.scrollTop=0;}
 }
+function _renderProximoEvento(){
+  var ev=_calProximoEvento();
+  var dEl=document.getElementById('hpe-dia');
+  var mEl=document.getElementById('hpe-mes');
+  var tEl=document.getElementById('hpe-titulo');
+  var tpEl=document.getElementById('hpe-tipo');
+  if(!dEl)return;
+  if(!ev){document.getElementById('home-proximo-evento').style.display='none';return;}
+  var d=new Date(ev.data+'T12:00:00');
+  var meses=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  dEl.textContent=d.getDate();
+  mEl.textContent=meses[d.getMonth()];
+  tEl.textContent=ev.titulo||ev.nome||'Evento';
+  tpEl.textContent=ev.tipo||'';
+}
 function fecharAjuda(){
   var m=document.getElementById('modal-ajuda');if(m)m.classList.remove('aberto');
 }
@@ -600,6 +616,7 @@ window.addEventListener('DOMContentLoaded',function(){
     try{carregarConsumiveis();}catch(e){}
   }
   _aplicarAcesso();
+  _renderProximoEvento();
 });
 
 function carregarEntidades(){
