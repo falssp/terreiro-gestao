@@ -513,6 +513,15 @@ function abrirAcesso(){
 function fecharAcesso(){
   var modal=document.getElementById('modal-acesso');if(modal)modal.classList.remove('aberto');
 }
+function abrirAjuda(){
+  var m=document.getElementById('modal-ajuda');if(m){m.classList.add('aberto');m.scrollTop=0;}
+}
+function fecharAjuda(){
+  var m=document.getElementById('modal-ajuda');if(m)m.classList.remove('aberto');
+}
+function faqToggle(btn){
+  btn.parentElement.classList.toggle('open');
+}
 function confirmarAcesso(){
   var codigo=(document.getElementById('acesso-input').value||'').trim();
   var erro=document.getElementById('acesso-erro');

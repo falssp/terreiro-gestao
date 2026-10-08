@@ -185,6 +185,20 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
 .tab-membro{display:none}
 #modal-acesso{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:400;display:none;align-items:center;justify-content:center;padding:24px}
 #modal-acesso.aberto{display:flex}
+#modal-ajuda{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:400;display:none;align-items:flex-start;justify-content:center;padding:24px;overflow-y:auto}
+#modal-ajuda.aberto{display:flex}
+.ajuda-box{background:#1a1a1a;border:1px solid var(--borda);border-radius:var(--r);padding:28px 24px;width:100%;max-width:640px;margin:auto}
+.ajuda-box h2{font-family:var(--fd);color:var(--ouro-lt);font-size:1rem;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center}
+.faq-item{border:1px solid var(--borda);border-radius:8px;margin-bottom:8px;overflow:hidden}
+.faq-q{width:100%;background:rgba(0,0,0,.3);border:none;color:var(--creme);font-family:var(--fb);font-size:13px;font-weight:600;padding:13px 16px;text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.faq-q:hover{color:var(--ouro-lt)}
+.faq-q .faq-arr{color:var(--ouro);font-size:10px;flex-shrink:0;transition:transform .2s}
+.faq-item.open .faq-q .faq-arr{transform:rotate(180deg)}
+.faq-a{display:none;padding:0 16px 14px;font-size:13px;color:var(--cinza);line-height:1.7}
+.faq-item.open .faq-a{display:block}
+.faq-a strong{color:var(--creme)}
+.faq-a code{background:rgba(201,168,76,.1);border:1px solid var(--borda);border-radius:4px;padding:1px 6px;font-size:11px;color:var(--ouro-lt)}
+.faq-a ul{margin:8px 0 8px 16px}.faq-a li{margin-bottom:4px}
 .acesso-box{background:#1a1a1a;border:1px solid var(--borda);border-radius:var(--r);padding:28px 24px;width:100%;max-width:360px}
 .acesso-box h2{font-family:var(--fd);color:var(--ouro-lt);font-size:1rem;margin-bottom:6px}
 .acesso-box p{font-size:12px;color:var(--cinza);margin-bottom:18px;line-height:1.6}
@@ -211,7 +225,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
   <button class="tab" onclick="irPara('pontos',this)">&#9835; Pontos</button>
   <button class="tab" onclick="irPara('galeria',this)">&#128247; Galeria</button>
 </nav>
-<div class="nav-links"><button class="acesso-chip" id="acesso-chip" onclick="abrirAcesso()"><span id="acesso-chip-icone">&#128274;</span><span id="acesso-chip-label">Membro</span></button><a href="admin.html">&#128100; Admin</a><a href="faq.html">&#10067; Ajuda</a></div>
+<div class="nav-links"><button class="acesso-chip" id="acesso-chip" onclick="abrirAcesso()"><span id="acesso-chip-icone">&#128274;</span><span id="acesso-chip-label">Membro</span></button><a href="admin.html">&#128100; Admin</a><a href="#" onclick="abrirAjuda();return false">&#10067; Ajuda</a></div>
 <div class="section active" id="sec-home">
   <div class="ornamento">&#10022; &#10022; &#10022;</div>
   <div class="home-card" style="margin-bottom:24px;background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(100,50,200,.08));border-color:rgba(201,168,76,.3)">
@@ -300,6 +314,55 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
       <button class="btn-acesso confirmar" onclick="confirmarAcesso()">Entrar</button>
     </div>
     <div class="acesso-erro" id="acesso-erro"></div>
+  </div>
+</div>
+
+<!-- MODAL AJUDA -->
+<div id="modal-ajuda" onclick="if(event.target===this)fecharAjuda()">
+  <div class="ajuda-box">
+    <h2>&#10067; Perguntas Frequentes <button onclick="fecharAjuda()" style="background:none;border:none;color:var(--cinza);font-size:1.2rem;cursor:pointer;line-height:1">&#10005;</button></h2>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="faqToggle(this)">Como faço login no sistema? <span class="faq-arr">&#9660;</span></button>
+      <div class="faq-a">O acesso é feito pelo código fornecido pelo terreiro. Clique no chip <strong>🔒 Filhos</strong> na barra de navegação (desktop) ou acesse diretamente <strong>Acervo</strong> ou <strong>Consumíveis</strong> pelo menu.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="faqToggle(this)">Como ouvir os pontos cantados? <span class="faq-arr">&#9660;</span></button>
+      <div class="faq-a">Acesse a aba <strong>Pontos</strong> no menu. Filtre por entidade ou busque pelo nome. Clique no ▶ para tocar — o player aparece na parte inferior com controles de anterior, próximo e fechar.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="faqToggle(this)">O que significam os níveis de estoque? <span class="faq-arr">&#9660;</span></button>
+      <div class="faq-a">
+        <ul>
+          <li><strong>OK</strong> — estoque acima de 75% do mínimo</li>
+          <li><strong>Repor</strong> — entre 50% e 75% do mínimo</li>
+          <li><strong>Alerta</strong> — entre 1% e 50% do mínimo</li>
+          <li><strong>Urgente</strong> — zerado ou abaixo do mínimo</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="faqToggle(this)">Os números aparecem como "--" no início. É erro? <span class="faq-arr">&#9660;</span></button>
+      <div class="faq-a">Não. Os <code>--</code> aparecem enquanto o sistema carrega os dados do servidor. Após alguns segundos os números reais aparecem automaticamente. Se persistir, verifique sua conexão.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="faqToggle(this)">Como atualizar o estoque de um consumível? <span class="faq-arr">&#9660;</span></button>
+      <div class="faq-a">Na aba <strong>Consumíveis</strong>, clique no item desejado para abrir o detalhe. Clique em <strong>Atualizar estoque</strong>, informe a quantidade atual e confirme.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="faqToggle(this)">O app pode ser instalado no celular? <span class="faq-arr">&#9660;</span></button>
+      <div class="faq-a">Sim. No Chrome, toque no banner <strong>"Instalar na tela inicial"</strong> que aparece no topo, ou acesse o menu do browser e escolha <strong>"Adicionar à tela inicial"</strong>. O app funciona como um aplicativo nativo.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="faqToggle(this)">Problemas técnicos — quem contatar? <span class="faq-arr">&#9660;</span></button>
+      <div class="faq-a">Entre em contato com a administração do terreiro ou pelo WhatsApp <strong><a href="https://wa.me/5511989202958" style="color:var(--ouro);text-decoration:none">(11) 98920-2958</a></strong>.</div>
+    </div>
   </div>
 </div>
 
