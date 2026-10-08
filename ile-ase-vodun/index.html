@@ -14,8 +14,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
 .topo{background:linear-gradient(135deg,#1a0e06,#0a0a0a);border-bottom:1px solid var(--borda);padding:14px 16px 10px;text-align:center}
 .topo h1{font-family:var(--fd);font-size:1.05rem;color:var(--ouro-lt);letter-spacing:.06em}
 .topo p{font-size:10px;color:var(--cinza);margin-top:3px;letter-spacing:.12em;text-transform:uppercase}
-.desktop-nav{display:flex;background:#111;border-bottom:1px solid var(--borda);overflow-x:auto;scrollbar-width:none}
-.desktop-nav::-webkit-scrollbar{display:none}
+.desktop-nav{display:none}
 .tab{background:none;border:none;border-bottom:2px solid transparent;padding:12px 18px;color:var(--cinza);font-family:var(--fb);font-size:13px;cursor:pointer;transition:color .2s,border-color .2s;white-space:nowrap}
 .tab:hover{color:var(--ouro-lt)}
 .tab.active{color:var(--ouro-lt);border-bottom-color:var(--ouro)}
@@ -33,7 +32,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
 .btn-pwa.nao{background:transparent;color:var(--cinza)}
 .section{display:none;padding:28px 36px}
 .section.active{display:block}
-@media(max-width:767px){.section{padding:14px;padding-bottom:calc(var(--nav-h) + 14px)}.desktop-nav,.nav-links{display:none}.bottom-nav{display:flex}#mini-player{bottom:var(--nav-h)}}
+@media(max-width:767px){.section{padding:14px;padding-bottom:14px}.desktop-nav{display:none}.bottom-nav{display:none}#mini-player{bottom:0}}
 .niveis-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
 @media(max-width:767px){.niveis-grid{grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}}
 .nivel-card{border-radius:var(--r);padding:18px 14px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px}
@@ -238,6 +237,25 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
     </div>
     <div style="color:var(--borda);font-size:18px">&#8250;</div>
   </div>
+  <!-- Nav cards -->
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px">
+    <button onclick="irPara('calendario')" style="background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:16px 14px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;color:inherit;font-family:var(--fb)">
+      <span style="font-size:24px">&#128197;</span>
+      <div><div style="font-size:13px;font-weight:600;color:var(--creme)">Calendário</div><div style="font-size:11px;color:var(--cinza);margin-top:2px">Festivais e eventos</div></div>
+    </button>
+    <button onclick="irPara('pontos')" style="background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:16px 14px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;color:inherit;font-family:var(--fb)">
+      <span style="font-size:24px">&#9835;</span>
+      <div><div style="font-size:13px;font-weight:600;color:var(--creme)">Pontos Cantados</div><div style="font-size:11px;color:var(--cinza);margin-top:2px">Letras e melodias</div></div>
+    </button>
+    <button onclick="irPara('entidades')" style="background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:16px 14px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;color:inherit;font-family:var(--fb)">
+      <span style="font-size:24px">&#10024;</span>
+      <div><div style="font-size:13px;font-weight:600;color:var(--creme)">Orixás &amp; Entidades</div><div style="font-size:11px;color:var(--cinza);margin-top:2px">Histórias e saudações</div></div>
+    </button>
+    <button onclick="irPara('galeria')" style="background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:16px 14px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;color:inherit;font-family:var(--fb)">
+      <span style="font-size:24px">&#128247;</span>
+      <div><div style="font-size:13px;font-weight:600;color:var(--creme)">Galeria</div><div style="font-size:11px;color:var(--cinza);margin-top:2px">Fotos do terreiro</div></div>
+    </button>
+  </div>
   <!-- Consultas -->
   <div class="home-card" style="margin-bottom:24px;background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(100,50,200,.08));border-color:rgba(201,168,76,.3)">
     <div class="home-card-titulo">&#127775; Consultas Espirituais</div>
@@ -255,10 +273,12 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
   </div>
 </div>
 <div class="section" id="sec-acervo">
+  <button onclick="irPara('home')" style="background:none;border:none;color:var(--cinza);font-family:var(--fb);font-size:12px;cursor:pointer;padding:0 0 16px;display:flex;align-items:center;gap:6px">&#8592; Início</button>
   <div class="filter-bar"><input type="search" id="acervo-busca" placeholder="&#128269; Buscar acervo..." oninput="renderAcervo()"/><select id="acervo-cat" onchange="renderAcervo()"><option value="">Todas as Categorias</option></select></div>
   <div class="lbl-count" id="acervo-count"></div><div id="acervo-lista"><div class="empty">Carregando...</div></div>
 </div>
 <div class="section" id="sec-consumiveis">
+  <button onclick="irPara('home')" style="background:none;border:none;color:var(--cinza);font-family:var(--fb);font-size:12px;cursor:pointer;padding:0 0 16px;display:flex;align-items:center;gap:6px">&#8592; Início</button>
   <div class="filter-bar">
     <input type="search" id="csm-busca" placeholder="&#128269; Buscar consumível..." oninput="renderConsumiveis()"/>
     <select id="csm-cat" onchange="renderConsumiveis()"><option value="">Todas as Categorias</option></select>
@@ -267,6 +287,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
   <div class="lbl-count" id="csm-count"></div><div class="csm-grid" id="csm-lista"><div class="empty">Carregando...</div></div>
 </div>
 <div class="section" id="sec-calendario">
+  <button onclick="irPara('home')" style="background:none;border:none;color:var(--cinza);font-family:var(--fb);font-size:12px;cursor:pointer;padding:0 0 16px;display:flex;align-items:center;gap:6px">&#8592; Início</button>
   <div id="cal-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
     <button id="cal-prev" onclick="calMudarMes(-1)" style="background:none;border:1px solid var(--borda);border-radius:8px;color:var(--cinza);font-size:18px;cursor:pointer;padding:4px 12px;line-height:1">&#8249;</button>
     <div id="cal-titulo" style="font-family:var(--fd);color:var(--ouro-lt);font-size:1rem;letter-spacing:.04em"></div>
@@ -276,15 +297,18 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
   <div id="cal-eventos-dia" style="margin-top:16px"></div>
 </div>
 <div class="section" id="sec-galeria">
+  <button onclick="irPara('home')" style="background:none;border:none;color:var(--cinza);font-family:var(--fb);font-size:12px;cursor:pointer;padding:0 0 16px;display:flex;align-items:center;gap:6px">&#8592; Início</button>
   <div class="ornamento">&#10022; &#10022; &#10022;</div>
   <div id="gal-grid" class="gal-grid"><div class="empty">Carregando...</div></div>
 </div>
 <div class="section" id="sec-entidades">
+  <button onclick="irPara('home')" style="background:none;border:none;color:var(--cinza);font-family:var(--fb);font-size:12px;cursor:pointer;padding:0 0 16px;display:flex;align-items:center;gap:6px">&#8592; Início</button>
   <div class="filter-bar"><input type="search" id="ent-busca" placeholder="&#128269; Buscar orixá ou entidade..." oninput="renderEntidades()"/></div>
   <div class="ent-tabs"><button class="ent-tab active" data-nacao="" onclick="setNacao(this)">Todos</button><button class="ent-tab" data-nacao="Angola" onclick="setNacao(this)">Angola</button><button class="ent-tab" data-nacao="Jeje" onclick="setNacao(this)">Jeje</button><button class="ent-tab" data-nacao="Ketu" onclick="setNacao(this)">Ketu</button><button class="ent-tab" data-nacao="Umbanda" onclick="setNacao(this)">Umbanda</button></div>
   <div id="ent-lista"><div class="empty">Carregando...</div></div>
 </div>
 <div class="section" id="sec-pontos">
+<button onclick="irPara('home')" style="background:none;border:none;color:var(--cinza);font-family:var(--fb);font-size:12px;cursor:pointer;padding:0 0 16px;display:flex;align-items:center;gap:6px">&#8592; Início</button>
 <div class="filter-bar" style="margin-bottom:12px">
   <select class="pt-sel" id="pt-ent" onchange="renderPontos()"><option value="">Todas as entidades</option></select>
   <input class="pt-sel" id="pt-busca" type="search" placeholder="&#128269; Buscar ponto..." oninput="renderPontos()"/>
