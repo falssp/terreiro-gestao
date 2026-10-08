@@ -519,9 +519,6 @@ function abrirAjuda(){
 function fecharAjuda(){
   var m=document.getElementById('modal-ajuda');if(m)m.classList.remove('aberto');
 }
-function faqToggle(btn){
-  btn.parentElement.classList.toggle('open');
-}
 function confirmarAcesso(){
   var codigo=(document.getElementById('acesso-input').value||'').trim();
   var erro=document.getElementById('acesso-erro');
