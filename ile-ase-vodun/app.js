@@ -496,7 +496,12 @@ function _aplicarAcesso(){
   }
   // Mostra/oculta abas de membro no desktop nav
   document.querySelectorAll('.tab-membro').forEach(function(t){
-    t.style.display=(nivel==='membro'||nivel==='admin')?'':'none';
+    if(nivel==='membro'||nivel==='admin'){
+      var tag=t.tagName.toLowerCase();
+      t.style.display=(tag==='a')?'block':(tag==='div'&&t.classList.contains('niveis-grid'))?'grid':'block';
+    } else {
+      t.style.display='none';
+    }
   });
   // Mostra botão de sair se for membro/admin
   var btnSair=document.getElementById('btn-sair-membro');
