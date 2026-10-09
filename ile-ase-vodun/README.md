@@ -52,7 +52,7 @@ O app tem três níveis de acesso, controlados por `localStorage._nivelAcesso`:
 | Nível | Código | O que vê |
 |-------|--------|----------|
 | `publico` | — | Início, Agenda (eventos abertos), Galeria, Orixás, Pontos |
-| `membro` | `ile2025` | + Acervo, Consumíveis, eventos fechados no calendário |
+| `filho` | `ile2025` | + Acervo, Consumíveis, eventos fechados no calendário |
 | `admin` | `ogumayre$` | Tudo acima + área admin |
 
 > Os códigos ficam em `app.js` nas variáveis `_CODIGO_MEMBRO` e `_CODIGO_ADMIN`. Troque antes de ir para produção.
@@ -123,7 +123,7 @@ No modo dev: usa `DEV_KEY = 'ile_ase_dev_2024_falsp'` (token de desenvolvimento)
 | F | Responsável | |
 | G | Observações | |
 | H | Cadastrado em | |
-| **I** | **Visibilidade** | `aberto` (padrão) ou `fechado` / `filhos` — eventos fechados só aparecem para membros |
+| **I** | **Visibilidade** | `aberto` (padrão) ou `fechado` / `filhos` — eventos fechados só aparecem para filhos |
 
 ### Galeria (aba `Galeria`)
 
@@ -150,5 +150,5 @@ A aba é criada automaticamente ao rodar `setup()` no GAS.
 
 - Ao abrir o app, o calendário **navega automaticamente para o próximo evento** e abre o painel do dia.
 - Eventos `fixo: true` (festas recorrentes hardcoded) sempre visíveis para todos.
-- Eventos com `visibilidade: "fechado"` ou `"filhos"` aparecem só para membros/admin — marcados com **ponto azul** no grid.
+- Eventos com `visibilidade: "fechado"` ou `"filhos"` aparecem só para filhos/admin — marcados com **ponto azul** no grid.
 - Eventos abertos: **ponto dourado**. Festas recorrentes: **ponto roxo**.

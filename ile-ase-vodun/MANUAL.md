@@ -47,11 +47,11 @@ O sistema tem quatro níveis:
 | Nível | Como acessa | O que vê |
 |-------|-------------|----------|
 | `publico` | Padrão (sem login) | Início, Agenda (eventos abertos), Galeria, Orixás, Pontos |
-| `membro` | Código de acesso na tela principal | Tudo acima + Acervo, Consumíveis, eventos fechados, grupo WhatsApp |
+| `filho` | Código de acesso na tela principal | Tudo acima + Acervo, Consumíveis, eventos fechados, grupo WhatsApp |
 | `admin` | Login com e-mail e senha em `admin.html` | Painel administrativo completo |
 | `dev` | URL com dev key | Acesso irrestrito ao backend (apenas para desenvolvimento) |
 
-### Acesso de filhos de santo (membro)
+### Acesso de filhos de santo
 
 Na tela principal, clique em **Acervo** ou **Consumíveis** — o sistema pede o código de acesso.
 
@@ -97,10 +97,10 @@ A tela principal funciona como hub: não tem barra de navegação fixa. Cada se�
 - 🖼 Galeria
 - 🌿 Orixás e Entidades
 - 🎵 Pontos Cantados
-- 📦 Acervo _(membro/admin)_
-- 🕯 Consumíveis _(membro/admin)_
+- 📦 Acervo _(filhos/admin)_
+- 🕯 Consumíveis _(filhos/admin)_
 
-**Na home (área de membros):**
+**Na home (área dos filhos):**
 - Dashboard de estoque (consumíveis) com contadores OK / Repor / Alerta / Urgente
 - Card do grupo de WhatsApp dos filhos (abre direto o grupo)
 - Card de consultas espirituais
@@ -114,7 +114,7 @@ A tela principal funciona como hub: não tem barra de navegação fixa. Cada se�
 1. Acesse o painel admin: `admin.html`
 2. Clique em **Calendário → Novo evento**
 3. Preencha: data, título, tipo (Gira, Festa, Consulta…), descrição, responsável
-4. Em **Visibilidade**: `aberto` para todos verem, `fechado` para mostrar só para membros
+4. Em **Visibilidade**: `aberto` para todos verem, `fechado` para mostrar só para filhos
 5. Clique em **Salvar** — o evento aparece na planilha e no app imediatamente
 
 ### Próximo evento (card na home)
@@ -137,7 +137,7 @@ O card na home exibe automaticamente o próximo evento do calendário. Clicar ne
 
 ### Controlar consumíveis
 
-O dashboard na home (visível para membros/admin) mostra o estoque em 4 níveis:
+O dashboard na home (visível para filhos/admin) mostra o estoque em 4 níveis:
 
 - **OK** (verde) — estoque suficiente
 - **REPOR** (amarelo) — atenção, repor em breve
@@ -154,7 +154,7 @@ Para atualizar: painel admin → **Consumíveis → editar item**.
 
 ### Grupo de WhatsApp dos filhos
 
-O card aparece na home apenas para membros logados. O link aponta diretamente para o grupo. Para atualizar o link (quando o link mudar):
+O card aparece na home apenas para filhos logados. O link aponta diretamente para o grupo. Para atualizar o link (quando o link mudar):
 
 ```html
 <!-- index.html — procure por chat.whatsapp.com -->
@@ -188,7 +188,7 @@ Se esquecer a senha: acesse o painel admin com a dev key → seção Admins → 
 
 **Calendário**
 - Listar, criar, editar e excluir eventos
-- Visibilidade: `aberto` (todos) ou `fechado` (só membros)
+- Visibilidade: `aberto` (todos) ou `fechado` (só filhos)
 - Cores no calendário: dourado = aberto, azul = fechado, roxo = festa recorrente
 
 **Galeria**
@@ -202,7 +202,7 @@ Se esquecer a senha: acesse o painel admin com a dev key → seção Admins → 
 
 **Consumíveis**
 - Estoque com limites configuráveis (mínimo, baixo, normal, ideal)
-- Dashboard visível para membros na home
+- Dashboard visível para filhos na home
 
 **Entidades**
 - Cadastro das entidades do terreiro
@@ -436,7 +436,7 @@ Qualquer push para a branch `main` publica automaticamente.
 
 | Arquivo | Quando editar |
 |---------|---------------|
-| `app.js` | Lógica, código de acesso de membros |
+| `app.js` | Lógica, código de acesso dos filhos |
 | `index.html` | Layout e estilos do app |
 | `admin.html` | Painel administrativo |
 | `Terreiro_AppsScript.gs` | Backend (GAS) |
@@ -470,7 +470,7 @@ Não impedem: Print Screen do SO, captura de tela pelo celular, fotografar a tel
 
 | Item | Onde está | Visível no frontend? |
 |------|-----------|----------------------|
-| Código de membros (`ile2025`) | `app.js` — `_CODIGO_MEMBRO` | Sim (hardcoded) |
+| Código dos filhos (`ile2025`) | `app.js` — `_CODIGO_MEMBRO` | Sim (hardcoded) |
 | Dev key | `app.js` — hardcoded | Sim (apenas desenvolvimento) |
 | Senhas dos admins | Planilha GAS (hash) | Não — autenticação no backend |
 | ADMIN_TOKEN (upload fotos) | Cloudflare Dashboard — Secret | Nunca |
@@ -478,7 +478,7 @@ Não impedem: Print Screen do SO, captura de tela pelo celular, fotografar a tel
 
 ### Boas práticas
 
-- Troque `_CODIGO_MEMBRO` antes de disponibilizar para uso real
+- Troque `_CODIGO_MEMBRO` antes de distribuir para os filhos
 - O `ADMIN_TOKEN` nunca deve aparecer no `wrangler.toml` nem no frontend
 - A dev key dá acesso irrestrito ao GAS — não compartilhar
 
@@ -504,7 +504,7 @@ Não impedem: Print Screen do SO, captura de tela pelo celular, fotografar a tel
 | Nível | Como | Variável no código |
 |-------|------|--------------------|
 | Público | Padrão | — |
-| Membro (filhos) | Código de acesso na tela | `_CODIGO_MEMBRO` em `app.js` |
+| Filho de santo | Código de acesso na tela | `_CODIGO_MEMBRO` em `app.js` |
 | Admin | E-mail + senha em `admin.html` | Gerenciado pelo GAS |
 | Dev | URL com dev key | `ile_ase_dev_2024_falsp` em `app.js` |
 
@@ -535,5 +535,5 @@ Não impedem: Print Screen do SO, captura de tela pelo celular, fotografar a tel
 | Cor | Significado |
 |-----|-------------|
 | Dourado | Evento aberto (todos) |
-| Azul | Evento fechado (só membros) |
+| Azul | Evento fechado (só filhos) |
 | Roxo | Festa recorrente (hardcoded) |
