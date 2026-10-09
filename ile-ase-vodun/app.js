@@ -62,8 +62,9 @@ function _calAbrirProximo(){
   if(!prox||!prox.data)return;
   var p=prox.data.split('-');
   _calAno=parseInt(p[0]);_calMes=parseInt(p[1])-1;_calDiaSel=prox.data;
+  irPara('calendario');
+  window.scrollTo(0,0);
   renderCalendario();
-  // Aguarda o DOM renderizar e abre o painel
   setTimeout(function(){calMostrarEvtsDia(prox.data);},50);
 }
 async function carregarCalendario(){
