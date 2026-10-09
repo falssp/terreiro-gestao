@@ -12,6 +12,7 @@ function irPara(sec,btn){
   document.querySelectorAll('.tab,.nav-btn').forEach(function(b){b.classList.remove('active');});
   if(btn)btn.classList.add('active');
   else{document.querySelectorAll('.tab,.nav-btn').forEach(function(b){if((b.getAttribute('onclick')||'').indexOf("'"+sec+"'")>=0)b.classList.add('active');});}
+  history.replaceState(null,'',sec==='home'?'#':'#'+sec);
 }
 function fillNum(id,v){var el=document.getElementById(id);if(!el)return;el.classList.remove('skeleton','skel-num');el.textContent=v;}
 function fecharModal(){document.getElementById('modal-bg').classList.remove('aberto');}
@@ -623,6 +624,10 @@ window.addEventListener('DOMContentLoaded',function(){
   }
   _aplicarAcesso();
   _renderProximoEvento();
+  // Restaura seção pelo hash da URL
+  var hash=(window.location.hash||'').replace('#','');
+  var secsValidas=['home','calendario','galeria','entidades','pontos','acervo','consumiveis'];
+  if(hash&&secsValidas.indexOf(hash)>=0){irPara(hash);}
 });
 
 function carregarEntidades(){
