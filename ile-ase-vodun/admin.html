@@ -125,7 +125,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
       <div class="acesso-err" id="p-err"></div>
       <button class="btn-acesso" onclick="criarPrimeiro()">Criar conta</button>
     </div>
-    <div class="acesso-sub"><a href="index.html">&#8592; Voltar ao site</a></div>
+    <div class="acesso-sub"><a href="index.html#home" onclick="sessionStorage.removeItem('_sec')">&#8592; Voltar ao site</a></div>
   </div>
 </div>
 
@@ -140,7 +140,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
       <div class="acesso-err" id="l-err"></div>
       <button class="btn-acesso" id="btn-entrar" onclick="entrar()">Entrar</button>
     </div>
-    <div class="acesso-sub"><a href="index.html">&#8592; Voltar ao site</a></div>
+    <div class="acesso-sub"><a href="index.html#home" onclick="sessionStorage.removeItem('_sec')">&#8592; Voltar ao site</a></div>
   </div>
 </div>
 
@@ -170,7 +170,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--creme);min-height:10
       <div class="admin-sub" id="admin-sub"></div>
     </div>
     <div class="top-nav">
-      <a href="index.html">&#128187;</a>
+      <a href="index.html#home">&#128187;</a>
       <a href="faq.html">&#10067;</a>
       <span onclick="sair()">Sair</span>
     </div>
