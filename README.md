@@ -2,7 +2,7 @@
 
 Sistema completo de gestão digital para terreiros de Umbanda — PWA acessível pelo celular, sem instalação.
 
-**→ [Landing page](https://falssp.github.io/terreiro-gestao/) · [Demo](https://falssp.github.io/terreiro-gestao/demo/) · [Modelo de negócio](PRODUTO.md)**
+**→ [Landing page](https://falssp.github.io/terreiro-gestao/) · [Demo](https://falssp.github.io/terreiro-gestao/demo/) · [Orçamento](https://falssp.github.io/terreiro-gestao/orcamento/) · [Modelo de negócio](PRODUTO.md)**
 
 ---
 
@@ -25,6 +25,9 @@ terreiro-gestao/
 │
 ├── demo/
 │   └── index.html              ← demo navegável (dados fictícios, sem backend)
+│
+├── orcamento/
+│   └── index.html              ← ferramenta de orçamento interativa (PDF + WhatsApp + histórico)
 │
 └── ile-ase-vodun/              ← instância do Ile Ase Vodun Ogum Ayres
     ├── index.html              ← app principal (PWA)

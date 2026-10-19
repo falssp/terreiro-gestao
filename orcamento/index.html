@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orçamento — Terreiro Gestão</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg2: #111111;
+    --card: #181818;
+    --card2: #1e1e1e;
+    --border: #2a2a2a;
+    --border2: #333333;
+    --ouro: #c9a84c;
+    --ouro-lt: #e8c96a;
+    --ouro-dk: #a07830;
+    --ouro-bg: rgba(201,168,76,0.08);
+    --ouro-bg2: rgba(201,168,76,0.15);
+    --fg: #f0ece4;
+    --fg2: #b8b0a0;
+    --fg3: #6a6258;
+    --green: #4caf7a;
+    --green-bg: rgba(76,175,122,0.12);
+    --red: #e05252;
+    --blue: #5b8cdb;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ─── TOPBAR ─── */
+  .topbar {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .topbar-brand {
+    font-family: 'Cinzel', serif;
+    font-size: 15px;
+    color: var(--ouro);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+  }
+  .topbar-back {
+    font-size: 13px;
+    color: var(--fg2);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+  }
+  .topbar-back:hover { color: var(--ouro); }
+
+  /* ─── LAYOUT ─── */
+  .wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .page-header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(22px, 4vw, 30px);
+    color: var(--ouro);
+    letter-spacing: 0.04em;
+    margin-bottom: 8px;
+  }
+  .page-header p {
+    color: var(--fg2);
+    font-size: 14px;
+  }
+
+  /* ─── STEPS ─── */
+  .steps {
+    display: flex;
+    gap: 0;
+    margin-bottom: 36px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .step {
+    flex: 1;
+    padding: 14px 8px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--fg3);
+    cursor: pointer;
+    transition: all 0.2s;
+    border-right: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .step:last-child { border-right: none; }
+  .step.active {
+    background: var(--ouro-bg2);
+    color: var(--ouro);
+  }
+  .step.done {
+    color: var(--green);
+  }
+  .step-num {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--border2);
+    color: var(--fg3);
+    flex-shrink: 0;
+  }
+  .step.active .step-num { background: var(--ouro); color: var(--bg); }
+  .step.done .step-num { background: var(--green); color: var(--bg); }
+
+  /* ─── SECTION ─── */
+  .section {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .section.visible { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .section-title {
+    font-family: 'Cinzel', serif;
+    font-size: 16px;
+    color: var(--ouro);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ─── INFO FORM ─── */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 560px) { .form-grid { grid-template-columns: 1fr; } }
+  .form-grid .full { grid-column: 1 / -1; }
+
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--fg2);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+  .field input, .field select, .field textarea {
+    width: 100%;
+    background: var(--card2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    color: var(--fg);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color: var(--ouro);
+    box-shadow: 0 0 0 3px var(--ouro-bg);
+  }
+  .field textarea { resize: vertical; min-height: 80px; }
+  .field select option { background: var(--card2); }
+
+  /* ─── PLAN CARDS ─── */
+  .plan-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 640px) { .plan-grid { grid-template-columns: 1fr; } }
+
+  .plan-card {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    text-align: center;
+  }
+  .plan-card:hover { border-color: var(--ouro-dk); }
+  .plan-card.selected {
+    border-color: var(--ouro);
+    background: var(--ouro-bg);
+  }
+  .plan-card .badge-rec {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ouro);
+    color: var(--bg);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+  .plan-name {
+    font-family: 'Cinzel', serif;
+    font-size: 16px;
+    color: var(--ouro);
+    margin-bottom: 4px;
+  }
+  .plan-price-wrap {
+    margin: 12px 0;
+  }
+  .plan-price {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--fg);
+    font-variant-numeric: tabular-nums;
+  }
+  .plan-price-period {
+    font-size: 12px;
+    color: var(--fg3);
+  }
+  .plan-price-annual {
+    font-size: 11px;
+    color: var(--green);
+    margin-top: 2px;
+  }
+  .plan-features {
+    list-style: none;
+    text-align: left;
+    margin-top: 14px;
+  }
+  .plan-features li {
+    font-size: 12px;
+    color: var(--fg2);
+    padding: 3px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .plan-features li::before {
+    content: '✓';
+    color: var(--ouro);
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .plan-check {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--border2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    transition: all 0.2s;
+  }
+  .plan-card.selected .plan-check {
+    background: var(--ouro);
+    border-color: var(--ouro);
+    color: var(--bg);
+  }
+
+  /* ─── PERIODO ─── */
+  .periodo-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .periodo-btn {
+    flex: 1;
+    padding: 12px;
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--fg2);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .periodo-btn:hover { border-color: var(--ouro-dk); color: var(--fg); }
+  .periodo-btn.selected {
+    border-color: var(--ouro);
+    background: var(--ouro-bg);
+    color: var(--ouro);
+  }
+  .periodo-btn span {
+    display: block;
+    font-size: 11px;
+    font-weight: 400;
+    color: inherit;
+    opacity: 0.7;
+    margin-top: 3px;
+  }
+
+  /* ─── MODULES ─── */
+  .modulos-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 500px) { .modulos-grid { grid-template-columns: 1fr; } }
+
+  .modulo-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .modulo-item:hover { border-color: var(--border2); }
+  .modulo-item.included {
+    cursor: default;
+    opacity: 0.6;
+  }
+  .modulo-item.selected {
+    border-color: var(--ouro);
+    background: var(--ouro-bg);
+  }
+  .modulo-toggle {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 2px solid var(--border2);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    transition: all 0.2s;
+  }
+  .modulo-item.selected .modulo-toggle,
+  .modulo-item.included .modulo-toggle {
+    background: var(--ouro);
+    border-color: var(--ouro);
+    color: var(--bg);
+  }
+  .modulo-item.included .modulo-toggle { background: var(--fg3); border-color: var(--fg3); }
+  .modulo-info { flex: 1; min-width: 0; }
+  .modulo-nome {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--fg);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .modulo-desc {
+    font-size: 11px;
+    color: var(--fg3);
+  }
+  .modulo-preco {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ouro);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .modulo-item.included .modulo-preco {
+    color: var(--fg3);
+    font-weight: 400;
+  }
+
+  /* ─── SUMMARY ─── */
+  .summary-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .summary-header {
+    background: var(--ouro-bg);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .summary-header h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    color: var(--ouro);
+  }
+  .summary-body { padding: 20px; }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row .label { color: var(--fg2); }
+  .summary-row .val { font-weight: 600; color: var(--fg); font-variant-numeric: tabular-nums; }
+  .summary-row .val.ouro { color: var(--ouro); }
+  .summary-total {
+    background: var(--ouro-bg2);
+    border-top: 2px solid var(--ouro);
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .summary-total .label {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    color: var(--ouro);
+  }
+  .summary-total .total-val {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--fg);
+    font-variant-numeric: tabular-nums;
+  }
+  .summary-total .total-period {
+    font-size: 12px;
+    color: var(--fg3);
+  }
+  .total-block { text-align: right; }
+
+  .validade-nota {
+    font-size: 12px;
+    color: var(--fg3);
+    text-align: center;
+    padding: 10px 0 0;
+    font-style: italic;
+  }
+
+  /* ─── OUTPUTS ─── */
+  .outputs-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 580px) { .outputs-row { grid-template-columns: 1fr; } }
+
+  .output-btn {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--fg);
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .output-btn:hover { border-color: var(--ouro); background: var(--ouro-bg); }
+  .output-btn.pdf-btn:hover { border-color: var(--red); background: rgba(224,82,82,0.08); }
+  .output-btn.wa-btn:hover { border-color: var(--green); background: var(--green-bg); }
+  .output-icon { font-size: 28px; line-height: 1; }
+  .output-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--fg2);
+  }
+  .output-desc { font-size: 11px; color: var(--fg3); }
+
+  .output-btn.pdf-btn .output-label { color: #e07070; }
+  .output-btn.wa-btn .output-label { color: var(--green); }
+  .output-btn.hist-btn .output-label { color: var(--blue); }
+
+  /* ─── NAV BTNS ─── */
+  .nav-btns {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 32px;
+  }
+  .btn {
+    padding: 12px 28px;
+    border-radius: var(--radius-sm);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    outline: none;
+  }
+  .btn-secondary {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--fg2);
+  }
+  .btn-secondary:hover { border-color: var(--ouro); color: var(--ouro); }
+  .btn-primary {
+    background: var(--ouro);
+    color: var(--bg);
+    flex: 1;
+  }
+  .btn-primary:hover { background: var(--ouro-lt); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* ─── TOAST ─── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--card2);
+    border: 1px solid var(--border2);
+    border-left: 3px solid var(--green);
+    border-radius: var(--radius-sm);
+    padding: 12px 18px;
+    font-size: 13px;
+    color: var(--fg);
+    z-index: 999;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.3s;
+    max-width: 280px;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.error { border-left-color: var(--red); }
+
+  /* ─── NOTA SETUP ─── */
+  .nota-setup {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--ouro);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    margin-bottom: 24px;
+    font-size: 13px;
+    color: var(--fg2);
+  }
+  .nota-setup strong { color: var(--ouro); }
+
+  /* ─── MODULO LABEL ─── */
+  .modulos-nota {
+    font-size: 12px;
+    color: var(--fg3);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .dot-included { width: 8px; height: 8px; border-radius: 50%; background: var(--fg3); display: inline-block; }
+  .dot-optional { width: 8px; height: 8px; border-radius: 50%; background: var(--ouro); display: inline-block; }
+
+  /* ─── LOADING ─── */
+  .loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    display: none;
+  }
+  .loading-overlay.show { display: flex; }
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border);
+    border-top-color: var(--ouro);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="../" class="topbar-brand">✦ Terreiro Gestão</a>
+  <a href="../" class="topbar-back">← voltar ao site</a>
+</div>
+
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+</div>
+
+<div class="wrap">
+
+  <div class="page-header">
+    <h1>Monte seu Orçamento</h1>
+    <p>Configure o plano ideal para o seu terreiro e receba uma proposta personalizada</p>
+  </div>
+
+  <!-- STEP INDICATORS -->
+  <div class="steps">
+    <div class="step active" id="step-ind-1" onclick="goStep(1)">
+      <div class="step-num">1</div>
+      <span>Terreiro</span>
+    </div>
+    <div class="step" id="step-ind-2" onclick="goStep(2)">
+      <div class="step-num">2</div>
+      <span>Plano</span>
+    </div>
+    <div class="step" id="step-ind-3" onclick="goStep(3)">
+      <div class="step-num">3</div>
+      <span>Módulos</span>
+    </div>
+    <div class="step" id="step-ind-4" onclick="goStep(4)">
+      <div class="step-num">4</div>
+      <span>Resumo</span>
+    </div>
+  </div>
+
+  <!-- STEP 1 — DADOS DO TERREIRO -->
+  <div class="section visible" id="sec-1">
+    <div class="section-title">Dados do Terreiro</div>
+    <div class="form-grid">
+      <div class="field full">
+        <label>Nome do Terreiro *</label>
+        <input type="text" id="f-nome" placeholder="ex: Ile Axé Ogum Beira-Mar" oninput="updateNome()">
+      </div>
+      <div class="field">
+        <label>Responsável (Zelador/a) *</label>
+        <input type="text" id="f-resp" placeholder="Nome do responsável">
+      </div>
+      <div class="field">
+        <label>WhatsApp *</label>
+        <input type="text" id="f-wpp" placeholder="(11) 99999-9999">
+      </div>
+      <div class="field">
+        <label>Cidade / Estado</label>
+        <input type="text" id="f-cidade" placeholder="São Paulo / SP">
+      </div>
+      <div class="field">
+        <label>Linha de Trabalho</label>
+        <input type="text" id="f-linha" placeholder="ex: Umbanda, Candomblé, Quimbanda">
+      </div>
+      <div class="field full">
+        <label>Observações</label>
+        <textarea id="f-obs" placeholder="Necessidades específicas, dúvidas, detalhes do terreiro..."></textarea>
+      </div>
+    </div>
+    <div class="nav-btns">
+      <div></div>
+      <button class="btn btn-primary" onclick="nextStep(1)" id="btn-next-1">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2 — ESCOLHA DO PLANO -->
+  <div class="section" id="sec-2">
+    <div class="section-title">Escolha o Plano</div>
+
+    <div class="plan-grid">
+
+      <div class="plan-card" id="plan-basico" onclick="selectPlan('basico')">
+        <div class="plan-check" id="check-basico">✓</div>
+        <div class="plan-name">Básico</div>
+        <div class="plan-price-wrap">
+          <div class="plan-price" id="price-basico">R$ 97</div>
+          <div class="plan-price-period">/mês</div>
+          <div class="plan-price-annual" id="annual-basico" style="display:none">ou R$ 870/ano (25% off)</div>
+        </div>
+        <ul class="plan-features">
+          <li>Calendário de giras</li>
+          <li>Pontos cantados (645+)</li>
+          <li>App instalável (PWA)</li>
+          <li>Suporte padrão</li>
+        </ul>
+      </div>
+
+      <div class="plan-card" id="plan-completo" onclick="selectPlan('completo')">
+        <div class="badge-rec">Recomendado</div>
+        <div class="plan-check" id="check-completo">✓</div>
+        <div class="plan-name">Completo</div>
+        <div class="plan-price-wrap">
+          <div class="plan-price" id="price-completo">R$ 197</div>
+          <div class="plan-price-period">/mês</div>
+          <div class="plan-price-annual" id="annual-completo" style="display:none">ou R$ 1.740/ano (26% off)</div>
+        </div>
+        <ul class="plan-features">
+          <li>Tudo do Básico</li>
+          <li>Acervo de peças</li>
+          <li>Controle de estoque</li>
+          <li>Galeria fotográfica</li>
+          <li>Orixás & Entidades</li>
+        </ul>
+      </div>
+
+      <div class="plan-card" id="plan-premium" onclick="selectPlan('premium')">
+        <div class="plan-check" id="check-premium">✓</div>
+        <div class="plan-name">Premium</div>
+        <div class="plan-price-wrap">
+          <div class="plan-price" id="price-premium">R$ 297</div>
+          <div class="plan-price-period">/mês</div>
+          <div class="plan-price-annual" id="annual-premium" style="display:none">ou R$ 2.640/ano (26% off)</div>
+        </div>
+        <ul class="plan-features">
+          <li>Tudo do Completo</li>
+          <li>Domínio personalizado</li>
+          <li>Suporte prioritário</li>
+          <li>Personalização avançada</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- PERÍODO -->
+    <div class="section-title" style="margin-top:8px">Período de Contratação</div>
+    <div class="periodo-row">
+      <button class="periodo-btn selected" id="per-mensal" onclick="selectPeriodo('mensal')">
+        Mensal
+        <span>Sem compromisso</span>
+      </button>
+      <button class="periodo-btn" id="per-anual" onclick="selectPeriodo('anual')">
+        Anual
+        <span>Economize até 26%</span>
+      </button>
+      <button class="periodo-btn" id="per-unico" onclick="selectPeriodo('unico')">
+        Pagamento único
+        <span>Sem mensalidade</span>
+      </button>
+    </div>
+
+    <div class="nota-setup" id="nota-setup">
+      <strong>Setup incluído:</strong> Configuração completa do sistema, personalização e treinamento.
+      Valor único de <strong id="setup-val">R$ 500–800</strong>.
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-secondary" onclick="prevStep(2)">← Voltar</button>
+      <button class="btn btn-primary" onclick="nextStep(2)">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3 — MÓDULOS ADICIONAIS -->
+  <div class="section" id="sec-3">
+    <div class="section-title">Módulos & Personalizações</div>
+
+    <div class="modulos-nota">
+      <span class="dot-included"></span> Incluído no plano &nbsp;
+      <span class="dot-optional"></span> Adicional disponível
+    </div>
+
+    <div class="modulos-grid" id="modulos-grid">
+      <!-- rendered by JS -->
+    </div>
+
+    <div class="nota-setup" style="margin-top: 0; margin-bottom: 24px;">
+      <strong>Domínio personalizado:</strong> Configure um endereço próprio como <em>seuterreiro.com.br</em>.
+      Custo adicional: ~R$ 40/ano (Registro.br) + R$ 50 de configuração.
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-secondary" onclick="prevStep(3)">← Voltar</button>
+      <button class="btn btn-primary" onclick="nextStep(3)">Ver resumo →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4 — RESUMO E GERAÇÃO -->
+  <div class="section" id="sec-4">
+    <div class="section-title">Resumo do Orçamento</div>
+
+    <div class="summary-card">
+      <div class="summary-header">
+        <h3 id="sum-nome">Terreiro — Plano Completo</h3>
+        <span style="font-size:12px; color:var(--fg3)" id="sum-data"></span>
+      </div>
+      <div class="summary-body" id="sum-body">
+        <!-- rendered by JS -->
+      </div>
+      <div class="summary-total">
+        <div>
+          <div class="label">Total mensal</div>
+          <div style="font-size:11px; color:var(--fg3)" id="sum-periodo-label"></div>
+        </div>
+        <div class="total-block">
+          <div class="total-val" id="sum-total">R$ 0</div>
+          <div class="total-period" id="sum-total-note"></div>
+        </div>
+      </div>
+    </div>
+    <div class="validade-nota">Orçamento válido por 30 dias a partir da data de emissão.</div>
+
+    <div style="margin-top:32px">
+      <div class="section-title">Exportar Orçamento</div>
+      <div class="outputs-row">
+        <div class="output-btn pdf-btn" onclick="gerarPDF()">
+          <div class="output-icon">📄</div>
+          <div class="output-label">Baixar PDF</div>
+          <div class="output-desc">Proposta completa em PDF para envio</div>
+        </div>
+        <div class="output-btn wa-btn" onclick="abrirWhatsApp()">
+          <div class="output-icon">💬</div>
+          <div class="output-label">WhatsApp</div>
+          <div class="output-desc">Abrir conversa com resumo pré-preenchido</div>
+        </div>
+        <div class="output-btn hist-btn" onclick="salvarHistorico()">
+          <div class="output-icon">📋</div>
+          <div class="output-label">Registrar</div>
+          <div class="output-desc">Salvar orçamento no histórico</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-secondary" onclick="prevStep(4)">← Voltar</button>
+      <button class="btn btn-primary" style="background:var(--green);" onclick="abrirWhatsApp()">💬 Falar no WhatsApp</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+//  ESTADO
+// ============================================================
+const state = {
+  step: 1,
+  nome: '',
+  resp: '',
+  wpp: '',
+  cidade: '',
+  linha: '',
+  obs: '',
+  plano: 'completo',
+  periodo: 'mensal',
+  modulosExtras: new Set()
+};
+
+// ============================================================
+//  PREÇOS
+// ============================================================
+const PLANOS = {
+  basico:   { nome:'Básico',   mensal:97,   anual:870,   unico:2500, setup:[500,800] },
+  completo: { nome:'Completo', mensal:197,  anual:1740,  unico:3000, setup:[500,800] },
+  premium:  { nome:'Premium',  mensal:297,  anual:2640,  unico:4000, setup:[500,800] }
+};
+
+const MODULOS = [
+  { id:'calendario',  nome:'Calendário',         desc:'Giras e eventos públicos',   preco:0,  planos:['basico','completo','premium'] },
+  { id:'pontos',      nome:'Pontos Cantados',     desc:'645+ pontos com letra',      preco:0,  planos:['basico','completo','premium'] },
+  { id:'pwa',         nome:'App (PWA)',            desc:'Instala no celular',         preco:0,  planos:['basico','completo','premium'] },
+  { id:'galeria',     nome:'Galeria Fotográfica',  desc:'Álbuns da casa',             preco:30, planos:['completo','premium'] },
+  { id:'entidades',   nome:'Orixás & Entidades',   desc:'Catálogo espiritual',        preco:20, planos:['completo','premium'] },
+  { id:'acervo',      nome:'Acervo',              desc:'Inventário de peças',        preco:0,  planos:['completo','premium'] },
+  { id:'estoque',     nome:'Estoque',             desc:'Controle de consumíveis',    preco:0,  planos:['completo','premium'] },
+  { id:'player',      nome:'Player de Áudio',     desc:'Pontos cantados com áudio',  preco:40, planos:[] },
+  { id:'dominio',     nome:'Domínio .com.br',     desc:'Endereço personalizado',     preco:90, planos:['premium'] }
+];
+
+// GAS URL para logging (Google Sheets) — substituir pelo URL real do Web App
+const GAS_LOG_URL = 'https://script.google.com/macros/s/SEU_GAS_ID_ORCAMENTO/exec';
+const WA_NUMBER = '5511989202958';
+
+// ============================================================
+//  NAVEGAÇÃO
+// ============================================================
+function goStep(n) {
+  if (n > state.step) return; // só avança pelo botão
+  state.step = n;
+  render();
+}
+function nextStep(from) {
+  if (from === 1) {
+    const nome = document.getElementById('f-nome').value.trim();
+    const resp = document.getElementById('f-resp').value.trim();
+    const wpp  = document.getElementById('f-wpp').value.trim();
+    if (!nome || !resp || !wpp) { showToast('Preencha nome, responsável e WhatsApp.', true); return; }
+    state.nome   = nome;
+    state.resp   = resp;
+    state.wpp    = wpp;
+    state.cidade = document.getElementById('f-cidade').value.trim();
+    state.linha  = document.getElementById('f-linha').value.trim();
+    state.obs    = document.getElementById('f-obs').value.trim();
+  }
+  if (from === 4) return;
+  state.step = from + 1;
+  render();
+}
+function prevStep(from) {
+  state.step = from - 1;
+  render();
+}
+
+function render() {
+  [1,2,3,4].forEach(i => {
+    document.getElementById('sec-'+i).classList.toggle('visible', i === state.step);
+    const ind = document.getElementById('step-ind-'+i);
+    ind.classList.remove('active','done');
+    if (i === state.step) ind.classList.add('active');
+    else if (i < state.step) ind.classList.add('done');
+  });
+  if (state.step === 3) renderModulos();
+  if (state.step === 4) renderSummary();
+}
+
+// ============================================================
+//  PLANO / PERÍODO
+// ============================================================
+function selectPlan(p) {
+  state.plano = p;
+  ['basico','completo','premium'].forEach(x => {
+    document.getElementById('plan-'+x).classList.toggle('selected', x === p);
+  });
+  updatePriceLabels();
+  updateSetupNota();
+  renderModulos();
+}
+
+function selectPeriodo(p) {
+  state.periodo = p;
+  ['mensal','anual','unico'].forEach(x =>
+    document.getElementById('per-'+x).classList.toggle('selected', x === p)
+  );
+  updatePriceLabels();
+  updateSetupNota();
+}
+
+function updatePriceLabels() {
+  ['basico','completo','premium'].forEach(key => {
+    const p = PLANOS[key];
+    const el = document.getElementById('price-'+key);
+    const ann = document.getElementById('annual-'+key);
+    if (state.periodo === 'mensal') {
+      el.textContent = 'R$ '+p.mensal;
+      ann.style.display = 'none';
+    } else if (state.periodo === 'anual') {
+      el.textContent = 'R$ '+Math.round(p.anual/12);
+      ann.style.display = 'block';
+      ann.textContent = 'ou R$ '+p.anual.toLocaleString('pt-BR')+'/ano (≈25% off)';
+    } else {
+      el.textContent = 'R$ '+p.unico.toLocaleString('pt-BR');
+      ann.style.display = 'block';
+      ann.textContent = 'pagamento único + 6m suporte';
+    }
+  });
+}
+
+function updateSetupNota() {
+  const nota = document.getElementById('nota-setup');
+  const val  = document.getElementById('setup-val');
+  if (state.periodo === 'unico') {
+    nota.innerHTML = '<strong>Setup incluído</strong> no valor do pacote único. Configuração, treinamento e 6 meses de suporte.';
+  } else {
+    const p = PLANOS[state.plano];
+    nota.innerHTML = '<strong>Setup incluído:</strong> Configuração completa, personalização e treinamento. Valor único de <strong id="setup-val">R$ '+p.setup[0]+'–'+p.setup[1]+'</strong>.';
+  }
+}
+
+function updateNome() {
+  state.nome = document.getElementById('f-nome').value.trim();
+}
+
+// ============================================================
+//  MÓDULOS
+// ============================================================
+function renderModulos() {
+  const grid = document.getElementById('modulos-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  MODULOS.forEach(m => {
+    const included = m.planos.includes(state.plano);
+    const selected = state.modulosExtras.has(m.id);
+    const isAddon  = !included;
+    const div = document.createElement('div');
+    div.className = 'modulo-item' + (included ? ' included' : (selected ? ' selected' : ''));
+    div.innerHTML = `
+      <div class="modulo-toggle">${(included || selected) ? '✓' : ''}</div>
+      <div class="modulo-info">
+        <div class="modulo-nome">${m.nome}</div>
+        <div class="modulo-desc">${m.desc}</div>
+      </div>
+      <div class="modulo-preco">${included ? 'incluído' : ('+R$ '+m.preco+'/mês')}</div>
+    `;
+    if (isAddon) div.onclick = () => toggleModulo(m.id);
+    grid.appendChild(div);
+  });
+}
+
+function toggleModulo(id) {
+  if (state.modulosExtras.has(id)) state.modulosExtras.delete(id);
+  else state.modulosExtras.add(id);
+  renderModulos();
+}
+
+// ============================================================
+//  CÁLCULO
+// ============================================================
+function calcTotal() {
+  const p = PLANOS[state.plano];
+  let base = 0;
+  if (state.periodo === 'mensal') base = p.mensal;
+  else if (state.periodo === 'anual') base = Math.round(p.anual / 12);
+  else base = 0;
+
+  let adicionais = 0;
+  state.modulosExtras.forEach(id => {
+    const m = MODULOS.find(x => x.id === id);
+    if (m && !m.planos.includes(state.plano)) {
+      if (state.periodo === 'anual') adicionais += Math.round(m.preco * 0.75);
+      else adicionais += m.preco;
+    }
+  });
+
+  return { base, adicionais, total: base + adicionais };
+}
+
+function getModulosAtivos() {
+  const plano = state.plano;
+  const ativos = MODULOS.filter(m => m.planos.includes(plano)).map(m => m.nome);
+  state.modulosExtras.forEach(id => {
+    const m = MODULOS.find(x => x.id === id);
+    if (m && !m.planos.includes(plano)) ativos.push(m.nome + ' (+R$'+m.preco+'/mês)');
+  });
+  return ativos;
+}
+
+// ============================================================
+//  RENDERIZA SUMMARY
+// ============================================================
+function renderSummary() {
+  const c = calcTotal();
+  const p = PLANOS[state.plano];
+  const now = new Date();
+  const validade = new Date(now); validade.setDate(validade.getDate() + 30);
+  const fmt = d => d.toLocaleDateString('pt-BR');
+
+  document.getElementById('sum-nome').textContent = (state.nome || 'Terreiro') + ' — Plano ' + p.nome;
+  document.getElementById('sum-data').textContent = 'Emitido em ' + fmt(now);
+
+  // periodo label
+  const perLabel = { mensal:'Contrato mensal', anual:'Contrato anual', unico:'Pagamento único' };
+  document.getElementById('sum-periodo-label').textContent = perLabel[state.periodo];
+
+  // body rows
+  const body = document.getElementById('sum-body');
+  const rows = [
+    { label:'Terreiro',       val: state.nome  || '—' },
+    { label:'Responsável',    val: state.resp  || '—' },
+    { label:'WhatsApp',       val: state.wpp   || '—' },
+    { label:'Plano',          val: p.nome, ouro:true },
+    { label:'Período',        val: perLabel[state.periodo] },
+    { label:'Módulos',        val: getModulosAtivos().join(', ') || '—' },
+  ];
+  if (state.periodo !== 'unico') {
+    rows.push({ label:'Setup (valor único)', val: 'R$ '+p.setup[0]+'–'+p.setup[1] });
+    if (c.adicionais > 0) {
+      rows.push({ label:'Base do plano', val: 'R$ '+c.base+'/mês' });
+      rows.push({ label:'Módulos adicionais', val: '+R$ '+c.adicionais+'/mês', ouro:true });
+    }
+  } else {
+    rows.push({ label:'Inclui setup + 6m suporte', val:'—' });
+  }
+  rows.push({ label:'Validade do orçamento', val: fmt(validade) });
+
+  body.innerHTML = rows.map(r =>
+    `<div class="summary-row"><span class="label">${r.label}</span><span class="val${r.ouro ? ' ouro' : ''}">${r.val}</span></div>`
+  ).join('');
+
+  // total
+  if (state.periodo === 'unico') {
+    document.getElementById('sum-total').textContent = 'R$ '+p.unico.toLocaleString('pt-BR');
+    document.getElementById('sum-total-note').textContent = 'valor único, sem mensalidade';
+    document.querySelector('.summary-total .label').textContent = 'Investimento único';
+  } else {
+    document.getElementById('sum-total').textContent = 'R$ '+(c.total).toLocaleString('pt-BR');
+    document.getElementById('sum-total-note').textContent =
+      state.periodo === 'anual' ? '(R$'+PLANOS[state.plano].anual.toLocaleString('pt-BR')+'/ano)' : '';
+    document.querySelector('.summary-total .label').textContent = 'Total mensal';
+  }
+}
+
+// ============================================================
+//  PDF
+// ============================================================
+async function gerarPDF() {
+  showLoading(true);
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+    const W = 210, H = 297;
+    const c = calcTotal();
+    const p = PLANOS[state.plano];
+    const now = new Date();
+    const validade = new Date(now); validade.setDate(validade.getDate() + 30);
+    const fmt = d => d.toLocaleDateString('pt-BR');
+
+    // BG
+    doc.setFillColor(10,10,10);
+    doc.rect(0,0,W,H,'F');
+
+    // Header strip
+    doc.setFillColor(30,20,5);
+    doc.rect(0,0,W,36,'F');
+    doc.setFillColor(201,168,76);
+    doc.rect(0,36,W,1,'F');
+
+    // Logo / título
+    doc.setTextColor(201,168,76);
+    doc.setFontSize(18);
+    doc.setFont('helvetica','bold');
+    doc.text('TERREIRO GESTÃO', 20, 17);
+    doc.setFontSize(9);
+    doc.setFont('helvetica','normal');
+    doc.setTextColor(180,160,120);
+    doc.text('Sistema de Gestão Digital para Terreiros de Umbanda', 20, 24);
+
+    // Número do orçamento
+    doc.setTextColor(201,168,76);
+    doc.setFontSize(11);
+    doc.setFont('helvetica','bold');
+    const orcNum = 'ORC-' + now.getFullYear() + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0') + '-' + String(Math.floor(Math.random()*9000)+1000);
+    doc.text(orcNum, W-20, 17, {align:'right'});
+    doc.setFontSize(8);
+    doc.setFont('helvetica','normal');
+    doc.setTextColor(150,140,120);
+    doc.text('Emitido: '+fmt(now)+'  |  Válido até: '+fmt(validade), W-20, 24, {align:'right'});
+
+    // Título proposta
+    doc.setFontSize(16);
+    doc.setFont('helvetica','bold');
+    doc.setTextColor(240,236,228);
+    doc.text('PROPOSTA COMERCIAL', 20, 52);
+    doc.setFontSize(11);
+    doc.setFont('helvetica','normal');
+    doc.setTextColor(140,130,110);
+    doc.text(state.nome || 'Terreiro', 20, 61);
+
+    let y = 76;
+
+    // Função helper: seção
+    const section = (title, startY) => {
+      doc.setFillColor(25,20,5);
+      doc.rect(15, startY-5, W-30, 8, 'F');
+      doc.setFontSize(9);
+      doc.setFont('helvetica','bold');
+      doc.setTextColor(201,168,76);
+      doc.text(title.toUpperCase(), 20, startY);
+      return startY + 10;
+    };
+
+    const row = (label, value, y, hilight) => {
+      doc.setFontSize(9);
+      doc.setFont('helvetica','normal');
+      doc.setTextColor(140,130,110);
+      doc.text(label, 20, y);
+      doc.setTextColor(hilight ? 201 : 220, hilight ? 168 : 215, hilight ? 76 : 205);
+      doc.setFont('helvetica', hilight ? 'bold' : 'normal');
+      doc.text(String(value), 105, y);
+      doc.setDrawColor(35,30,20);
+      doc.line(15, y+2, W-15, y+2);
+      return y + 9;
+    };
+
+    // DADOS DO TERREIRO
+    y = section('Dados do Terreiro', y);
+    y = row('Terreiro', state.nome || '—', y, false);
+    y = row('Responsável', state.resp || '—', y, false);
+    y = row('WhatsApp', state.wpp || '—', y, false);
+    if (state.cidade) y = row('Cidade', state.cidade, y, false);
+    if (state.linha)  y = row('Linha de Trabalho', state.linha, y, false);
+
+    y += 8;
+
+    // PLANO
+    y = section('Plano Contratado', y);
+    const perLabel = { mensal:'Mensal (sem fidelidade)', anual:'Anual (≈25% de desconto)', unico:'Pagamento único (sem mensalidade)' };
+    y = row('Plano', p.nome, y, true);
+    y = row('Período', perLabel[state.periodo], y, false);
+
+    y += 8;
+
+    // MÓDULOS
+    y = section('Módulos Incluídos', y);
+    const mods = getModulosAtivos();
+    mods.forEach((m,i) => {
+      doc.setFontSize(9);
+      doc.setFont('helvetica','normal');
+      doc.setTextColor(201,168,76);
+      doc.text('✓', 20, y);
+      doc.setTextColor(220,215,205);
+      doc.text(m, 28, y);
+      if (i < mods.length-1) {
+        doc.setDrawColor(35,30,20);
+        doc.line(15, y+2, W-15, y+2);
+      }
+      y += 9;
+    });
+
+    y += 8;
+
+    // INVESTIMENTO
+    y = section('Investimento', y);
+    if (state.periodo === 'unico') {
+      y = row('Pagamento único', 'R$ '+p.unico.toLocaleString('pt-BR'), y, true);
+      y = row('Inclui', '6 meses de suporte + setup', y, false);
+    } else {
+      if (state.periodo === 'mensal') {
+        y = row('Mensalidade', 'R$ '+c.base+'/mês', y, true);
+        if (c.adicionais > 0) y = row('Módulos extras', '+R$ '+c.adicionais+'/mês', y, true);
+        y = row('Total mensal', 'R$ '+c.total+'/mês', y, true);
+      } else {
+        y = row('Mensalidade equiv.', 'R$ '+c.base+'/mês', y, false);
+        if (c.adicionais > 0) y = row('Módulos extras', '+R$ '+c.adicionais+'/mês', y, false);
+        y = row('Faturamento anual', 'R$ '+PLANOS[state.plano].anual.toLocaleString('pt-BR')+'/ano', y, true);
+      }
+      y = row('Setup (valor único)', 'R$ '+p.setup[0]+'–'+p.setup[1], y, false);
+    }
+
+    y += 8;
+
+    // O que está incluído no setup
+    y = section('O Que Está Incluído no Setup', y);
+    const items = [
+      'Configuração do repositório e GitHub Pages',
+      'Google Sheets + Apps Script (backend) personalizados',
+      'Cloudflare Worker (proxy seguro) configurado',
+      'Upload do acervo de áudio no Cloudflare R2',
+      'Personalização completa: nome, cores, dados do terreiro',
+      'Importação dos dados iniciais fornecidos',
+      'Treinamento com o zelador/a — 1h via chamada',
+      'Documentação de uso simplificada'
+    ];
+    items.forEach((it, i) => {
+      if (y > H - 40) { doc.addPage(); doc.setFillColor(10,10,10); doc.rect(0,0,W,H,'F'); y = 20; }
+      doc.setFontSize(8.5);
+      doc.setFont('helvetica','normal');
+      doc.setTextColor(100,200,140);
+      doc.text('•', 20, y);
+      doc.setTextColor(200,195,185);
+      doc.text(it, 26, y);
+      y += 7;
+    });
+
+    if (state.obs) {
+      y += 6;
+      y = section('Observações', y);
+      const obsLines = doc.splitTextToSize(state.obs, W - 40);
+      doc.setFontSize(9);
+      doc.setFont('helvetica','normal');
+      doc.setTextColor(170,160,140);
+      doc.text(obsLines, 20, y);
+      y += obsLines.length * 5 + 8;
+    }
+
+    // FOOTER
+    const footerY = H - 25;
+    doc.setFillColor(25,20,5);
+    doc.rect(0, footerY-4, W, 30, 'F');
+    doc.setFillColor(201,168,76);
+    doc.rect(0, footerY-4, W, 0.5, 'F');
+
+    doc.setFontSize(9);
+    doc.setFont('helvetica','bold');
+    doc.setTextColor(201,168,76);
+    doc.text('Terreiro Gestão', 20, footerY+6);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(8);
+    doc.setTextColor(140,130,110);
+    doc.text('https://falssp.github.io/terreiro-gestao/', 20, footerY+13);
+    doc.text('WhatsApp: (11) 98920-2958', 20, footerY+19);
+    doc.setTextColor(100,90,70);
+    doc.text(orcNum + '  |  Orçamento válido por 30 dias', W-20, footerY+13, {align:'right'});
+
+    doc.save('Orcamento_TerreiroGestao_'+orcNum+'.pdf');
+    showToast('PDF gerado com sucesso! ✓');
+  } catch(e) {
+    console.error(e);
+    showToast('Erro ao gerar PDF.', true);
+  }
+  showLoading(false);
+}
+
+// ============================================================
+//  WHATSAPP
+// ============================================================
+function abrirWhatsApp() {
+  const c = calcTotal();
+  const p = PLANOS[state.plano];
+  const perLabel = { mensal:'mensal (sem fidelidade)', anual:'anual (com desconto de ~25%)', unico:'pagamento único (sem mensalidade)' };
+  const mods = getModulosAtivos();
+  const now = new Date();
+  const validade = new Date(now); validade.setDate(validade.getDate() + 30);
+
+  let valorStr = '';
+  if (state.periodo === 'unico') {
+    valorStr = 'R$ '+p.unico.toLocaleString('pt-BR')+' (único)';
+  } else {
+    valorStr = 'R$ '+c.total+'/mês' + (state.periodo === 'anual' ? ' (R$ '+PLANOS[state.plano].anual.toLocaleString('pt-BR')+'/ano)' : '');
+    valorStr += '\n🔧 Setup: R$ '+p.setup[0]+'–'+p.setup[1]+' (único)';
+  }
+
+  const msg =
+`✦ *Orçamento — Terreiro Gestão*
+
+📋 *Dados do Terreiro*
+Terreiro: ${state.nome || '—'}
+Responsável: ${state.resp || '—'}
+WhatsApp: ${state.wpp || '—'}${state.cidade ? '\nCidade: '+state.cidade : ''}${state.linha ? '\nLinha: '+state.linha : ''}
+
+📦 *Plano: ${p.nome}* — ${perLabel[state.periodo]}
+
+✅ *Módulos incluídos:*
+${mods.map(m => '• '+m).join('\n')}
+
+💰 *Investimento:*
+${valorStr}
+
+📅 Orçamento válido até: ${validade.toLocaleDateString('pt-BR')}
+${state.obs ? '\n📝 Obs: '+state.obs : ''}
+---
+Olá! Gostaria de mais informações sobre esse orçamento.`;
+
+  const url = 'https://wa.me/'+WA_NUMBER+'?text='+encodeURIComponent(msg);
+  window.open(url, '_blank');
+}
+
+// ============================================================
+//  SALVAR HISTÓRICO (GAS / Sheets)
+// ============================================================
+async function salvarHistorico() {
+  showLoading(true);
+  const c = calcTotal();
+  const p = PLANOS[state.plano];
+  const perLabel = { mensal:'Mensal', anual:'Anual', unico:'Único' };
+
+  const payload = {
+    acao:       'orcamento',
+    data:       new Date().toISOString(),
+    terreiro:   state.nome,
+    responsavel: state.resp,
+    whatsapp:   state.wpp,
+    cidade:     state.cidade,
+    linha:      state.linha,
+    plano:      p.nome,
+    periodo:    perLabel[state.periodo],
+    modulos:    getModulosAtivos().join(', '),
+    total_mensal: state.periodo !== 'unico' ? c.total : 0,
+    total_unico:  state.periodo === 'unico' ? p.unico : 0,
+    setup_min:  p.setup[0],
+    setup_max:  p.setup[1],
+    obs:        state.obs
+  };
+
+  try {
+    // Tenta enviar ao GAS (pode falhar se URL não configurada)
+    const resp = await fetch(GAS_LOG_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    showToast('Orçamento registrado no histórico! ✓');
+  } catch(e) {
+    // Salva localmente como fallback
+    try {
+      const hist = JSON.parse(localStorage.getItem('orcamentos') || '[]');
+      hist.push(payload);
+      localStorage.setItem('orcamentos', JSON.stringify(hist));
+      showToast('Salvo localmente ('+hist.length+' orçamento'+( hist.length>1 ? 's' : '')+')');
+    } catch(e2) {
+      showToast('Orçamento gerado! Histórico não disponível.', false);
+    }
+  }
+  showLoading(false);
+}
+
+// ============================================================
+//  HELPERS
+// ============================================================
+function showToast(msg, err) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (err ? ' error' : '');
+  setTimeout(() => { t.className = 'toast'; }, 3500);
+}
+
+function showLoading(show) {
+  document.getElementById('loadingOverlay').classList.toggle('show', show);
+}
+
+// ============================================================
+//  INIT
+// ============================================================
+selectPlan('completo');
+selectPeriodo('mensal');
+</script>
+</body>
+</html>
