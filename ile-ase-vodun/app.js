@@ -222,7 +222,8 @@ function calVerDia(el){
   el.classList.add('selecionado');_calDiaSel=dt;calMostrarEvtsDia(dt);
 }
 function calMostrarEvtsDia(dt){
-  var evts=calendario.filter(function(ev){return ev.data===dt;});
+  // Filtrar pela visibilidade do nível atual (igual à grade mensal)
+  var evts=_calEventosVisiveis().filter(function(ev){return ev.data===dt;});
   var wrap=document.getElementById('cal-eventos-dia');if(!wrap)return;
   if(!evts.length){wrap.innerHTML='';return;}
   var meses=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];

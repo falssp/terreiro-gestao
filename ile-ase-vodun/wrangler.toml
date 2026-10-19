@@ -6,8 +6,14 @@ compatibility_date = "2024-11-01"
 binding = "BUCKET"
 bucket_name = "terreiro-pontos"
 
-# Variável de ambiente — defina o valor real no dashboard do Cloudflare:
-# Workers > terreiro-proxy > Settings > Variables > ADMIN_TOKEN = ile_ase_dev_2024_falsp
-# (ou um token mais seguro para produção)
+# Variáveis de ambiente — definir no Cloudflare Dashboard:
+# Workers > terreiro-proxy > Settings > Variables
+#
+#   ADMIN_TOKEN  — token secreto para upload/deleção de fotos
+#   GAS_URL      — URL do Apps Script (Web App)
+#
+# Ou via CLI:
+#   wrangler secret put ADMIN_TOKEN
+#   wrangler secret put GAS_URL
 [vars]
-# ADMIN_TOKEN = "ile_ase_dev_2024_falsp"   # <-- definir no dashboard, não aqui
+# (nenhuma variável em texto puro — usar Secrets no dashboard)
