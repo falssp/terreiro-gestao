@@ -220,7 +220,7 @@ Só paga o que usa. Útil para entrada no produto.
 | Demo navegável | https://falssp.github.io/terreiro-gestao/demo/ |
 | Terreiro ativo | https://falssp.github.io/terreiro-gestao/ile-ase-vodun/ |
 | Repositório | https://github.com/falssp/terreiro-gestao |
-| WhatsApp | https://wa.me/5511989202958 |
+| WhatsApp | https://wa.me/5511991145649 |
 
 ---
 

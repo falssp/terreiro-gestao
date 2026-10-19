@@ -216,4 +216,4 @@ Veja [PRODUTO.md](PRODUTO.md) para detalhes completos de precificação.
 
 ## Contato
 
-WhatsApp: [(11) 98920-2958](https://wa.me/5511989202958)
+WhatsApp: [(11) 99114-5649](https://wa.me/5511991145649)
