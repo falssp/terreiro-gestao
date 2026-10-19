@@ -3,34 +3,408 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Terreiro Gestão</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<title>Terreiro Gestão — Sistema para Terreiros de Umbanda</title>
+<meta name="description" content="Sistema completo de gestão para terreiros de Umbanda. Acervo, consumíveis, calendário, pontos cantados e galeria numa plataforma acessível por celular."/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
-:root{--bg:#0d0d0d;--ouro:#c9a84c;--ouro-lt:#e8c96a;--creme:#fff;--cinza:#999;--borda:rgba(201,168,76,.18);--card:rgba(255,255,255,.03);--r:12px}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--creme);font-family:'Inter',sans-serif;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px}
-.topo{text-align:center;margin-bottom:48px}
-.topo h1{font-family:'Cinzel',serif;font-size:1.6rem;color:var(--ouro-lt);letter-spacing:.08em}
-.topo p{font-size:12px;color:var(--cinza);margin-top:6px;letter-spacing:.15em;text-transform:uppercase}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;width:100%;max-width:800px}
-.card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:24px 28px;text-decoration:none;color:var(--creme);transition:border-color .2s}
-.card:hover{border-color:rgba(201,168,76,.5)}
-.card-nome{font-family:'Cinzel',serif;font-size:1rem;color:var(--ouro-lt);margin-bottom:6px}
-.card-sub{font-size:11px;color:var(--cinza);text-transform:uppercase;letter-spacing:.1em}
-.rodape{margin-top:48px;font-size:11px;color:rgba(255,255,255,.2)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0a;
+  --bg2:#111;
+  --card:#161616;
+  --ouro:#c9a84c;
+  --ouro-lt:#e8c96a;
+  --ouro-dim:rgba(201,168,76,.12);
+  --creme:#f5f0e8;
+  --cinza:#888;
+  --cinza-lt:#bbb;
+  --borda:rgba(201,168,76,.18);
+  --r:12px;
+  --fd:'Cinzel',serif;
+  --fb:'Inter',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);background:var(--bg);color:var(--creme);line-height:1.6;overflow-x:hidden}
+
+/* ── UTILITÁRIOS ── */
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+.tag{display:inline-block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;padding:4px 12px;border-radius:99px;background:var(--ouro-dim);color:var(--ouro);border:1px solid var(--borda)}
+.btn-cta{display:inline-flex;align-items:center;gap:9px;padding:14px 28px;border-radius:10px;font-family:var(--fb);font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .2s;white-space:nowrap}
+.btn-primary{background:var(--ouro);color:#0a0a0a;border:none}
+.btn-primary:hover{background:var(--ouro-lt);transform:translateY(-1px)}
+.btn-outline{background:transparent;color:var(--ouro);border:1px solid var(--borda)}
+.btn-outline:hover{border-color:var(--ouro);background:var(--ouro-dim)}
+.sep{height:1px;background:var(--borda);margin:0}
+.ornamento{text-align:center;color:var(--ouro);letter-spacing:.5em;font-size:11px;opacity:.5}
+
+/* ── HERO ── */
+.hero{position:relative;min-height:100dvh;display:flex;flex-direction:column;justify-content:center;padding:80px 0 60px;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(201,168,76,.08) 0%,transparent 70%);pointer-events:none}
+.hero-bg2{position:absolute;inset:0;background:radial-gradient(ellipse 40% 40% at 80% 60%,rgba(100,40,160,.06) 0%,transparent 60%);pointer-events:none}
+.hero-tag{margin-bottom:22px}
+.hero h1{font-family:var(--fd);font-size:clamp(2rem,5vw,3.6rem);line-height:1.18;color:var(--ouro-lt);text-wrap:balance;max-width:700px;margin-bottom:20px;letter-spacing:.02em}
+.hero h1 em{font-style:normal;color:var(--creme)}
+.hero-sub{font-size:clamp(15px,2vw,18px);color:var(--cinza-lt);max-width:560px;margin-bottom:36px;line-height:1.75}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.hero-scroll{margin-top:64px;display:flex;align-items:center;gap:16px}
+.hero-scroll-linha{flex:1;height:1px;background:var(--borda)}
+.hero-scroll-txt{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--cinza);white-space:nowrap}
+
+/* ── APP PREVIEW ── */
+.preview-wrap{margin:0 auto;max-width:340px;position:relative}
+.phone-frame{background:var(--card);border:1px solid var(--borda);border-radius:32px;overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,.7),0 0 0 1px rgba(201,168,76,.08)}
+.phone-notch{height:28px;background:#0f0f0f;display:flex;align-items:center;justify-content:center}
+.phone-notch-bar{width:80px;height:5px;background:rgba(255,255,255,.08);border-radius:99px}
+.phone-screen{background:#0f0f0f}
+.phone-screen img{width:100%;display:block}
+.phone-home-btn{height:24px;background:#0f0f0f;display:flex;align-items:center;justify-content:center}
+.phone-home-dot{width:44px;height:5px;background:rgba(255,255,255,.1);border-radius:99px}
+.preview-glow{position:absolute;inset:-40px;background:radial-gradient(circle,rgba(201,168,76,.08) 0%,transparent 65%);pointer-events:none;z-index:-1}
+.screens-strip{display:flex;gap:12px;overflow-x:auto;padding:8px 0;scrollbar-width:none}
+.screens-strip::-webkit-scrollbar{display:none}
+.screen-mini{flex-shrink:0;width:120px;border-radius:12px;overflow:hidden;border:1px solid var(--borda);cursor:pointer;transition:border-color .2s}
+.screen-mini:hover,.screen-mini.active{border-color:var(--ouro)}
+.screen-mini-lbl{padding:5px 8px;font-size:10px;color:var(--cinza);text-align:center;background:var(--card)}
+
+/* ── FEATURES ── */
+.features{padding:100px 0}
+.section-header{text-align:center;margin-bottom:64px}
+.section-header h2{font-family:var(--fd);font-size:clamp(1.5rem,3vw,2.4rem);color:var(--ouro-lt);margin:16px 0 14px}
+.section-header p{color:var(--cinza-lt);max-width:520px;margin:0 auto;font-size:15px;line-height:1.75}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--borda);border:1px solid var(--borda);border-radius:16px;overflow:hidden}
+@media(max-width:900px){.feat-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.feat-grid{grid-template-columns:1fr}}
+.feat-item{background:var(--bg);padding:32px 28px;transition:background .2s}
+.feat-item:hover{background:rgba(201,168,76,.04)}
+.feat-icon{font-size:28px;margin-bottom:14px;line-height:1}
+.feat-titulo{font-size:15px;font-weight:600;color:var(--creme);margin-bottom:8px}
+.feat-desc{font-size:13px;color:var(--cinza);line-height:1.75}
+
+/* ── HOW IT WORKS ── */
+.como{padding:80px 0;background:var(--bg2)}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative;margin-top:48px}
+@media(max-width:760px){.steps{grid-template-columns:1fr 1fr;gap:32px 0}}
+@media(max-width:420px){.steps{grid-template-columns:1fr}}
+.steps::before{content:'';position:absolute;top:28px;left:12.5%;right:12.5%;height:1px;background:var(--borda);z-index:0}
+@media(max-width:760px){.steps::before{display:none}}
+.step{text-align:center;padding:0 16px;position:relative;z-index:1}
+.step-num{width:56px;height:56px;border-radius:50%;background:var(--bg);border:1px solid var(--borda);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:18px;color:var(--ouro);margin:0 auto 16px}
+.step-titulo{font-size:14px;font-weight:600;color:var(--creme);margin-bottom:6px}
+.step-desc{font-size:12px;color:var(--cinza);line-height:1.7}
+
+/* ── DEPOIMENTO / CASO ── */
+.caso{padding:80px 0}
+.caso-card{background:linear-gradient(135deg,rgba(201,168,76,.06),rgba(100,40,160,.04));border:1px solid var(--borda);border-radius:20px;padding:48px 52px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+@media(max-width:700px){.caso-card{grid-template-columns:1fr;padding:32px 28px;gap:28px}}
+.caso-quote{font-family:var(--fd);font-size:clamp(1rem,2vw,1.35rem);color:var(--ouro-lt);line-height:1.6;margin-bottom:20px}
+.caso-info{display:flex;flex-direction:column;gap:4px}
+.caso-nome{font-size:14px;font-weight:600;color:var(--creme)}
+.caso-papel{font-size:12px;color:var(--cinza)}
+.caso-stats{display:flex;flex-direction:column;gap:20px}
+.stat-item{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:18px 22px}
+.stat-num{font-family:var(--fd);font-size:2rem;color:var(--ouro-lt);line-height:1;margin-bottom:4px}
+.stat-rot{font-size:12px;color:var(--cinza)}
+
+/* ── MÓDULOS ── */
+.modulos{padding:80px 0;background:var(--bg2)}
+.mod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:48px}
+@media(max-width:620px){.mod-grid{grid-template-columns:1fr}}
+.mod-card{background:var(--bg);border:1px solid var(--borda);border-radius:var(--r);padding:22px 24px;display:flex;gap:16px;align-items:flex-start;transition:border-color .2s}
+.mod-card:hover{border-color:rgba(201,168,76,.4)}
+.mod-icon{font-size:24px;flex-shrink:0;margin-top:2px}
+.mod-titulo{font-size:14px;font-weight:600;color:var(--creme);margin-bottom:4px}
+.mod-desc{font-size:12px;color:var(--cinza);line-height:1.7}
+.mod-badge{display:inline-block;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;padding:2px 8px;border-radius:99px;margin-top:6px}
+.mod-badge.pub{background:rgba(40,180,40,.12);color:#6d6;border:1px solid rgba(40,180,40,.25)}
+.mod-badge.pri{background:rgba(201,168,76,.12);color:var(--ouro);border:1px solid var(--borda)}
+
+/* ── CTA ── */
+.cta-section{padding:100px 0;text-align:center;position:relative;overflow:hidden}
+.cta-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 70% at 50% 50%,rgba(201,168,76,.06) 0%,transparent 65%);pointer-events:none}
+.cta-section h2{font-family:var(--fd);font-size:clamp(1.5rem,3vw,2.4rem);color:var(--ouro-lt);margin:16px 0 14px}
+.cta-section p{color:var(--cinza-lt);max-width:480px;margin:0 auto 36px;font-size:15px;line-height:1.75}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.cta-aviso{font-size:12px;color:var(--cinza);margin-top:20px}
+
+/* ── FOOTER ── */
+footer{background:var(--bg2);border-top:1px solid var(--borda);padding:40px 0}
+.footer-inner{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.footer-brand{font-family:var(--fd);font-size:14px;color:var(--ouro);letter-spacing:.06em}
+.footer-links{display:flex;gap:24px}
+.footer-links a{font-size:13px;color:var(--cinza);text-decoration:none}
+.footer-links a:hover{color:var(--ouro-lt)}
+.footer-copy{font-size:11px;color:rgba(255,255,255,.2)}
+
+/* ── NAV ── */
+.topnav{position:fixed;top:0;left:0;right:0;z-index:90;background:rgba(10,10,10,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--borda);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{font-family:var(--fd);font-size:13px;color:var(--ouro);letter-spacing:.06em;text-decoration:none}
+.nav-links-top{display:flex;align-items:center;gap:8px}
+.nav-link{font-size:13px;color:var(--cinza);text-decoration:none;padding:6px 12px;border-radius:8px;transition:color .2s}
+.nav-link:hover{color:var(--creme)}
+.nav-cta{padding:7px 18px;background:var(--ouro);color:#0a0a0a;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;transition:background .2s}
+.nav-cta:hover{background:var(--ouro-lt)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:767px){
+  .hero{padding:100px 0 60px;min-height:auto}
+  .caso-card{padding:28px 20px}
+  .topnav .nav-link{display:none}
+}
 </style>
 </head>
 <body>
-<div class="topo">
-  <h1>&#10022; Terreiro Gestão &#10022;</h1>
-  <p>Sistema de gestão para terreiros de Umbanda</p>
-</div>
-<div class="grid">
-  <a class="card" href="ile-ase-vodun/">
-    <div class="card-nome">Ile Ase Vodun Ogum Ayres</div>
-    <div class="card-sub">Terreiro de Umbanda &middot; São Paulo</div>
-  </a>
-</div>
-<div class="rodape">terreiro-gestao &middot; falssp</div>
+
+<!-- NAV -->
+<nav class="topnav">
+  <a class="nav-brand" href="#">&#10022; Terreiro Gestão</a>
+  <div class="nav-links-top">
+    <a class="nav-link" href="#funcionalidades">Funcionalidades</a>
+    <a class="nav-link" href="#modulos">Módulos</a>
+    <a class="nav-cta" href="https://wa.me/5511989202958?text=Olá!%20Vi%20o%20Terreiro%20Gestão%20e%20gostaria%20de%20saber%20mais." target="_blank">Falar conosco</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-bg2"></div>
+  <div class="container">
+    <div class="hero-tag"><span class="tag">&#10022; Sistema completo para Umbanda</span></div>
+    <h1>Seu terreiro,<br/><em>organizado e conectado</em></h1>
+    <p class="hero-sub">Gerencie acervo, consumíveis, calendário de giras, pontos cantados e galeria — tudo numa plataforma acessível por celular, sem instalar nada.</p>
+    <div class="hero-btns">
+      <a class="btn-cta btn-primary" href="demo/">&#9654;&nbsp; Ver demonstração</a>
+      <a class="btn-cta btn-outline" href="https://wa.me/5511989202958?text=Olá!%20Vi%20o%20Terreiro%20Gestão%20e%20gostaria%20de%20saber%20mais." target="_blank">&#128242;&nbsp; Falar conosco</a>
+    </div>
+    <div class="hero-scroll">
+      <div class="hero-scroll-linha"></div>
+      <div class="hero-scroll-txt">&#10022; &nbsp; Conheça o sistema &nbsp; &#10022;</div>
+      <div class="hero-scroll-linha"></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="funcionalidades">
+  <div class="container">
+    <div class="section-header">
+      <span class="tag">Funcionalidades</span>
+      <h2>Tudo que o terreiro precisa</h2>
+      <p>Desenvolvido especificamente para terreiros de Umbanda — com respeito às tradições e praticidade do dia a dia.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-item">
+        <div class="feat-icon">&#128230;</div>
+        <div class="feat-titulo">Acervo</div>
+        <div class="feat-desc">Cadastre e consulte todos os itens do terreiro — roupas, guias, atabaques, adornos. Filtre por categoria e acesse o detalhe de cada peça.</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">&#128305;</div>
+        <div class="feat-titulo">Consumíveis</div>
+        <div class="feat-desc">Controle de estoque em tempo real com alertas visuais: OK, Repor, Alerta e Urgente. Nunca mais faltar vela, erva ou defumador na gira.</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">&#128197;</div>
+        <div class="feat-titulo">Calendário</div>
+        <div class="feat-desc">Agenda de giras, festas de orixás e eventos especiais. Diferencia eventos públicos e fechados. Próximo evento sempre em destaque na tela inicial.</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">&#9835;</div>
+        <div class="feat-titulo">Pontos Cantados</div>
+        <div class="feat-desc">Mais de 600 pontos com letra completa, agrupados por entidade. Player de áudio integrado — ouça e acompanhe a letra ao mesmo tempo.</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">&#128247;</div>
+        <div class="feat-titulo">Galeria de Fotos</div>
+        <div class="feat-desc">Álbuns organizados das giras e festas. Lightbox com navegação por teclado ou toque. Acervo visual do terreiro sempre acessível.</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">&#10024;</div>
+        <div class="feat-titulo">Orixás &amp; Entidades</div>
+        <div class="feat-desc">Catálogo completo com histórias, saudações e pontos associados de cada orixá e entidade cultuada no terreiro.</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">&#128274;</div>
+        <div class="feat-titulo">Área dos Filhos</div>
+        <div class="feat-desc">Acesso restrito por código para filhos de santo. Acervo e consumíveis ficam protegidos — o público vê apenas o que o terreiro autoriza.</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">&#128241;</div>
+        <div class="feat-titulo">PWA — Instala no celular</div>
+        <div class="feat-desc">Funciona como aplicativo nativo: instale no Android ou iPhone direto pelo navegador. Sem loja de aplicativos, sem mensalidade de app.</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">&#128100;</div>
+        <div class="feat-titulo">Painel Administrativo</div>
+        <div class="feat-desc">Interface separada para gestão completa: cadastro de itens, atualização de estoque, gerenciamento de galeria e configurações do terreiro.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- HOW IT WORKS -->
+<section class="como">
+  <div class="container">
+    <div class="section-header">
+      <span class="tag">Como funciona</span>
+      <h2>Pronto em dias, não meses</h2>
+      <p>Configuramos tudo para o seu terreiro. Você não precisa saber programar.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-titulo">Conversa inicial</div>
+        <div class="step-desc">Entendemos o terreiro, o fluxo da casa e o que precisa ser gerenciado.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-titulo">Configuração</div>
+        <div class="step-desc">Personalizamos com o nome, as cores e os dados do seu terreiro.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-titulo">Cadastro inicial</div>
+        <div class="step-desc">Importamos acervo, consumíveis e calendário fornecidos pelo terreiro.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-titulo">Entrega e treino</div>
+        <div class="step-desc">Link pronto para uso. Mostramos como atualizar e gerenciar o sistema.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- CASO EM USO -->
+<section class="caso">
+  <div class="container">
+    <div class="caso-card">
+      <div>
+        <span class="tag" style="margin-bottom:24px">Em uso hoje</span>
+        <div class="caso-quote">"Um terreiro organizado honra os orixás e acolhe melhor os filhos e visitantes."</div>
+        <div class="caso-info">
+          <span class="caso-nome">Ile Ase Vodun Ogum Ayres</span>
+          <span class="caso-papel">Terreiro de Umbanda &middot; São Paulo &middot; ativo desde 2024</span>
+        </div>
+        <div style="margin-top:24px">
+          <a class="btn-cta btn-outline" href="ile-ase-vodun/" target="_blank" style="font-size:13px;padding:10px 20px">Ver terreiro ao vivo &#8599;</a>
+        </div>
+      </div>
+      <div class="caso-stats">
+        <div class="stat-item">
+          <div class="stat-num">645+</div>
+          <div class="stat-rot">Pontos cantados catalogados</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">7</div>
+          <div class="stat-rot">Módulos integrados</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">100%</div>
+          <div class="stat-rot">Acessível por celular</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- MÓDULOS -->
+<section class="modulos" id="modulos">
+  <div class="container">
+    <div class="section-header">
+      <span class="tag">Módulos</span>
+      <h2>Público e privado, no mesmo lugar</h2>
+      <p>Separe o que é para todos e o que é só para quem é da casa.</p>
+    </div>
+    <div class="mod-grid">
+      <div class="mod-card">
+        <div class="mod-icon">&#128197;</div>
+        <div>
+          <div class="mod-titulo">Calendário público</div>
+          <div class="mod-desc">Visitantes veem giras abertas e festas sem precisar de login. Eventos fechados ficam marcados mas sem detalhes.</div>
+          <span class="mod-badge pub">Público</span>
+        </div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-icon">&#9835;</div>
+        <div>
+          <div class="mod-titulo">Pontos cantados</div>
+          <div class="mod-desc">Catálogo aberto para todos — filhos e simpatizantes podem aprender e revisar pontos a qualquer hora.</div>
+          <span class="mod-badge pub">Público</span>
+        </div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-icon">&#128247;</div>
+        <div>
+          <div class="mod-titulo">Galeria de fotos</div>
+          <div class="mod-desc">Álbuns das giras e festas — memória visual da casa, acessível por qualquer dispositivo.</div>
+          <span class="mod-badge pub">Público</span>
+        </div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-icon">&#10024;</div>
+        <div>
+          <div class="mod-titulo">Orixás &amp; Entidades</div>
+          <div class="mod-desc">Catálogo espiritual aberto — histórias, saudações e características de cada entidade cultuada.</div>
+          <span class="mod-badge pub">Público</span>
+        </div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-icon">&#128230;</div>
+        <div>
+          <div class="mod-titulo">Acervo</div>
+          <div class="mod-desc">Inventário completo de peças e itens rituais — visível apenas para filhos cadastrados com código de acesso.</div>
+          <span class="mod-badge pri">Filhos</span>
+        </div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-icon">&#128305;</div>
+        <div>
+          <div class="mod-titulo">Consumíveis</div>
+          <div class="mod-desc">Controle de estoque com alertas — quem é da casa sabe o que precisa ser comprado antes da gira.</div>
+          <span class="mod-badge pri">Filhos</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <span class="tag">&#10022; Próximo passo</span>
+    <h2>Seu terreiro merece isso</h2>
+    <p>Entre em contato para conhecer melhor o sistema e entender como funciona para a realidade da sua casa.</p>
+    <div class="cta-btns">
+      <a class="btn-cta btn-primary" href="https://wa.me/5511989202958?text=Olá!%20Vi%20o%20Terreiro%20Gestão%20e%20gostaria%20de%20saber%20mais%20sobre%20o%20sistema." target="_blank">&#128242;&nbsp; Falar pelo WhatsApp</a>
+      <a class="btn-cta btn-outline" href="demo/">&#9654;&nbsp; Ver demonstração primeiro</a>
+    </div>
+    <div class="cta-aviso">Sem compromisso. Respondemos em até 24h.</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">&#10022; Terreiro Gestão</div>
+      <div class="footer-links">
+        <a href="demo/">Demo</a>
+        <a href="ile-ase-vodun/">Terreiro ativo</a>
+        <a href="https://wa.me/5511989202958" target="_blank">WhatsApp</a>
+      </div>
+      <div class="footer-copy">Sistema desenvolvido com GitHub Pages + Google Apps Script</div>
+    </div>
+  </div>
+</footer>
+
 </body>
 </html>

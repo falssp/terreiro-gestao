@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="theme-color" content="#0f0f0f"/>
+<title>Axé da Luz — Demo Terreiro Gestão</title>
+<link rel="manifest" href="#"/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0f0f;--card:#1a1a1a;--ouro:#c9a84c;--ouro-lt:#f0d060;
+  --creme:#fff;--cinza:#999;--borda:rgba(201,168,76,.22);
+  --r:12px;--fd:'Cinzel',serif;--fb:'Inter',sans-serif;--nav-h:56px;
+  --verde:#4caf7d;--amarelo:#f0b429;--laranja:#e8703a;--vermelho:#e53e3e;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--fb);background:var(--bg);color:var(--creme);display:flex;flex-direction:column}
+
+/* ── DEMO BANNER ── */
+.demo-banner{background:linear-gradient(90deg,rgba(201,168,76,.15),rgba(201,168,76,.08));border-bottom:1px solid var(--borda);padding:6px 16px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:11px;color:var(--ouro);flex-shrink:0}
+.demo-banner a{color:inherit;text-decoration:underline;opacity:.8}
+
+/* ── NAV ── */
+.topnav{background:#111;border-bottom:1px solid var(--borda);padding:0 20px;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.nav-brand{font-family:var(--fd);font-size:13px;color:var(--ouro);letter-spacing:.06em}
+.nav-tabs{display:none;gap:4px}
+@media(min-width:640px){.nav-tabs{display:flex}}
+.nav-tab{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;color:var(--cinza);border:none;background:transparent;transition:all .15s}
+.nav-tab:hover{color:var(--creme)}
+.nav-tab.active{background:var(--card);color:var(--ouro);border:1px solid var(--borda)}
+.nav-links{display:flex;gap:8px;align-items:center}
+.btn-membro{padding:5px 14px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--borda);background:transparent;color:var(--ouro);transition:all .15s}
+.btn-membro.active{background:rgba(201,168,76,.12)}
+
+/* ── MAIN ── */
+main{flex:1;overflow-y:auto;padding-bottom:72px}
+@media(min-width:640px){main{padding-bottom:0}}
+
+/* ── SECTIONS ── */
+.tab-section{display:none;padding:20px 16px;max-width:900px;margin:0 auto}
+.tab-section.active{display:block}
+
+/* ── HOME ── */
+.evento-card{background:linear-gradient(135deg,rgba(201,168,76,.1),rgba(100,40,160,.06));border:1px solid var(--borda);border-radius:var(--r);padding:20px;margin-bottom:20px}
+.evento-tag{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--ouro);margin-bottom:6px}
+.evento-titulo{font-family:var(--fd);font-size:1.2rem;color:var(--ouro-lt);margin-bottom:4px}
+.evento-data{font-size:12px;color:var(--cinza)}
+.evento-tipo{display:inline-block;font-size:10px;padding:2px 8px;border-radius:99px;background:rgba(201,168,76,.12);color:var(--ouro);border:1px solid var(--borda);margin-top:8px}
+
+.nav-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+@media(max-width:400px){.nav-cards{grid-template-columns:repeat(2,1fr)}}
+.nav-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:16px 12px;text-align:center;cursor:pointer;transition:border-color .15s}
+.nav-card:hover{border-color:rgba(201,168,76,.5)}
+.nav-card-icon{font-size:22px;margin-bottom:8px}
+.nav-card-lbl{font-size:11px;color:var(--cinza)}
+
+.stock-preview{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:16px;margin-bottom:20px}
+.stock-preview-title{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--cinza);margin-bottom:12px}
+.stock-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.stock-row:last-child{border-bottom:none}
+.stock-nome{flex:1;font-size:13px}
+.stock-qtd{font-size:12px;color:var(--cinza);min-width:40px;text-align:right}
+.badge{font-size:10px;padding:2px 8px;border-radius:99px;font-weight:600;min-width:52px;text-align:center}
+.badge-ok{background:rgba(76,175,125,.15);color:var(--verde)}
+.badge-repor{background:rgba(240,180,41,.15);color:var(--amarelo)}
+.badge-alerta{background:rgba(232,112,58,.15);color:var(--laranja)}
+.badge-urgente{background:rgba(229,62,62,.15);color:var(--vermelho)}
+
+/* ── TABS GENÉRICAS ── */
+.section-title{font-family:var(--fd);font-size:1.1rem;color:var(--ouro);margin-bottom:4px}
+.section-sub{font-size:12px;color:var(--cinza);margin-bottom:20px}
+
+/* ── ACERVO ── */
+.item-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.item-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:14px;cursor:pointer;transition:border-color .15s}
+.item-card:hover{border-color:rgba(201,168,76,.5)}
+.item-cat{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--cinza);margin-bottom:4px}
+.item-nome{font-size:13px;font-weight:500;margin-bottom:6px}
+.item-desc{font-size:11px;color:var(--cinza);line-height:1.5}
+
+/* ── CONSUMÍVEIS ── */
+.cons-list{display:flex;flex-direction:column;gap:8px}
+.cons-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:14px}
+.cons-info{flex:1}
+.cons-nome{font-size:14px;font-weight:500;margin-bottom:2px}
+.cons-unit{font-size:11px;color:var(--cinza)}
+.cons-qtd{font-size:20px;font-family:var(--fd);color:var(--ouro-lt);min-width:48px;text-align:right}
+
+/* ── CALENDÁRIO ── */
+.cal-list{display:flex;flex-direction:column;gap:10px}
+.cal-item{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:16px;display:grid;grid-template-columns:56px 1fr;gap:14px;align-items:start}
+.cal-dia{text-align:center}
+.cal-dia-num{font-family:var(--fd);font-size:1.5rem;color:var(--ouro-lt);line-height:1}
+.cal-dia-mes{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--cinza)}
+.cal-titulo{font-size:14px;font-weight:600;margin-bottom:4px}
+.cal-hora{font-size:12px;color:var(--cinza);margin-bottom:6px}
+.cal-tipo-pub{display:inline-block;font-size:9px;padding:2px 8px;border-radius:99px;background:rgba(76,175,125,.12);color:var(--verde);border:1px solid rgba(76,175,125,.25)}
+.cal-tipo-pri{display:inline-block;font-size:9px;padding:2px 8px;border-radius:99px;background:rgba(201,168,76,.12);color:var(--ouro);border:1px solid var(--borda)}
+
+/* ── GALERIA ── */
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+@media(min-width:480px){.gallery-grid{grid-template-columns:repeat(4,1fr)}}
+.gallery-thumb{aspect-ratio:1;border-radius:8px;overflow:hidden;cursor:pointer;position:relative;background:var(--card);border:1px solid var(--borda)}
+.gallery-thumb-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:28px;flex-direction:column;gap:4px}
+.gallery-thumb-lbl{font-size:9px;color:var(--cinza);text-align:center}
+.gallery-album{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ouro);margin-bottom:12px;margin-top:16px}
+
+/* ── ENTIDADES ── */
+.ent-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.ent-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:16px;text-align:center;cursor:pointer;transition:border-color .15s}
+.ent-card:hover{border-color:rgba(201,168,76,.5)}
+.ent-icon{font-size:32px;margin-bottom:8px}
+.ent-nome{font-family:var(--fd);font-size:13px;color:var(--ouro-lt);margin-bottom:4px}
+.ent-saud{font-size:11px;color:var(--cinza)}
+
+/* ── PONTOS ── */
+.filtros{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.filtro-btn{padding:5px 14px;border-radius:99px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--borda);background:transparent;color:var(--cinza);transition:all .15s}
+.filtro-btn.active,.filtro-btn:hover{background:rgba(201,168,76,.12);color:var(--ouro);border-color:rgba(201,168,76,.4)}
+.pontos-list{display:flex;flex-direction:column;gap:6px}
+.ponto-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);overflow:hidden}
+.ponto-header{padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.ponto-icon{font-size:18px;flex-shrink:0}
+.ponto-info{flex:1;min-width:0}
+.ponto-nome{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ponto-ent{font-size:11px;color:var(--cinza)}
+.ponto-play{width:30px;height:30px;border-radius:50%;background:rgba(201,168,76,.12);border:1px solid var(--borda);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;color:var(--ouro);flex-shrink:0}
+.ponto-letra{padding:0 14px;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s}
+.ponto-letra.open{max-height:400px;padding-bottom:14px}
+.ponto-letra-txt{font-size:12px;color:var(--cinza);line-height:1.85;white-space:pre-wrap}
+
+/* ── PLAYER ── */
+.mini-player{position:fixed;bottom:56px;left:0;right:0;background:#111;border-top:1px solid var(--borda);padding:8px 16px;display:flex;align-items:center;gap:12px;z-index:50;transform:translateY(100%);transition:transform .3s}
+.mini-player.visible{transform:translateY(0)}
+@media(min-width:640px){.mini-player{bottom:0}}
+.player-info{flex:1;min-width:0}
+.player-nome{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.player-ent{font-size:10px;color:var(--cinza)}
+.player-btn{width:34px;height:34px;border-radius:50%;background:var(--ouro);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:#0f0f0f;flex-shrink:0}
+.player-close{background:transparent;border:none;color:var(--cinza);font-size:16px;cursor:pointer;padding:4px}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:56px;background:#111;border-top:1px solid var(--borda);display:flex;z-index:40}
+@media(min-width:640px){.bottom-nav{display:none}}
+.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;background:transparent;border:none;color:var(--cinza);font-size:10px;transition:color .15s}
+.bnav-btn.active{color:var(--ouro)}
+.bnav-icon{font-size:18px;line-height:1}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;display:none;align-items:flex-end;justify-content:center;padding:0}
+@media(min-width:640px){.modal-overlay{align-items:center;padding:20px}}
+.modal-overlay.open{display:flex}
+.modal{background:#1a1a1a;border-top:1px solid var(--borda);border-radius:20px 20px 0 0;width:100%;max-height:85dvh;overflow-y:auto;padding:20px}
+@media(min-width:640px){.modal{border-radius:var(--r);max-width:480px;max-height:80vh;border:1px solid var(--borda)}}
+.modal-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
+.modal-titulo{font-family:var(--fd);font-size:1rem;color:var(--ouro-lt)}
+.modal-close{background:transparent;border:none;color:var(--cinza);font-size:20px;cursor:pointer;line-height:1;flex-shrink:0}
+.modal-campo{margin-bottom:12px}
+.modal-campo-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--cinza);margin-bottom:4px}
+.modal-campo-val{font-size:13px;line-height:1.6}
+
+/* ── MEMBRO ── */
+.tab-membro{display:none}
+.logado .tab-membro{display:block}
+.login-prompt{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:24px;text-align:center;margin-bottom:20px}
+.login-prompt p{font-size:13px;color:var(--cinza);margin-bottom:16px}
+.login-input{width:100%;background:#111;border:1px solid var(--borda);border-radius:8px;padding:10px 14px;font-size:14px;color:var(--creme);outline:none;font-family:var(--fb);text-align:center;letter-spacing:.3em}
+.login-input:focus{border-color:rgba(201,168,76,.5)}
+.login-btn{margin-top:10px;width:100%;padding:10px;background:rgba(201,168,76,.12);border:1px solid var(--borda);border-radius:8px;color:var(--ouro);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fb)}
+.login-err{font-size:11px;color:var(--vermelho);margin-top:6px}
+</style>
+</head>
+<body>
+
+<!-- DEMO BANNER -->
+<div class="demo-banner">
+  ⚡ Esta é uma demonstração — dados fictícios do terreiro <strong>"Axé da Luz"</strong> &nbsp;·&nbsp; <a href="../">Ver apresentação completa</a>
+</div>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="nav-brand">✦ Axé da Luz</div>
+  <div class="nav-tabs" id="navTabs">
+    <button class="nav-tab active" onclick="goTab('home')">Início</button>
+    <button class="nav-tab" onclick="goTab('acervo')">Acervo</button>
+    <button class="nav-tab" onclick="goTab('consumiveis')">Consumíveis</button>
+    <button class="nav-tab" onclick="goTab('calendario')">Calendário</button>
+    <button class="nav-tab" onclick="goTab('galeria')">Galeria</button>
+    <button class="nav-tab" onclick="goTab('entidades')">Entidades</button>
+    <button class="nav-tab" onclick="goTab('pontos')">Pontos</button>
+  </div>
+  <button class="btn-membro" id="btnMembro" onclick="toggleLogin()">🔑 Área Filhos</button>
+</nav>
+
+<!-- MAIN -->
+<main id="main">
+
+  <!-- HOME -->
+  <section class="tab-section active" id="tab-home">
+    <div class="evento-card">
+      <div class="evento-tag">✦ Próximo evento</div>
+      <div class="evento-titulo">Gira de Exu & Pomba Gira</div>
+      <div class="evento-data">Sexta-feira, 25 de outubro de 2026 · 21h00</div>
+      <span class="evento-tipo">🌙 Fechado</span>
+    </div>
+
+    <div class="nav-cards">
+      <div class="nav-card" onclick="goTab('acervo')"><div class="nav-card-icon">📦</div><div class="nav-card-lbl">Acervo</div></div>
+      <div class="nav-card" onclick="goTab('consumiveis')"><div class="nav-card-icon">🧯</div><div class="nav-card-lbl">Consumíveis</div></div>
+      <div class="nav-card" onclick="goTab('calendario')"><div class="nav-card-icon">📅</div><div class="nav-card-lbl">Calendário</div></div>
+      <div class="nav-card" onclick="goTab('galeria')"><div class="nav-card-icon">📷</div><div class="nav-card-lbl">Galeria</div></div>
+      <div class="nav-card" onclick="goTab('entidades')"><div class="nav-card-icon">✨</div><div class="nav-card-lbl">Entidades</div></div>
+      <div class="nav-card" onclick="goTab('pontos')"><div class="nav-card-icon">🎵</div><div class="nav-card-lbl">Pontos</div></div>
+    </div>
+
+    <!-- STOCK PREVIEW — só para membros -->
+    <div class="tab-membro">
+      <div class="stock-preview">
+        <div class="stock-preview-title">Consumíveis — visão rápida</div>
+        <div class="stock-row"><span class="stock-nome">Vela branca (und.)</span><span class="stock-qtd">80</span><span class="badge badge-ok">✅ OK</span></div>
+        <div class="stock-row"><span class="stock-nome">Palo santo (g)</span><span class="stock-qtd">320</span><span class="badge badge-ok">✅ OK</span></div>
+        <div class="stock-row"><span class="stock-nome">Pemba branca</span><span class="stock-qtd">12</span><span class="badge badge-repor">⚠️ Repor</span></div>
+        <div class="stock-row"><span class="stock-nome">Azeite dendê (ml)</span><span class="stock-qtd">200</span><span class="badge badge-alerta">🔴 Alerta</span></div>
+        <div class="stock-row"><span class="stock-nome">Aguardente (ml)</span><span class="stock-qtd">0</span><span class="badge badge-urgente">🚨 Urgente</span></div>
+      </div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:16px">
+      <div style="font-size:11px;color:var(--cinza);margin-bottom:6px;text-transform:uppercase;letter-spacing:.1em">Sobre o terreiro</div>
+      <div style="font-size:13px;line-height:1.7;color:var(--cinza)">O <strong style="color:var(--creme)">Terreiro Axé da Luz</strong> é uma casa de Umbanda fundada em 1998, localizada em São Paulo. Cultuamos Orixás, Caboclos, Pretos Velhos e Exus com amor, fé e respeito às tradições.</div>
+    </div>
+  </section>
+
+  <!-- ACERVO -->
+  <section class="tab-section" id="tab-acervo">
+    <div class="login-prompt" id="acervoPrompt">
+      <p>O acervo é restrito aos filhos da casa.<br/>Digite o código de acesso para ver os itens.</p>
+      <input class="login-input" id="acervoCode" type="password" placeholder="••••••" maxlength="8" oninput="tryLogin(this.value)"/>
+      <div class="login-err" id="acervoErr" hidden>Código incorreto</div>
+      <button class="login-btn" onclick="tryLogin(document.getElementById('acervoCode').value)">Entrar</button>
+      <div style="margin-top:12px;font-size:11px;color:var(--cinza)">💡 Dica demo: use o código <strong style="color:var(--ouro)">2024</strong></div>
+    </div>
+
+    <div class="tab-membro">
+      <div class="section-title">Acervo</div>
+      <div class="section-sub">Itens e peças do terreiro</div>
+      <div class="item-grid" id="acervoGrid"></div>
+    </div>
+  </section>
+
+  <!-- CONSUMÍVEIS -->
+  <section class="tab-section" id="tab-consumiveis">
+    <div class="login-prompt" id="consPrompt">
+      <p>Consumíveis são visíveis apenas para membros.</p>
+      <input class="login-input" id="consCode" type="password" placeholder="••••••" maxlength="8" oninput="tryLogin(this.value)"/>
+      <div class="login-err" id="consErr" hidden>Código incorreto</div>
+      <button class="login-btn" onclick="tryLogin(document.getElementById('consCode').value)">Entrar</button>
+      <div style="margin-top:12px;font-size:11px;color:var(--cinza)">💡 Dica demo: use o código <strong style="color:var(--ouro)">2024</strong></div>
+    </div>
+
+    <div class="tab-membro">
+      <div class="section-title">Consumíveis</div>
+      <div class="section-sub">Estoque em tempo real</div>
+      <div class="cons-list" id="consList"></div>
+    </div>
+  </section>
+
+  <!-- CALENDÁRIO -->
+  <section class="tab-section" id="tab-calendario">
+    <div class="section-title">Calendário</div>
+    <div class="section-sub">Giras, festas e eventos — outubro / novembro 2026</div>
+    <div class="cal-list" id="calList"></div>
+  </section>
+
+  <!-- GALERIA -->
+  <section class="tab-section" id="tab-galeria">
+    <div class="section-title">Galeria</div>
+    <div class="section-sub">Memória fotográfica da casa</div>
+    <div id="galeriaContent"></div>
+  </section>
+
+  <!-- ENTIDADES -->
+  <section class="tab-section" id="tab-entidades">
+    <div class="section-title">Orixás &amp; Entidades</div>
+    <div class="section-sub">Cultuados no Axé da Luz</div>
+    <div class="ent-grid" id="entGrid"></div>
+  </section>
+
+  <!-- PONTOS -->
+  <section class="tab-section" id="tab-pontos">
+    <div class="section-title">Pontos Cantados</div>
+    <div class="section-sub">Selecione uma entidade para filtrar</div>
+    <div class="filtros" id="pontosFiltros"></div>
+    <div class="pontos-list" id="pontosList"></div>
+  </section>
+
+</main>
+
+<!-- MINI PLAYER -->
+<div class="mini-player" id="miniPlayer">
+  <div class="player-info">
+    <div class="player-nome" id="playerNome">—</div>
+    <div class="player-ent" id="playerEnt">—</div>
+  </div>
+  <button class="player-btn" id="playerBtn" onclick="togglePlay()">▶</button>
+  <button class="player-close" onclick="closePlayer()">✕</button>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="bnav-btn active" onclick="goTab('home')"><div class="bnav-icon">🏠</div>Início</button>
+  <button class="bnav-btn" onclick="goTab('acervo')"><div class="bnav-icon">📦</div>Acervo</button>
+  <button class="bnav-btn" onclick="goTab('consumiveis')"><div class="bnav-icon">🧯</div>Estoque</button>
+  <button class="bnav-btn" onclick="goTab('calendario')"><div class="bnav-icon">📅</div>Agenda</button>
+  <button class="bnav-btn" onclick="goTab('pontos')"><div class="bnav-icon">🎵</div>Pontos</button>
+</nav>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="modal-titulo" id="modalTitulo"></div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+const ACERVO = [
+  {cat:'Roupas',nome:'Conjunto branco Ogum',desc:'Calça e camisa branca com bordado dourado, tamanho M'},
+  {cat:'Roupas',nome:'Vestido Iemanjá',desc:'Vestido longo azul claro com rendas, tamanho P'},
+  {cat:'Roupas',nome:'Capa Preto Velho',desc:'Capa preta com detalhe branco e bordão'},
+  {cat:'Guias',nome:'Guia Oxalá',desc:'Fio de contas brancas, comprimento 60cm'},
+  {cat:'Guias',nome:'Guia Iansã',desc:'Contas vermelhas e marrons, 7 voltas'},
+  {cat:'Guias',nome:'Guia Oxum',desc:'Contas douradas e amarelas, original de orixá'},
+  {cat:'Instrumentos',nome:'Atabaque rum',desc:'Atabaque grande em couro, afinado, 90cm'},
+  {cat:'Instrumentos',nome:'Agogô duplo',desc:'Ferro fundido, 2 sinos, cabo de madeira'},
+  {cat:'Instrumentos',nome:'Adjá de Iemanjá',desc:'Sino de metal prateado, alça trançada'},
+  {cat:'Adornos',nome:'Espada Ogum',desc:'Espada ritual de ferro, 45cm, cabo madeira'},
+  {cat:'Adornos',nome:'Leque Oxum',desc:'Leque dourado com penas amarelas'},
+  {cat:'Adornos',nome:'Rabo de cavalo Xangô',desc:'Sceptro com rabo natural e pedras de oxalá'},
+];
+
+const CONSUMIVEIS = [
+  {nome:'Vela branca',unit:'und.',qtd:80,max:100},
+  {nome:'Vela vermelha',unit:'und.',qtd:45,max:60},
+  {nome:'Vela preta',unit:'und.',qtd:28,max:60},
+  {nome:'Palo santo',unit:'g',qtd:320,max:500},
+  {nome:'Pemba branca',unit:'und.',qtd:12,max:50},
+  {nome:'Pemba vermelha',unit:'und.',qtd:8,max:50},
+  {nome:'Azeite dendê',unit:'ml',qtd:200,max:1000},
+  {nome:'Mel puro',unit:'ml',qtd:350,max:500},
+  {nome:'Aguardente',unit:'ml',qtd:0,max:500},
+  {nome:'Marafo',unit:'ml',qtd:150,max:500},
+  {nome:'Carvão',unit:'g',qtd:450,max:600},
+  {nome:'Charuto panatela',unit:'und.',qtd:6,max:20},
+];
+
+const CALENDARIO = [
+  {dia:'18',mes:'Out',titulo:'Gira de Caboclos',hora:'20h00',tipo:'pub',desc:'Gira aberta com caboclos da jurema. Recepção a partir das 19h30.'},
+  {dia:'25',mes:'Out',titulo:'Gira de Exu & Pomba Gira',hora:'21h00',tipo:'pri',desc:'Gira fechada para filhos e convidados. Traje preto e vermelho.'},
+  {dia:'02',mes:'Nov',titulo:'Dia de Finados — Homenagem',hora:'19h00',tipo:'pub',desc:'Sessão aberta de homenagem aos antepassados. Público bem-vindo.'},
+  {dia:'08',mes:'Nov',titulo:'Festa de Iemanjá',hora:'15h00',tipo:'pub',desc:'Festa anual com oferendas ao mar. Saída em cortejo às 14h30.'},
+  {dia:'15',mes:'Nov',titulo:'Gira de Pretos Velhos',hora:'20h00',tipo:'pub',desc:'Sessão de cura e aconselhamento com os pretos velhos.'},
+  {dia:'22',mes:'Nov',titulo:'Reunião de filhos',hora:'14h00',tipo:'pri',desc:'Reunião interna para filhos iniciados. Pauta: calendário 2027.'},
+];
+
+const GALERIA = {
+  'Festa de Oxalá 2026': ['🕊️','🤍','🌿','✨','🪔','🌟'],
+  'Gira de Pretos Velhos': ['🪑','☕','📿','🕯️','🌙','⭐'],
+  'Festa de Iemanjá 2025': ['🌊','💙','🐚','🎀','🌸','🌺'],
+};
+
+const ENTIDADES = [
+  {nome:'Oxalá',saud:'Epàbà!',icon:'🕊️',desc:'Orixá da paz, criação e pureza. Regente do branco, das alturas e da luz divina.'},
+  {nome:'Iemanjá',saud:'Odoyá!',icon:'🌊',desc:'Rainha do mar e das águas salgadas. Mãe de todos os orixás, símbolo da maternidade.'},
+  {nome:'Ogum',saud:'Ogunhê!',icon:'⚔️',desc:'Orixá do ferro, das guerras e das estradas. Abre os caminhos e protege os trabalhadores.'},
+  {nome:'Xangô',saud:'Kaô Kabiecilê!',icon:'⚡',desc:'Orixá da justiça, do trovão e do fogo. Justo e severo, não tolera mentiras.'},
+  {nome:'Iansã',saud:'Eparrei!',icon:'🌪️',desc:'Orixá dos ventos, tempestades e raios. Guerreira destemida, senhora dos mortos.'},
+  {nome:'Oxum',saud:'Ora Iê Iê Ô!',icon:'💛',desc:'Orixá das águas doces, do amor e da fertilidade. Símbolo da beleza e da riqueza.'},
+  {nome:'Preto Velho',saud:'Adorei!',icon:'🪑',desc:'Espíritos de ex-escravizados africanos. Curandeiros sábios e compassivos, trazem paz.'},
+  {nome:'Caboclo',saud:'Okê Arô!',icon:'🪶',desc:'Espíritos de índios nativos. Trabalhadores da cura e das matas, fortes e diretos.'},
+  {nome:'Exu',saud:'Laroyê!',icon:'🔱',desc:'Mensageiro dos orixás, dono das encruzilhadas. Guardião das casas e comunicador.'},
+  {nome:'Pomba Gira',saud:'Salve!',icon:'🌹',desc:'Entidade feminina das encruzilhadas. Rege o amor, a sexualidade e a liberdade feminina.'},
+];
+
+const PONTOS = [
+  {ent:'Oxalá',nome:'Salve o Senhor do Branco',letra:'Salve o senhor do branco\nSalve o senhor da luz\nEpàbà, meu pai Oxalá\nEpàbà, senhor Jesus'},
+  {ent:'Oxalá',nome:'Branco como a neve',letra:'Branco como a neve\nBranco como o algodão\nOxalá meu pai divino\nVem abençoar o coração'},
+  {ent:'Iemanjá',nome:'Sereia do Mar',letra:'Sereia, sereia do mar\nIemanjá veio nos abençoar\nOdoyá, rainha do mar\nSua coroa é de coral'},
+  {ent:'Iemanjá',nome:'Filha das águas',letra:'Filha das águas, rainha do mar\nIemanjá nos veio proteger\nCom seu manto azul nos cobrir\nCom seu amor nos aquecer'},
+  {ent:'Ogum',nome:'Abre Caminho',letra:'Abre caminho, Ogum guerreiro\nAbre caminho pra mim\nCom sua espada de aço\nCorta o mal até o fim'},
+  {ent:'Ogum',nome:'Ogum na Avenida',letra:'Ogum tá na avenida\nOgunhê, Ogunhê\nCom sua espada na mão\nAbrindo os caminhos, Ogunhê'},
+  {ent:'Xangô',nome:'Pai das pedreiras',letra:'Xangô pai das pedreiras\nSenhor do trovão e do fogo\nKaô Kabiecilê, meu senhor\nVenha nos reger nesse jogo'},
+  {ent:'Iansã',nome:'Rainha dos ventos',letra:'Eparrei, rainha guerreira\nDona dos ventos e do mar\nIansã, senhora das tempestades\nVenha com seu amor nos proteger'},
+  {ent:'Oxum',nome:'Rainha das águas doces',letra:'Ora Iê Iê Ô, Oxum\nRainha das águas doces és tu\nCom seu espelho dourado\nReflete o amor em cruz'},
+  {ent:'Preto Velho',nome:'Vovô da Calunga',letra:'Vovô, vovô, vovô\nVovô da Calunga Grande\nCom sua cachimba acesa\nFumegando em paz e fé'},
+  {ent:'Preto Velho',nome:'Café com leite',letra:'Café com leite, cachimbo\nVovô veio trabalhar\nCom sua benção e sabedoria\nOs males vem afastar'},
+  {ent:'Caboclo',nome:'Ubirajara da Mata',letra:'Ubirajara, guerreiro da mata\nCaboclo da jurema sagrada\nOkê Arô, senhor das florestas\nSua flecha nunca errou na estrada'},
+  {ent:'Exu',nome:'Laroyê Exu',letra:'Laroyê, Exu\nDono das encruzilhadas\nExu abre os caminhos\nExu fecha as passagens\nLaroyê, Exu'},
+  {ent:'Pomba Gira',nome:'Maria Padilha',letra:'Maria Padilha, rainha das rosas\nVenha com seu amor nos abençoar\nSalve a pomba gira das encruzilhadas\nSua guia de rosas vai perfumar'},
+];
+
+// ── STATE ──
+let currentTab = 'home';
+let logado = false;
+let filtroAtivo = 'Todos';
+let playerAtivo = null;
+let playing = false;
+
+// ── INIT ──
+renderAcervo();
+renderConsumiveis();
+renderCalendario();
+renderGaleria();
+renderEntidades();
+renderPontos();
+
+// ── RENDER ──
+function stockClass(qtd,max){
+  const p=qtd/max*100;
+  if(p>=75)return['badge-ok','✅ OK'];
+  if(p>=25)return['badge-repor','⚠️ Repor'];
+  if(p>=5)return['badge-alerta','🔴 Alerta'];
+  return['badge-urgente','🚨 Urgente'];
+}
+
+function renderAcervo(){
+  const g=document.getElementById('acervoGrid');
+  g.innerHTML=ACERVO.map(i=>`
+    <div class="item-card" onclick="openItem(${JSON.stringify(i).replace(/'/g,'&#39;')})">
+      <div class="item-cat">${i.cat}</div>
+      <div class="item-nome">${i.nome}</div>
+      <div class="item-desc">${i.desc.substring(0,60)}...</div>
+    </div>`).join('');
+}
+
+function renderConsumiveis(){
+  const l=document.getElementById('consList');
+  l.innerHTML=CONSUMIVEIS.map(c=>{
+    const[cls,lbl]=stockClass(c.qtd,c.max);
+    return`<div class="cons-card">
+      <div class="cons-info"><div class="cons-nome">${c.nome}</div><div class="cons-unit">${c.unit}</div></div>
+      <span class="badge ${cls}">${lbl}</span>
+      <div class="cons-qtd">${c.qtd}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderCalendario(){
+  const l=document.getElementById('calList');
+  l.innerHTML=CALENDARIO.map(e=>`
+    <div class="cal-item">
+      <div class="cal-dia"><div class="cal-dia-num">${e.dia}</div><div class="cal-dia-mes">${e.mes}</div></div>
+      <div>
+        <div class="cal-titulo">${e.titulo}</div>
+        <div class="cal-hora">🕐 ${e.hora}</div>
+        <span class="${e.tipo==='pub'?'cal-tipo-pub':'cal-tipo-pri'}">${e.tipo==='pub'?'🌍 Aberto':'🔒 Fechado'}</span>
+        <div style="font-size:12px;color:var(--cinza);margin-top:8px;line-height:1.6">${e.desc}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderGaleria(){
+  const c=document.getElementById('galeriaContent');
+  c.innerHTML=Object.entries(GALERIA).map(([album,fotos])=>`
+    <div class="gallery-album">📸 ${album}</div>
+    <div class="gallery-grid" style="margin-bottom:20px">
+      ${fotos.map((f,i)=>`
+        <div class="gallery-thumb" onclick="openFoto('${album}',${i})">
+          <div class="gallery-thumb-inner">
+            <div style="font-size:32px">${f}</div>
+            <div class="gallery-thumb-lbl">foto ${i+1}</div>
+          </div>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+function renderEntidades(){
+  const g=document.getElementById('entGrid');
+  g.innerHTML=ENTIDADES.map(e=>`
+    <div class="ent-card" onclick="openEntidade(${JSON.stringify(e).replace(/'/g,'&#39;')})">
+      <div class="ent-icon">${e.icon}</div>
+      <div class="ent-nome">${e.nome}</div>
+      <div class="ent-saud">${e.saud}</div>
+    </div>`).join('');
+}
+
+function renderPontos(){
+  const entidades=['Todos',...new Set(PONTOS.map(p=>p.ent))];
+  document.getElementById('pontosFiltros').innerHTML=entidades.map(e=>`
+    <button class="filtro-btn${e===filtroAtivo?' active':''}" onclick="setFiltro('${e}')">${e}</button>`).join('');
+
+  const filtered=filtroAtivo==='Todos'?PONTOS:PONTOS.filter(p=>p.ent===filtroAtivo);
+  document.getElementById('pontosList').innerHTML=filtered.map((p,i)=>`
+    <div class="ponto-card">
+      <div class="ponto-header" onclick="toggleLetra(${i})">
+        <div class="ponto-icon">🎵</div>
+        <div class="ponto-info">
+          <div class="ponto-nome">${p.nome}</div>
+          <div class="ponto-ent">${p.ent}</div>
+        </div>
+        <button class="ponto-play" onclick="event.stopPropagation();playPonto(${i})" title="Tocar">▶</button>
+      </div>
+      <div class="ponto-letra" id="letra-${i}">
+        <div class="ponto-letra-txt">${p.letra}</div>
+      </div>
+    </div>`).join('');
+}
+
+function setFiltro(e){filtroAtivo=e;renderPontos()}
+
+function toggleLetra(i){
+  const el=document.getElementById('letra-'+i);
+  el.classList.toggle('open');
+}
+
+// ── LOGIN ──
+function tryLogin(code){
+  if(code==='2024'){
+    logado=true;
+    document.body.classList.add('logado');
+    document.getElementById('btnMembro').textContent='✓ Membro';
+    document.getElementById('btnMembro').classList.add('active');
+    ['acervoPrompt','consPrompt'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el)el.style.display='none';
+    });
+  }
+}
+
+function toggleLogin(){
+  if(logado){
+    logado=false;
+    document.body.classList.remove('logado');
+    document.getElementById('btnMembro').textContent='🔑 Área Filhos';
+    document.getElementById('btnMembro').classList.remove('active');
+    ['acervoPrompt','consPrompt'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el)el.style.display='';
+    });
+  } else {
+    goTab('acervo');
+  }
+}
+
+// ── TABS ──
+function goTab(id){
+  document.querySelectorAll('.tab-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach((t,i)=>{
+    const tabs=['home','acervo','consumiveis','calendario','galeria','entidades','pontos'];
+    t.classList.toggle('active',tabs[i]===id);
+  });
+  document.querySelectorAll('.bnav-btn').forEach((b,i)=>{
+    const tabs=['home','acervo','consumiveis','calendario','pontos'];
+    b.classList.toggle('active',tabs[i]===id);
+  });
+  currentTab=id;
+  document.getElementById('main').scrollTop=0;
+}
+
+// ── MODAIS ──
+function openItem(item){
+  document.getElementById('modalTitulo').textContent=item.nome;
+  document.getElementById('modalBody').innerHTML=`
+    <div class="modal-campo"><div class="modal-campo-lbl">Categoria</div><div class="modal-campo-val">${item.cat}</div></div>
+    <div class="modal-campo"><div class="modal-campo-lbl">Descrição</div><div class="modal-campo-val">${item.desc}</div></div>`;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function openEntidade(e){
+  document.getElementById('modalTitulo').innerHTML=`${e.icon} ${e.nome}`;
+  document.getElementById('modalBody').innerHTML=`
+    <div class="modal-campo"><div class="modal-campo-lbl">Saudação</div><div class="modal-campo-val" style="font-family:var(--fd);color:var(--ouro)">${e.saud}</div></div>
+    <div class="modal-campo"><div class="modal-campo-lbl">Sobre</div><div class="modal-campo-val">${e.desc}</div></div>`;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function openFoto(album,i){
+  const fotos=GALERIA[album];
+  document.getElementById('modalTitulo').textContent=album;
+  document.getElementById('modalBody').innerHTML=`
+    <div style="font-size:80px;text-align:center;padding:20px 0">${fotos[i]}</div>
+    <div style="text-align:center;font-size:12px;color:var(--cinza)">Foto ${i+1} de ${fotos.length}</div>`;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal(e){
+  if(!e||e.target===document.getElementById('modalOverlay'))
+    document.getElementById('modalOverlay').classList.remove('open');
+}
+
+// ── PLAYER ──
+function playPonto(i){
+  const p=PONTOS[i];
+  playerAtivo=p;
+  document.getElementById('playerNome').textContent=p.nome;
+  document.getElementById('playerEnt').textContent=p.ent;
+  document.getElementById('miniPlayer').classList.add('visible');
+  document.getElementById('playerBtn').textContent='⏸';
+  playing=true;
+}
+
+function togglePlay(){
+  playing=!playing;
+  document.getElementById('playerBtn').textContent=playing?'⏸':'▶';
+}
+
+function closePlayer(){
+  document.getElementById('miniPlayer').classList.remove('visible');
+  playing=false;
+  playerAtivo=null;
+}
+</script>
+</body>
+</html>
