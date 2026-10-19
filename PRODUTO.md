@@ -1,191 +1,226 @@
 # Terreiro Gestão — Produto & Modelo de Negócio
 
-> Documento interno de referência para precificação, onboarding e custos operacionais.
+> Documento interno. Não publicar.
 
 ---
 
-## O que é o produto
+## Stack e pontos de ruptura de infra
 
-Sistema completo de gestão digital para terreiros de Umbanda, entregue como PWA (Progressive Web App) acessível pelo celular sem instalação. Cada terreiro recebe sua própria instância com:
+A infra começa gratuita mas escala com o número de terreiros ativos. Precificar considerando os custos reais desde o primeiro terreiro pago.
 
-- Acervo de peças e itens rituais
-- Controle de estoque (consumíveis) com alertas visuais
-- Calendário de giras e eventos
-- Galeria fotográfica
-- Catálogo de orixás e entidades
-- Pontos cantados com player de áudio (645+ pontos base)
-- Área privada para filhos de santo (acesso por código)
-- Painel administrativo para o zelador/a
+| Serviço | Cota gratuita | Custo excedente | Ponto de ruptura |
+|---------|--------------|-----------------|-----------------|
+| Cloudflare R2 (storage áudio) | 10 GB/mês | US$ 0,015/GB | ~20 terreiros (500 MB cada) |
+| Cloudflare R2 (leitura) | 1M ops/mês | US$ 0,36/M ops | ~15 terreiros ativos |
+| Cloudflare Worker (proxy) | 100k req/dia | US$ 5/mês (+10M req) | ~200 terreiros |
+| Google Apps Script | 90 min exec/dia | Sem plano pago — requer conta separada por terreiro | ~400 terreiros no mesmo projeto |
+| GitHub Pages (bandwidth) | 100 GB/mês | Plano pago GitHub | ~2.000 terreiros |
+| Domínio .com.br | — | R$ 40/ano (Registro.br) | por terreiro |
 
----
+**Custo operacional estimado por terreiro/mês (a partir do 15º terreiro ativo):**
+- R2 storage: ~US$ 0,008 (R$ ~0,05)
+- R2 leitura: ~US$ 0,024 (R$ ~0,14)
+- Worker proporcional: ~US$ 0,025 (R$ ~0,15)
+- GAS: precisa de conta Google separada por bloco de terreiros
+- **Total infra: ~R$ 0,35–1,00/terreiro/mês**
 
-## Stack tecnológica
-
-| Serviço | Uso | Custo |
-|---------|-----|-------|
-| GitHub Pages | Hospedagem do frontend (HTML/JS) | Grátis |
-| Google Apps Script | Backend / API (lógica + autenticação) | Grátis |
-| Google Sheets | Banco de dados do terreiro | Grátis |
-| Cloudflare Worker | Proxy HTTPS para o GAS (contorna CORS) | Grátis até 100k req/dia |
-| Cloudflare R2 | Storage de áudio dos pontos cantados | Grátis até 10 GB + 1M ops/mês |
-| Cloudflare DNS | DNS do domínio personalizado | Grátis |
-| Domínio `.com.br` | URL própria (ex: meuterreiro.com.br) | ~R$ 40/ano (Registro.br) |
-
-**Custo de infra por terreiro: R$ 0 sem domínio / ~R$ 40/ano com domínio.**
-
-> Todos os serviços operam dentro das cotas gratuitas para o volume típico de um terreiro. O único custo recorrente obrigatório é o domínio, caso o cliente queira URL personalizada.
-
-### Limites das cotas gratuitas (referência)
-
-| Serviço | Cota gratuita | Terreiro típico |
-|---------|---------------|-----------------|
-| GAS execuções | 6 min/exec, 90 min/dia | < 5 min/dia |
-| GAS chamadas URL | 20.000/dia | < 200/dia |
-| Cloudflare Worker | 100.000 req/dia | < 1.000/dia |
-| Cloudflare R2 storage | 10 GB/mês | ~500 MB (áudio) |
-| Cloudflare R2 leitura | 10 milhões ops/mês | < 50.000/mês |
-| GitHub Pages bandwidth | 100 GB/mês | < 1 GB/mês |
+> O custo de infra é irrelevante para precificação — o valor está no serviço e na exclusividade para o nicho.
 
 ---
 
-## Modelo de negócio proposto
+## Proposta de valor
 
-### Opção A — Setup + Mensalidade (recomendado)
+**Para o terreiro:**
+- Para de perder consumível por falta de controle (compra de emergência custa mais)
+- Zelador/a para de responder "qual a data da gira?" no WhatsApp
+- Filhos acessam pontos, calendário e entidades pelo celular a qualquer hora
+- Galeria e catálogo espiritual = memória e identidade da casa
+- Aparência profissional para visitantes e novos filhos
 
-| Item | Valor sugerido |
-|------|---------------|
-| Setup inicial (configuração, personalização, importação de dados) | R$ 600 – R$ 1.200 |
-| Mensalidade (manutenção, suporte, atualizações) | R$ 80 – R$ 150/mês |
-| Domínio personalizado (repassado ao cliente) | R$ 40/ano (~R$ 3,50/mês) |
+**Posicionamento de mercado:**
 
-**Racional:** Setup cobre o trabalho de configuração (~4–8h). Mensalidade cobre suporte e garante receita recorrente previsível.
-
----
-
-### Opção B — Anual (para quem prefere não ter mensalidade)
-
-| Item | Valor sugerido |
-|------|---------------|
-| Setup inicial | R$ 600 – R$ 1.200 |
-| Licença anual (inclui suporte e atualizações) | R$ 600 – R$ 900/ano |
-| Domínio (repassado) | R$ 40/ano |
-
-**Racional:** Equivale a ~R$ 50–75/mês. Mais fácil de vender para quem tem resistência a assinatura mensal.
+| Solução | Custo mensal | Serve terreiro? |
+|---------|-------------|----------------|
+| Site Wix/Squarespace | R$ 80–150/mês | Parcialmente — só vitrine |
+| Linktree pago | R$ 40–80/mês | Só links |
+| App por agência | R$ 500+/mês + setup R$ 5k–15k | Genérico, caro |
+| Planilha manual | R$ 0 | Sem controle, sem app |
+| **Terreiro Gestão** | **a definir** | **Único feito para Umbanda** |
 
 ---
 
-### Opção C — One-time (venda única, sem suporte contínuo)
+## Módulos do sistema
 
-| Item | Valor sugerido |
-|------|---------------|
-| Setup completo + 3 meses de suporte inclusos | R$ 1.500 – R$ 2.500 |
-| Suporte adicional após 3 meses (por hora) | R$ 100 – R$ 150/hora |
-| Domínio (repassado) | R$ 40/ano |
-
-**Racional:** Menor barreira de entrada, mas sem receita recorrente. Indicado para clientes que querem autonomia total.
+| Módulo | Acesso padrão | Pode ser opcional |
+|--------|--------------|-------------------|
+| Calendário de giras | Público | Não — é core |
+| Pontos Cantados (645+) | Público | Não — é core |
+| Galeria fotográfica | Público | Sim |
+| Orixás & Entidades | Público | Sim |
+| Acervo de peças | Filhos | Sim |
+| Controle de estoque | Filhos | Sim |
+| Área dos filhos (auth) | Filhos | Não se tiver Acervo/Estoque |
+| Painel administrativo | Admin | Sim |
+| Player de áudio offline | Todos | Sim (depende de ter áudio no R2) |
+| PWA (instala no celular) | Todos | Não — é a entrega |
 
 ---
 
-## O que está incluso no setup
+## Modelos de comercialização
 
-- [ ] Configuração do repositório GitHub (fork do template)
-- [ ] Configuração do Google Sheets com as abas padrão
-- [ ] Deploy do Google Apps Script com URL do terreiro
-- [ ] Configuração do Cloudflare Worker (proxy)
-- [ ] Upload dos arquivos de áudio no Cloudflare R2
-- [ ] Personalização: nome, cores, logo e informações do terreiro
-- [ ] Importação dos dados iniciais (acervo, consumíveis, pontos)
-- [ ] Domínio personalizado + DNS (se contratado)
-- [ ] Treinamento com o zelador/a (1 hora via chamada)
-- [ ] Documentação de uso simplificada
+### Modelo 1 — SaaS Mensal (recorrência, recomendado para escala)
+
+O terreiro paga uma mensalidade que inclui tudo.
+
+| Plano | Módulos | Valor sugerido |
+|-------|---------|---------------|
+| **Básico** | Calendário + Pontos + PWA | R$ 97/mês |
+| **Completo** | Tudo acima + Acervo + Estoque + Galeria + Entidades | R$ 197/mês |
+| **Premium** | Tudo + domínio personalizado + suporte prioritário | R$ 297/mês |
+
+Setup único (todos os planos): R$ 500–800
+
+**Por que funciona:** Wix cobra R$ 80–150 e não faz nada disso. R$ 97–197 é defensável.
+
+---
+
+### Modelo 2 — Anual (desconto por comprometimento)
+
+| Plano | Valor anual | Equivalente mensal | Economia |
+|-------|------------|-------------------|----------|
+| Básico anual | R$ 870/ano | R$ 72,50/mês | ~25% |
+| Completo anual | R$ 1.740/ano | R$ 145/mês | ~26% |
+| Premium anual | R$ 2.640/ano | R$ 220/mês | ~26% |
+
+Setup único: R$ 500–800
+
+---
+
+### Modelo 3 — One-time + Manutenção opcional
+
+Para terreiros que querem pagar uma vez e ter autonomia.
+
+| Item | Valor |
+|------|-------|
+| Setup completo (todos os módulos) | R$ 2.500–4.000 |
+| Inclui: 6 meses de suporte | — |
+| Manutenção mensal opcional após 6 meses | R$ 150/mês |
+| Hora avulsa de suporte | R$ 150/hora |
+
+**Risco:** sem receita recorrente. Indicado como exceção, não como padrão.
+
+---
+
+### Modelo 4 — Módulos à la carte (para terreiros menores)
+
+Só paga o que usa. Útil para entrada no produto.
+
+| Módulo | Valor/mês | Valor/ano |
+|--------|-----------|-----------|
+| Core (Calendário + Pontos + PWA) | R$ 67/mês | R$ 670/ano |
+| + Galeria | +R$ 30/mês | +R$ 300/ano |
+| + Acervo & Estoque | +R$ 50/mês | +R$ 500/ano |
+| + Entidades | +R$ 20/mês | +R$ 200/ano |
+| + Domínio personalizado | +R$ 40/ano | — |
+| Setup | R$ 300–500 | — |
+
+---
+
+## O que está incluso no setup (todos os planos)
+
+- Configuração do repositório e GitHub Pages
+- Google Sheets com as abas do plano contratado
+- Google Apps Script (backend) com URL do terreiro
+- Cloudflare Worker (proxy) configurado
+- Upload do acervo de áudio no R2 (se plano tiver Pontos)
+- Personalização: nome, cores, informações do terreiro
+- Importação dos dados iniciais fornecidos pelo terreiro
+- Domínio personalizado (se plano incluir)
+- Treinamento com o zelador/a — 1h via chamada
+- Documentação de uso simplificada
 
 **Tempo estimado de setup: 4–8 horas**
 
 ---
 
-## O que está incluso na manutenção mensal
-
-- Atualização do catálogo de pontos cantados (quando disponível)
-- Suporte para dúvidas e pequenas alterações
-- Atualização de eventos no calendário (se solicitado)
-- Monitoramento de cota dos serviços gratuitos
-- Atualização do sistema quando houver melhorias
-
----
-
 ## Processo de onboarding (novo terreiro)
 
-### 1. Coleta de dados (formulário ou conversa)
-- Nome do terreiro
-- Linha de trabalho (Umbanda, Candomblé, linha específica)
-- Responsável (zelador/a) e contato
-- Quer domínio? Se sim, qual nome?
-- Lista de itens do acervo (pode ser feita depois)
-- Lista de consumíveis
-- Agenda de giras recorrentes
-- Fotos (logo, galeria inicial)
+### 1. Coleta de dados
+- Nome e linha do terreiro
+- Responsável e WhatsApp
+- Plano escolhido / módulos desejados
+- Quer domínio? Qual nome?
+- Lista de consumíveis e acervo (pode ser depois)
+- Agenda recorrente de giras
+- Fotos iniciais (logo + galeria)
 
-### 2. Provisionar infraestrutura (~2h)
+### 2. Provisionar infra (~2h)
+
 ```
 1. Fork do repositório template no GitHub
 2. Criar planilha Google Sheets (copiar template)
-3. Deploy do Google Apps Script (definir doGet/doPost)
+3. Deploy do Google Apps Script → anotar URL do Web App
 4. Criar Cloudflare Worker (copiar worker.js, ajustar URL do GAS)
-5. Criar bucket R2 (se vai ter pontos com áudio)
+5. Criar bucket R2 (se plano tiver Pontos com áudio)
 6. Registrar domínio no Registro.br (se contratado)
 7. Configurar DNS no Cloudflare
 8. Ativar GitHub Pages no repositório
 ```
 
-### 3. Personalizar app (~1h)
+### 3. Personalizar (~1h)
+
 ```
-- Editar app.js: nome, GAS URL, R2 URL
-- Ajustar cores CSS se necessário
-- Atualizar pontos cantados (filtrar por linha do terreiro)
+- Editar app.js: nome do terreiro, GAS URL, R2 URL
+- Ajustar cores CSS se solicitado
+- Filtrar catálogo de pontos por linha do terreiro
 - Configurar ícones PWA
 ```
 
 ### 4. Importar dados (~1–2h)
+
 ```
-- Preencher aba Acervo na planilha
 - Preencher aba Consumíveis com estoque inicial
-- Adicionar eventos iniciais no Calendário
-- Fazer upload das fotos iniciais
-- Definir código(s) de acesso para filhos de santo
+- Cadastrar acervo inicial
+- Adicionar eventos no Calendário
+- Upload das fotos iniciais
+- Definir código(s) de acesso dos filhos
 ```
 
 ### 5. Entrega e treinamento (~1h)
+
 ```
-- Testar todos os módulos
+- Testar todos os módulos contratados
 - Apresentar para o zelador/a
 - Entregar documentação de uso
-- Combinação de como funciona o suporte
+- Combinar dinâmica de suporte
 ```
 
 ---
 
-## Concorrência e posicionamento
+## Escalabilidade da infra com crescimento
 
-| Solução | Custo | Adequado para terreiros? |
-|---------|-------|--------------------------|
-| Planilha Excel/Sheets manual | Grátis | Sim, mas sem controle de estoque visual nem app |
-| App genérico (Notion, Airtable) | R$ 30–100/mês | Parcialmente, sem identidade visual |
-| Sistema de gestão religioso | R$ 200–500/mês | Foco em igrejas cristãs |
-| **Terreiro Gestão** | **R$ 0–150/mês** | **Sim, desenvolvido para Umbanda** |
+| Nº de terreiros | Custo de infra/mês | Receita estimada (Completo) | Margem |
+|----------------|--------------------|-----------------------------|--------|
+| 1–15 | R$ 0 | R$ 197–2.955 | ~100% |
+| 16–50 | ~R$ 20–60 | R$ 3.152–9.850 | >99% |
+| 51–200 | ~R$ 80–200 | R$ 10.047–39.400 | >99% |
+| 200+ | ~R$ 300–800 | R$ 39.400+ | >98% |
 
-**Diferencial:** Único sistema desenvolvido especificamente para Umbanda, com pontos cantados, entidades, controle de acervo ritual e respeito à LGPD.
+> A infra escala de forma irrelevante frente à receita. O gargalo real é o tempo de setup e suporte — não o custo de servidor.
+
+**Implicação:** para escalar, o produto precisa de documentação de self-service ou de um processo de setup semi-automatizado. Não de mais servidor.
 
 ---
 
-## Referências de URL
+## URLs de referência
 
 | Recurso | URL |
 |---------|-----|
-| Landing page (vendas) | https://falssp.github.io/terreiro-gestao/ |
+| Landing page | https://falssp.github.io/terreiro-gestao/ |
 | Demo navegável | https://falssp.github.io/terreiro-gestao/demo/ |
-| Terreiro ativo (Ile Ase Vodun) | https://falssp.github.io/terreiro-gestao/ile-ase-vodun/ |
+| Terreiro ativo | https://falssp.github.io/terreiro-gestao/ile-ase-vodun/ |
 | Repositório | https://github.com/falssp/terreiro-gestao |
-| WhatsApp de contato | https://wa.me/5511989202958 |
+| WhatsApp | https://wa.me/5511989202958 |
 
 ---
 
